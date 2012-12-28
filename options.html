@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<title class=i18n>Options - Violentmonkey</title>
+	</head>
+	<body>
+		<h1 class=i18n>Options - Violentmonkey</h1>
+		<div class=main>
+			<div id=header>
+				<div class=left>
+					<button id=bNew class=i18n>New</button>
+					<a href=http://userscripts.org target=_blank class=i18n>Get more scripts from UserScripts.org</a>
+				</div>
+				<div class=right>
+					<button id=bUpdate class=i18n>Update all</button>
+					<button id=bAdvanced class=i18n>Advanced</button>
+				</div>
+			</div>
+			<div class=x></div>
+			<fieldset>
+				<legend><span class=i18n>Script List</span> <input type=checkbox id=cDetail><label for=cDetail class=i18n>Show details</label></legend>
+				<div id=sList></div>
+			</fieldset>
+			<div id=footer class=i18n>Designed by Gerald</div>
+		</div>
+		<div id=overlay></div>
+		<div id=editor class="float hide">
+			<h2 class=i18n>Script Editor</h2>
+			<textarea id=mCode></textarea>
+			<div class=left><input type=checkbox id=mUpdate><label for=mUpdate class=i18n>Allow update</label></div>
+			<div class=right>
+				<button id=mSave class=i18n>Save</button>
+				<button id=mSaveClose class=i18n>Save and Close</button>
+				<button id=mClose class=i18n>Close</button>
+			</div>
+		</div>
+		<div id=export class="float hide">
+			<h2 class=i18n>Data Export</h2>
+			<label class=i18n>Script List</label>
+			<div class=right>
+				<button id=bSelect class=i18n>All/None</button>
+			</div>
+			<div id=xList class=list></div>
+			<div class=right>
+				<button id=bExport class=i18n>Export</button>
+				<button id=bClose class=i18n>Close</button>
+			</div>
+		</div>
+		<div id=advanced class="float hide">
+			<h2 class=i18n>Advanced</h2>
+			<div><input type=checkbox id=cShow><label for=cShow class=i18n>Show button on toolbar</label></div>
+			<div><input type=checkbox id=cInstall><label for=cInstall class=i18n>Allow installing .user.js files loaded by Opera.</label></div>
+			<fieldset>
+				<legend class=i18n>Data</legend>
+				<button id=aExport class=i18n>Export to zip file</button><br>
+				<button id=aVacuum class=i18n>Vacuum data</button><span class=i18n>Vacuum hint</span>
+			</fieldset>
+			<div class=right><button id=aClose class=i18n>Close</button></div>
+		</div>
+	</body>
+</html>
+<script src="jszip.js"></script>
+<script src="options.js"></script>
+<script src="i18n.js"></script>

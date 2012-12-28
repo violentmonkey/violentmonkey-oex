@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget xmlns="http://www.w3.org/ns/widgets" version="1.1.9-preview" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
+  <name>Violent monkey</name>
+  <author href="http://my.opera.com/gera2ld" email="gera2ld@163.net">Gerald</author>
+  <icon src="images/icon64.png"/>
+  <icon src="images/icon18.png"/>
+  <access origin="*"/>
+  <update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
+  <description xml:lang="en">UserScript support for Opera.</description>
+  <description xml:lang="zh">为Opera提供UserScript支持。</description>
+</widget>
