@@ -106,8 +106,8 @@ var A=$('advanced');
 $('bAdvanced').onclick=function(){showDialog(A);};
 $('cShow').checked=bg.getSetting('showButton',true);
 $('cShow').onchange=function(){bg.showButton(bg.saveSetting('showButton',this.checked));};
-$('cInstall').checked=bg.getSetting('installFile',true);
-$('cInstall').onchange=function(){bg.saveSetting('installFile',this.checked);};
+$('cInstall').checked=bg.installFile;
+$('cInstall').onchange=function(){bg.saveSetting('installFile',bg.installFile=this.checked);};
 $('aExport').onclick=function(){closeDialog(A);showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
 A.onclose=$('aClose').onclick=function(){closeDialog(A);};
@@ -204,7 +204,7 @@ function check(i){
 // Script Editor
 var M=$('editor'),T=$('mCode'),U=$('mUpdate');
 function edit(i){
-	showDialog(M);
+	showDialog(M);T.style.height=window.innerHeight-120+'px';
 	M.dirty=false;M.scr=bg.scripts[i];M.cur=L.childNodes[i];
 	T.value=M.scr.code;U.checked=M.scr.update;
 }

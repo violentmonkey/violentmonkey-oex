@@ -6,25 +6,23 @@
 		<title class=i18n>Options - Violentmonkey</title>
 	</head>
 	<body>
-		<h1 class=i18n>Options - Violentmonkey</h1>
-		<div class=main>
-			<div id=header>
-				<div class=left>
-					<button id=bNew class=i18n>New</button>
-					<a href=http://userscripts.org target=_blank class=i18n>Get more scripts from UserScripts.org</a>
-				</div>
-				<div class=right>
-					<button id=bUpdate class=i18n>Update all</button>
-					<button id=bAdvanced class=i18n>Advanced</button>
-				</div>
+		<div id=header class=main>
+			<h1 class=i18n>Options - Violentmonkey</h1>
+			<div class=left>
+				<button id=bNew class=i18n>New</button>
+				<a href=http://userscripts.org target=_blank class=i18n>Get more scripts from UserScripts.org</a>
+			</div>
+			<div class=right>
+				<button id=bUpdate class=i18n>Update all</button>
+				<button id=bAdvanced class=i18n>Advanced</button>
 			</div>
 			<div class=x></div>
-			<fieldset>
-				<legend><span class=i18n>Script List</span> <input type=checkbox id=cDetail><label for=cDetail class=i18n>Show details</label></legend>
-				<div id=sList></div>
-			</fieldset>
-			<div id=footer class=i18n>Designed by Gerald</div>
 		</div>
+		<fieldset id=fMain class=main>
+			<legend><span class=i18n>Script List</span> <input type=checkbox id=cDetail><label for=cDetail class=i18n>Show details</label></legend>
+			<div id=sList></div>
+		</fieldset>
+		<div id=footer class="i18n main">Designed by Gerald</div>
 		<div id=overlay></div>
 		<div id=editor class="float hide">
 			<h2 class=i18n>Script Editor</h2>

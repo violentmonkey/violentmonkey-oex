@@ -4,7 +4,11 @@ GM_null=function(name){opera.postError(name+' has not been supported yet!');};
 // Messages
 callbacks={},requests={};
 function postMessage(topic,rtopic,data,func){
-	if(rtopic) callbacks[rtopic]=func;
+	if(rtopic&&func) {
+		var f=callbacks[rtopic];
+		if(!f) callbacks[rtopic]=f=[];
+		f.push(func);
+	}
 	opera.extension.postMessage({topic:topic,data:data});
 }
 opera.extension.addEventListener('message', function(e) {
@@ -20,7 +24,7 @@ opera.extension.addEventListener('message', function(e) {
 		c=command[message.data];if(c) c();
 	} else {
 		c=callbacks[message.topic];
-		if(c) {c(message.data);delete callbacks[message.topic];}
+		if(c&&(c=c.shift())) c(message.data);
 	}
 }, false);
 
@@ -37,7 +41,7 @@ if(/\.user\.js$/.test(window.location.href)) window.addEventListener('load',func
 },false);
 
 // For injected scripts
-var start=[],end=[],cache={},scr=[],menu=[],command={};
+var start=[],body=[],end=[],cache={},scr=[],menu=[],command={};
 function run_code(c){
 	this.code=c.code;
 	this.require=c.meta.require||[];
@@ -48,23 +52,38 @@ function run_code(c){
 		try{eval('(function(){'+this.code+'})();');}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	}
 }
-function runScript(){
-	var i=['loading','interactive','complete'].indexOf(document.readyState);
-	if(i>=0) while(start.length) run_code(start.shift());
-	if(i>=1) while(end.length) run_code(end.shift());
+function runScript(e){
+	if(!e||e.type=='readystatechange') {
+		var i=['loading','interactive','complete'].indexOf(document.readyState);
+		if(i>=0) while(start.length) run_code(start.shift());
+		if(i>=1) while(end.length) run_code(end.shift());
+	}
+	if(!e||e.type=='DOMNodeInserted') {
+		if(document.body) {
+			window.removeEventListener('DOMNodeInserted',runScript,false);
+			while(body.length) run_code(body.shift());
+		}
+	}
 }
 function loadScript(data){
 	for(var i=0;i<data.length;i++) {
 		scr.push(data[i].id);
 		if(data[i].enabled) {
-			var l=data[i].meta['run-at']=='document-start'?start:end;
+			var l;
+			switch(data[i].meta['run-at']){
+				case 'document-start': l=start;break;
+				case 'document-body': l=body;break;
+				default: l=end;
+			}
 			l.push(data[i]);
 			(data[i].meta.require||[]).forEach(function(i){cache[i]=null;});
 			for(l in data[i].meta.resources) cache[data[i].meta.resources[l]]=null;
 		}
 	}
 	postMessage('LoadCache','LoadedCache',cache,function(d){
-		cache=d;document.onreadystatechange=runScript;runScript();
+		cache=d;document.onreadystatechange=runScript;
+		window.addEventListener('DOMNodeInserted',runScript,false);
+		runScript();
 	});
 }
 function wrapFunction(o,i,c){
@@ -131,6 +150,7 @@ function wrapper(c){
 				user:details.user,
 				password:details.password,
 				headers:details.headers,
+				overrideMimeType:details.overrideMimeType,
 			}});
 		};
 		var r={abort:function(){postMessage('AbortRequest',null,details.id);}};
@@ -154,5 +174,5 @@ function wrapper(c){
 	} catch(e) {}	// avoid reading protected data*/
 }
 wrapper.prototype=window;
-postMessage('FindScript','FoundScript',null,loadScript);
+postMessage('FindScript','FoundScript',window.location.href,loadScript);
 })();

@@ -7,30 +7,41 @@ import xml.etree.ElementTree as ET
 class i18n:
     default_keys=['__author','__lang']
     sep='<=>'
+    name=None
     lang=None
+    path='.'
     data={}
     keys=set()
+    commands=['help','load','lang']
     def __init__(self):
         print('Language tool for Opera addons - designed by Gerald\nType "help" for more information.')
-        self.load()
+        self.cmd_load()
         while True:
             cmd=input('$ ')
             cmd,_,arg=cmd.partition(' ')
             if not cmd: continue
             if cmd=='quit': break
             a=getattr(self,'cmd_'+cmd,None)
+            try: i=self.commands.index(cmd)
+            except: i=255
             if a is None:
                 print('Bad command: %s' % cmd)
-            elif self.lang is None and cmd not in ['lang','help']:
+            elif i>1 and self.name is None:
+                print('Please load package!')
+            elif i>2 and self.lang is None:
                 print('Please set lang!')
             else: a(arg)
     def _fromString(self,s):
         return s.replace('\\n','\n').replace('\\t','\t').replace('\\r','\r')
     def _toString(self,s):
         return s.replace('\n','\\n').replace('\t','\\t').replace('\r','\\r')
-    def load(self):
-        try: tree=ET.parse('config.xml')
-        except: return print('Error loading package')
+    def cmd_load(self,arg=None):
+        if arg: self.path=arg
+        else: self.path='.'
+        try: tree=ET.parse(os.path.join(self.path,'config.xml'))
+        except:
+            if arg: print('Error loading package:',arg)
+            return
         self.widget=tree.getroot()
         self.name=self.widget.find('{http://www.w3.org/ns/widgets}name').text
         self.version=self.widget.get('version')
@@ -41,6 +52,7 @@ class i18n:
 Usage: command [args]
 Commands:
     help: show this message.
+    load: load package path, leading to a folder with config.xml.
     lang: set language, list all available languages if no argument is given.
     list: list all translations of current language.
     keys: print all source words, excluding the obsolete ones.
@@ -58,9 +70,9 @@ Commands:
     def cmd_lang(self, lang):
         if not lang:
             lang='locales'
-            print('\n'.join([i for i in os.listdir(lang) if os.path.isdir(os.path.join(lang,i))]))
+            print('\n'.join([i for i in os.listdir(os.path.join(self.path,lang)) if os.path.isdir(os.path.join(self.path,lang,i))]))
         else:
-            try: data=json.load(open(os.path.join('locales',lang,'messages.json'),encoding='utf-8'))
+            try: data=json.load(open(os.path.join(self.path,'locales',lang,'messages.json'),encoding='utf-8'))
             except: return print('Error loading lang: %s' % lang)
             self.lang=lang
             self.data=data
@@ -77,6 +89,7 @@ Commands:
         self.keys.clear()
         self.keys.update(self.default_keys)
         for i in os.listdir():
+            i=os.path.join(self.path,i)
             if i.endswith('.js'):
                 with open(i,encoding='utf-8') as f:
                     r=f.read()
@@ -94,7 +107,7 @@ Commands:
         for i in self.keys: data[i]=self.data.get(i,i)
         self.data=data
     def cmd_save(self, arg):
-        json.dump(self.data,open(os.path.join('locales',self.lang,'messages.json'),'w',encoding='utf-8'))
+        json.dump(self.data,open(os.path.join(self.path,'locales',self.lang,'messages.json'),'w',encoding='utf-8'))
     def cmd_walk(self, arg):
         k=list(sorted(self.data.keys()))
         l=len(k)

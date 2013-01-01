@@ -95,10 +95,12 @@ function testURL(url,e){
 	if(f) for(i=0;i<exc.length;i++) if(!(f=!reg(exc[i]).test(url))) break;	// @exclude
 	return f;
 }
-function findScript(e){
+function findScript(e,url){
 	var i,c=[];
-	if(isApplied) for(i=0;i<scripts.length;i++) if(testURL(e.origin,scripts[i])) c.push(scripts[i]);
-	e.source.postMessage({topic: 'FoundScript',data: c});
+	url=url||e.origin;	// to recognize URLs like data:...
+	if(isApplied&&url.substr(0,5)!='data:')
+		for(i=0;i<scripts.length;i++) if(testURL(url,scripts[i])) c.push(scripts[i]);
+	e.source.postMessage({topic:'FoundScript',data:c});
 }
 function loadCache(e,d){
 	for(var i in d) d[i]=cache[i];
@@ -193,6 +195,7 @@ function httpRequest(e,details){
 	try{
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
+		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
 		req.onreadystatechange=function(){
 			d.data.data=response();
 			d.data.evt='readystatechange';
@@ -251,32 +254,37 @@ var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',
 	'HttpRequest':httpRequest,
 	'AbortRequest':abortRequest,
 };
-function showButton(show){
-	if(show) opera.contexts.toolbar.addItem(button);
-	else opera.contexts.toolbar.removeItem(button);
-}
 function onMessage(e) {
 	var message = e.data,c=messages[message.topic];
 	if(c) c(e,message.data);
 	else {
 		c=_messages[message.topic];
-		if(c) {c(e,message.data);delete _messages[message.topic];}
+		if(c&&(c=c.shift()))
+			try{c(e,message.data);}catch(e){opera.postError(e.stacktrace);}
 	}
 }
 function postMessage(topic,rtopic,data,callback) {
 	var tab=opera.extension.tabs.getFocused();
 	if(tab) {
-		if(rtopic&&callback) _messages[rtopic]=callback;
+		if(rtopic&&callback) {
+			var f=_messages[rtopic];
+			if(!f) _messages[rtopic]=f=[];
+			f.push(callback);
+		}
 		tab.postMessage({topic:topic,data:data});
 	}
+}
+function showButton(show){
+	if(show) opera.contexts.toolbar.addItem(button);
+	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
 window.addEventListener('DOMContentLoaded', function() {
 	opera.extension.onmessage = onMessage;
 	button = opera.contexts.toolbar.createItem({
-		title: "Violentmonkey",
+		title:"Violentmonkey",
 		popup:{
-			href: "popup.html",
+			href:"popup.html",
 			width:222,
 			height:100
 		}
