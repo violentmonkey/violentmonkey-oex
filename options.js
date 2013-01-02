@@ -14,15 +14,15 @@ function loadItem(d,n){
 	d.innerHTML='<a class="name ellipsis"></a>'
 	+'<span class=author>'+(n.meta.author?_('Author: ')+n.meta.author:'')+'</span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
+	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
 	+'<div class="descrip ellipsis"></div>'
 	+'<span class=message></span>'
 	+'<div class=panel>'
-		+(allowUpdate(n)?'<button data="update">'+_('Update')+'</button> ':'')
-		+'<button data="edit">'+_('Edit')+'</button> '
-		+'<button data="enable">'+_(n.enabled?'Disable':'Enable')+'</button> '
-		+'<button data="remove">'+_('Remove')+'</button>'
-		+'<button data="up" class=move>'+_('Up')+'</button>'
-		+'<button data="down" class=move>'+_('Down')+'</button>'
+		+'<button data=edit>'+_('Edit')+'</button> '
+		+'<button data=enable>'+_(n.enabled?'Disable':'Enable')+'</button> '
+		+'<button data=remove>'+_('Remove')+'</button>'
+		+'<button data=up class=move>'+_('Up')+'</button>'
+		+'<button data=down class=move>'+_('Down')+'</button>'
 	+'</div>';
 	with(d.firstChild) innerText=title=n.meta.name;
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
@@ -42,13 +42,12 @@ function moveUp(i,p){
 	updateMove(p);updateMove(p.nextSibling);
 }
 L.onclick=function(e){
-	var o=e.target;
-	if(o.tagName!='BUTTON') return;
+	var o=e.target,d=o.getAttribute('data'),p;
+	if(!d) return;
 	e.preventDefault();
-	e=o.getAttribute('data');
-	var p=o.parentNode.parentNode;
+	for(p=o;p&&p.parentNode!=L;p=p.parentNode);
 	var i=Array.prototype.indexOf.call(L.childNodes,p);
-	switch(e){
+	switch(d){
 		case 'edit':
 			edit(i);
 			break;
@@ -166,9 +165,9 @@ function canUpdate(o,n){
 	return n.length;
 }
 function check(i){
-	var l=L.childNodes[i],s=bg.scripts[i],o=l.querySelector('button[data=update]'),m=l.querySelector('.message');
+	var l=L.childNodes[i],s=bg.scripts[i],o=l.querySelector('[data=update]'),m=l.querySelector('.message');
 	m.innerHTML=_('Checking for updates...');
-	o.disabled=true;
+	o.classList.add('hide');
 	function update(){
 		m.innerHTML=_('Updating...');
 		req=new window.XMLHttpRequest();
@@ -176,11 +175,11 @@ function check(i){
 		req.onreadystatechange=function(){
 			if(req.readyState==4) {
 				if(req.status==200) {
-					bg.parseScript(null,req.responseText,s);
+					bg.parseScript(req.responseText,s);
 					l.querySelector('.version').innerHTML=s.meta.version?'v'+s.meta.version:'';
 					m.innerHTML=_('Update finished!');
 				} else m.innerHTML=_('Update failed!');
-				o.disabled=false;
+				o.classList.remove('hide');
 			}
 		};
 		req.send();
@@ -196,7 +195,7 @@ function check(i){
 			m.innerHTML=_('Failed fetching update information.');
 			opera.postError(e);
 		}
-		o.disabled=false;
+		o.classList.remove('hide');
 	};
 	req.send();
 }
@@ -210,7 +209,7 @@ function edit(i){
 }
 function mSave(){
 	if(M.dirty){
-		M.scr.update=U.checked;bg.parseScript(null,T.value,M.scr);
+		M.scr.update=U.checked;bg.parseScript(T.value,M.scr);
 		M.dirty=false;loadItem(M.cur,M.scr);updateMove(M.cur);
 		return true;
 	} else return false;

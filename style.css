@@ -21,6 +21,7 @@ legend{margin-left:10px;}
 #sList .version,#sList .author{margin-left:20px;color:gray;font-style:italic;}
 #sList.simple .author{display:none;}
 #sList.simple .descrip{display:none;}
+#sList .update{position:absolute;right:10px;top:10px;}
 #sList .message{color:gray;position:absolute;bottom:10px;left:10px;}
 #sList .disabled{color:gray;background:silver;}
 #sList .name{font-weight:bold;line-height:150%;display:inline-block;max-width:400px;}

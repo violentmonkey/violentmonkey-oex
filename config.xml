@@ -4,6 +4,7 @@
   <author href="http://my.opera.com/gera2ld" email="gera2ld@163.net">Gerald</author>
   <icon src="images/icon64.png"/>
   <icon src="images/icon18.png"/>
+  <feature name="opera:share-cookies" required="false"/>
   <access origin="*"/>
   <update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
   <description xml:lang="en">UserScript support for Opera.</description>

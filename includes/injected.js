@@ -1,42 +1,93 @@
 (function(){
-GM_null=function(name){opera.postError(name+' has not been supported yet!');};
+/**
+ *  Base64 encode / decode
+ *  http://www.webtoolkit.info/
+ **/
+function base64encode(input) {
+	var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	var output = "";
+	var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+	var i = 0;
+	while (i < input.length) {
+		chr1 = input.charCodeAt(i++);
+        	chr2 = input.charCodeAt(i++);
+        	chr3 = input.charCodeAt(i++);
+		enc1 = chr1 >> 2;
+		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		enc4 = chr3 & 63;
+		if (isNaN(chr2)) {
+			enc3 = enc4 = 64;
+		} else if (isNaN(chr3)) {
+			enc4 = 64;
+		}
+		output = output +
+		_keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
+		_keyStr.charAt(enc3) + _keyStr.charAt(enc4);
+	}
+	return output;
+}
 
 // Messages
-callbacks={},requests={};
-function postMessage(topic,rtopic,data,func){
-	if(rtopic&&func) {
-		var f=callbacks[rtopic];
-		if(!f) callbacks[rtopic]=f=[];
-		f.push(func);
-	}
-	opera.extension.postMessage({topic:topic,data:data});
-}
+var requests={},qrequests=[];
 opera.extension.addEventListener('message', function(e) {
 	var message=e.data,c;
-	if(message.topic=='HttpRequested') {
+	if(message.topic=='FoundScript') loadScript(message.data);
+	else if(message.topic=='HttpRequested') {
 		c=requests[message.data.id];
-		if(c) c(message.data);
+		if(c) c.callback(message.data);
+	} else if(message.topic=='LoadedCache') {
+		cache=message.data;document.onreadystatechange=runScript;
+		window.addEventListener('DOMNodeInserted',runScript,false);
+		runScript();
 	} else if(message.topic=='GetPopup')
-		postMessage('GotPopup',null,[menu,scr]);
-	else if(message.topic=='ShowMessage')
-		alert(message.data);
+		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
-	} else {
-		c=callbacks[message.topic];
-		if(c&&(c=c.shift())) c(message.data);
-	}
+	} else if(message.topic=='ConfirmInstall') {
+		if(message.data&&confirm(message.data)) {
+			if(installCallback) installCallback();
+			else opera.extension.postMessage({topic:'ParseScript',data:document.body.innerText});
+		}
+	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
 }, false);
+function Request(details){
+	this.callback=function(d){
+		var c=details['on'+d.type];
+		if(c) c(d.data);
+		if(!this.id) for(var i in d.data) this.req[i]=d.data[i];
+		if(d.type=='load') delete requests[this.id];
+	};
+	this.start=function(id){
+		this.id=id;
+		requests[id]=this;
+		opera.extension.postMessage({topic:'HttpRequest',data:{
+			id:id,
+			method:details.method,
+			url:details.url,
+			data:details.data,
+			async:!details.synchronous,
+			user:details.user,
+			password:details.password,
+			headers:details.headers,
+			overrideMimeType:details.overrideMimeType,
+		}});
+	};
+	this.abort=function(){opera.extension.postMessage({topic:'AbortRequest',data:this.id});};
+	this.req={abort:this.abort};
+	qrequests.push(this);
+	opera.extension.postMessage({topic:'GetRequestId'});
+};
 
 // For UserScripts installation
+var installCallback=null;
 if(/\.user\.js$/.test(window.location.href)) window.addEventListener('load',function(){
-	postMessage('InstallScript','Confirm',null,function(c){
-		if(c&&confirm(c)) postMessage('ParseScript',null,document.body.innerText);
-	});
-}); else window.addEventListener('click',function(e){
+	opera.extension.postMessage({topic:'InstallScript'});
+},false); else window.addEventListener('click',function(e){
 	if(/\.user\.js$/.test(e.target.href)) {
 		e.preventDefault();
-		postMessage('InstallScript',null,e.target.href);
+		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:e.target.href});};
+		opera.extension.postMessage({topic:'InstallScript'});
 	}
 },false);
 
@@ -80,11 +131,7 @@ function loadScript(data){
 			for(l in data[i].meta.resources) cache[data[i].meta.resources[l]]=null;
 		}
 	}
-	postMessage('LoadCache','LoadedCache',cache,function(d){
-		cache=d;document.onreadystatechange=runScript;
-		window.addEventListener('DOMNodeInserted',runScript,false);
-		runScript();
-	});
+	opera.extension.postMessage({topic:'LoadCache',data:cache});
 }
 function wrapFunction(o,i,c){
 	var f=function(){var r=o[i].apply(o,arguments);if(c) r=c(r);return r;};
@@ -118,7 +165,11 @@ function wrapper(c){
 		widget.preferences.setItem(ckey+key,JSON.stringify(val));
 	};
 	t.GM_getResourceText=function(name){for(var i in resources) if(name==i) return cache[resources[i]];};
-	t.GM_getResourceURL=function(name){GM_null('GM_getResourceURL');};
+	t.GM_getResourceURL=function(name){
+		var b=t.GM_getResourceText(name);
+		if(b) b='data:;base64,'+base64encode(b);
+		return b;
+	};
 	t.GM_addStyle=function(css){
 		if(!document.head) return;
 		var v=document.createElement('style');
@@ -130,33 +181,9 @@ function wrapper(c){
 	t.GM_openInTab=function(url){window.open(url);};
 	t.GM_registerMenuCommand=function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;};
 	t.GM_xmlhttpRequest=function(details){
-		// TODO: synchronous mode
-		var async=!details.synchronous;
-		function callback(d){
-			var c=details['on'+d.evt];
-			if(c) c(d.data);
-			if(!details.id) for(var i in d.data) r[i]=d.data[i];
-			if(d.evt=='load') delete requests[details.id];
-		}
-		function Request(id){
-			details.id=id;
-			requests[id]=callback;
-			opera.extension.postMessage({topic:'HttpRequest',data:{
-				id:id,
-				method:details.method,
-				url:details.url,
-				data:details.data,
-				async:async,
-				user:details.user,
-				password:details.password,
-				headers:details.headers,
-				overrideMimeType:details.overrideMimeType,
-			}});
-		};
-		var r={abort:function(){postMessage('AbortRequest',null,details.id);}};
-		if(async) postMessage('GetRequestId','GotRequestId',null,Request);
-		else Request(0);
-		return r;
+		// synchronous mode not supported
+		var r=new Request(details);
+		return r.req;
 	};
 	// functions and properties
 	function wrapWindow(w){return w==window?t:w;}
@@ -174,5 +201,5 @@ function wrapper(c){
 	} catch(e) {}	// avoid reading protected data*/
 }
 wrapper.prototype=window;
-postMessage('FindScript','FoundScript',window.location.href,loadScript);
+opera.extension.postMessage({topic:'FindScript',data:window.location.href});
 })();

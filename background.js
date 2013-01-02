@@ -103,7 +103,9 @@ function findScript(e,url){
 	e.source.postMessage({topic:'FoundScript',data:c});
 }
 function loadCache(e,d){
-	for(var i in d) d[i]=cache[i];
+	var i;
+	for(i in d[0]) d[0][i]=cache[i];
+	for(i in d[1]) d[1][i]=blob[i];
 	e.source.postMessage({topic:'LoadedCache',data:d});
 }
 function parseMeta(d,meta){
@@ -124,23 +126,25 @@ function parseMeta(d,meta){
 	}
 	return meta;
 }
-function fetchURL(url){
+function fetchURL(url,callback,type){
 	var req=new XMLHttpRequest();
-	req.open('GET',url,false);
+	req.open('GET',url,true);
+	if(type) req.responseType=type;
+	if(callback) req.onload=callback;
 	req.send();
-	return req.responseText;
 }
-var _cache=0;
 function fetchCache(url){
-	function fetch(){
-		var d=fetchURL(url);
-		if(d) cache[url]=d;
-		if(!--_cache) saveCache();
-	}
-	_cache++;setTimeout(fetch,0);
+	fetchCache.count++;
+	fetchURL(url,function(){
+		var f=new FileReader();
+		f.onload=function(){cache[url]=this.result;};
+		f.readAsBinaryString(this.response);
+		if(!--fetchCache.count) saveCache();
+	},'blob');
 }
+fetchCache.count=0;
 
-function parseScript(e,d,c){
+function parseScript(d,c){
 	var i,meta=parseMeta(d);
 	if(!c) {
 		if(meta.name) {
@@ -156,17 +160,11 @@ function parseScript(e,d,c){
 	meta.require.forEach(function(i){fetchCache(i);});
 	// @resource: download when installed
 	for(var j in meta.resources) fetchCache(meta.resources[j]);
-	if(e) {
-		if(c.code) j=format(_('UserScript <$1> is $2!\nCheck it out in the options page.'),c.meta.name,i<0?_('installed'):_('updated'));
-		else j=_('No script is installed!');
-		e.source.postMessage({topic:'ShowMessage',data:j});
-	}
 }
 function installScript(e,url){
 	if(!url) {
-		if(installFile) e.source.postMessage({topic:'Confirm',data:_('Do you want to install this UserScript?')});
-	} else if(/https?:\/\/userscripts\.org\//.test(url))
-		setTimeout(function(){parseScript(e,fetchURL(url));},0);
+		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
+	} else fetchURL(url,function(){parseScript(this.responseText);});
 }
 
 // Requests
@@ -196,14 +194,10 @@ function httpRequest(e,details){
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		req.onreadystatechange=function(){
+		req.onload=req.onreadystatechange=function(evt){
 			d.data.data=response();
-			d.data.evt='readystatechange';
+			d.data.type=evt.type;
 			e.source.postMessage(d);
-			if(req.readyState==4) {
-				d.data.evt='load';
-				e.source.postMessage(d);
-			}
 		};
 		req.send(details.data);
 		if(!details.id) {d.data.data=response();e.source.postMessage(d);}
@@ -249,7 +243,6 @@ var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',
 	'FindScript':findScript,
 	'LoadCache':loadCache,
 	'InstallScript':installScript,
-	'ParseScript':parseScript,
 	'GetRequestId':getRequestId,
 	'HttpRequest':httpRequest,
 	'AbortRequest':abortRequest,

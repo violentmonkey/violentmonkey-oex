@@ -24,7 +24,7 @@ function addItem(h,t,c){
 function menuCommand(e){e=e.target;bg.postMessage('Command',null,e.cmd);}
 function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
-	var n=(s.meta.name||'('+_('Null')+')').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+	var n=(s.meta.name||'('+_('Null name')+')').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 	addItem(n,i[0],{data:s.enabled,onclick:function(e){
 		loadItem(this,s.enabled=!s.enabled);bg.saveScripts();
 	}});
@@ -33,22 +33,24 @@ function load(e,data){
 	addItem(_('Manage scripts'),true,{symbol:'>>',onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
-	if(data) addItem(_('Search scripts for this site'),true,{symbol:'>>',onclick:function(){
+	if(data) addItem(_('Find scripts for this site'),true,{symbol:'>>',onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
 		});
-		return bg.opera.extension.tabs.create({url:'http://www.baidu.com/s?wd='+q}).focus();
-		//return bg.opera.extension.tabs.create({url:'http://www.google.com.hk/search?q='+q}).focus();
+		return bg.opera.extension.tabs.create({url:'http://www.google.com/search?q='+q}).focus();
+		//return bg.opera.extension.tabs.create({url:'http://www.baidu.com/s?wd='+q}).focus();
 	}});
 	addItem(_('Scripts enabled'),true,{data:bg.isApplied,onclick:function(e){
 		loadItem(this,bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied));bg.updateIcon();
 	}});
-	P.appendChild(document.createElement('hr'));
 	if(data&&data[0]&&data[0].length) {
-		for(var i=0;i<data[0].length;i++) addItem(data[0][i][0],true,{symbol:'>>',onclick:menuCommand,cmd:data[0][i][0]});
 		P.appendChild(document.createElement('hr'));
+		for(var i=0;i<data[0].length;i++) addItem(data[0][i][0],true,{symbol:'>>',onclick:menuCommand,cmd:data[0][i][0]});
 	}
-	if(data&&data[1]&&data[1].length) data[1].forEach(menuScript); else addItem('<em>'+_('Null')+'</em>',_('Null'),{className:'disabled'});
+	if(data&&data[1]&&data[1].length) {
+		P.appendChild(document.createElement('hr'));
+		data[1].forEach(menuScript);
+	}
 	bg.button.popup.height=document.body.offsetHeight;
 }
 if(tab.port) bg.postMessage('GetPopup','GotPopup',null,load); else load();
