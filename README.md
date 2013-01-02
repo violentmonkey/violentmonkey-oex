@@ -17,5 +17,5 @@ Violentmonkey
 <li><a name=faq_local></a><b>What about the local UserJS?</b><p>Violentmonkey does nothing with the local UserJS. They can work just as before. But make sure they are not both in UserJS folders and Violentmonkey, because that will make the script running twice.</p></li>
 <li><a name=faq_lib></a><b>Do I need to install the required scripts (e.g. jQuery) to Violentmonkey along with the main one?</b><p>No. Even if they are installed, they make no difference. Violentmonkey will build a separated environment for each script, as a result, variables from different scripts will not be visited by each other. All you need to do is to make sure the required scripts are required with <i style="color:olive">@require</i> rules in meta data. Violentmonkey will do the left.</p></li>
 </ol>
-<p>Support page: http://my.opera.com/gera2ld/blog/2012/12/15/violentmonkey</p>
+<p>Preview release (2012-1-2): https://skydrive.live.com/redir?resid=9F63DC97688A095E!619</p>
 <p>Author: Gerald &lt;gera2ld&#x40;myopera.com&gt;</p>
