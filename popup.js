@@ -24,7 +24,7 @@ function addItem(h,t,c){
 function menuCommand(e){e=e.target;bg.postMessage('Command',null,e.cmd);}
 function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
-	var n=(s.meta.name||'('+_('Null name')+')').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	addItem(n,i[0],{data:s.enabled,onclick:function(e){
 		loadItem(this,s.enabled=!s.enabled);bg.saveScripts();
 	}});
@@ -41,7 +41,7 @@ function load(e,data){
 		//return bg.opera.extension.tabs.create({url:'http://www.baidu.com/s?wd='+q}).focus();
 	}});
 	addItem(_('Scripts enabled'),true,{data:bg.isApplied,onclick:function(e){
-		loadItem(this,bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied));bg.updateIcon();
+		bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
 	if(data&&data[0]&&data[0].length) {
 		P.appendChild(document.createElement('hr'));

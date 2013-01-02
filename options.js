@@ -24,7 +24,10 @@ function loadItem(d,n){
 		+'<button data=up class=move>'+_('Up')+'</button>'
 		+'<button data=down class=move>'+_('Down')+'</button>'
 	+'</div>';
-	with(d.firstChild) innerText=title=n.meta.name;
+	with(d.firstChild) {
+		title=n.meta.name||'';
+		innerHTML=n.meta.name?n.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
+	}
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
 }
 function addItem(n){
@@ -175,7 +178,7 @@ function check(i){
 		req.onreadystatechange=function(){
 			if(req.readyState==4) {
 				if(req.status==200) {
-					bg.parseScript(req.responseText,s);
+					bg.parseScript(null,req.responseText,s);
 					l.querySelector('.version').innerHTML=s.meta.version?'v'+s.meta.version:'';
 					m.innerHTML=_('Update finished!');
 				} else m.innerHTML=_('Update failed!');
@@ -209,7 +212,7 @@ function edit(i){
 }
 function mSave(){
 	if(M.dirty){
-		M.scr.update=U.checked;bg.parseScript(T.value,M.scr);
+		M.scr.update=U.checked;bg.parseScript(null,T.value,M.scr);
 		M.dirty=false;loadItem(M.cur,M.scr);updateMove(M.cur);
 		return true;
 	} else return false;

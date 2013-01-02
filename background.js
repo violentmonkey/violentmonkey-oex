@@ -103,9 +103,7 @@ function findScript(e,url){
 	e.source.postMessage({topic:'FoundScript',data:c});
 }
 function loadCache(e,d){
-	var i;
-	for(i in d[0]) d[0][i]=cache[i];
-	for(i in d[1]) d[1][i]=blob[i];
+	for(var i in d) d[i]=cache[i];
 	e.source.postMessage({topic:'LoadedCache',data:d});
 }
 function parseMeta(d,meta){
@@ -144,7 +142,7 @@ function fetchCache(url){
 }
 fetchCache.count=0;
 
-function parseScript(d,c){
+function parseScript(e,d,c){
 	var i,meta=parseMeta(d);
 	if(!c) {
 		if(meta.name) {
@@ -164,7 +162,7 @@ function parseScript(d,c){
 function installScript(e,url){
 	if(!url) {
 		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
-	} else fetchURL(url,function(){parseScript(this.responseText);});
+	} else fetchURL(url,function(){parseScript(e,this.responseText);});
 }
 
 // Requests
@@ -243,6 +241,7 @@ var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',
 	'FindScript':findScript,
 	'LoadCache':loadCache,
 	'InstallScript':installScript,
+	'ParseScript':parseScript,
 	'GetRequestId':getRequestId,
 	'HttpRequest':httpRequest,
 	'AbortRequest':abortRequest,
@@ -253,7 +252,7 @@ function onMessage(e) {
 	else {
 		c=_messages[message.topic];
 		if(c&&(c=c.shift()))
-			try{c(e,message.data);}catch(e){opera.postError(e.stacktrace);}
+			try{c(e,message.data);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	}
 }
 function postMessage(topic,rtopic,data,callback) {

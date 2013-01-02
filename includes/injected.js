@@ -27,6 +27,30 @@ function base64encode(input) {
 	}
 	return output;
 }
+/**
+* http://www.webtoolkit.info/javascript-utf8.html
+*/
+function utf8decode (utftext) {
+	var string = "";
+	var i = 0;
+	var c = 0, c1 = 0, c2 = 0, c3 = 0;
+
+	while ( i < utftext.length ) {
+		c = utftext.charCodeAt(i);
+		if (c < 128) {string += String.fromCharCode(c);i++;}
+		else if((c > 191) && (c < 224)) {
+			c2 = utftext.charCodeAt(i+1);
+			string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+			i += 2;
+		} else {
+			c2 = utftext.charCodeAt(i+1);
+			c3 = utftext.charCodeAt(i+2);
+			string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+			i += 3;
+		}
+	}
+	return string;
+}
 
 // Messages
 var requests={},qrequests=[];
@@ -44,13 +68,14 @@ opera.extension.addEventListener('message', function(e) {
 		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
-	} else if(message.topic=='ConfirmInstall') {
-		if(message.data&&confirm(message.data)) {
-			if(installCallback) installCallback();
-			else opera.extension.postMessage({topic:'ParseScript',data:document.body.innerText});
-		}
-	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
+	} else if(message.topic=='ConfirmInstall') confirmInstall(message.data);
+	else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
 }, false);
+function confirmInstall(data){
+	if(!data||!confirm(data)) return;
+	if(installCallback) installCallback();
+	else opera.extension.postMessage({topic:'ParseScript',data:document.body.innerText});
+}
 function Request(details){
 	this.callback=function(d){
 		var c=details['on'+d.type];
@@ -94,27 +119,29 @@ if(/\.user\.js$/.test(window.location.href)) window.addEventListener('load',func
 // For injected scripts
 var start=[],body=[],end=[],cache={},scr=[],menu=[],command={};
 function run_code(c){
+	this.wrapper=new wrapper(c);
+	var require=c.meta.require||[];
+	for(var i=0;i<require.length;i++) try{
+		this.code=utf8decode(cache[require[i]]);
+		with(this.wrapper) try{eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
+	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	this.code=c.code;
-	this.require=c.meta.require||[];
-	this.cache=cache;
-	with(new wrapper(c)) {
-		for(this.i=0;this.i<this.require.length;this.i++)
-			try{eval(this.cache[this.require[this.i]]);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
-		try{eval('(function(){'+this.code+'})();');}catch(e){opera.postError(e+'\n'+e.stacktrace);}
-	}
+	with(this.wrapper) try{eval('(function(){'+this.code+'})();');}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 }
 function runScript(e){
-	if(!e||e.type=='readystatechange') {
+	function onreadystatechange(){
 		var i=['loading','interactive','complete'].indexOf(document.readyState);
-		if(i>=0) while(start.length) run_code(start.shift());
-		if(i>=1) while(end.length) run_code(end.shift());
+		if(i>=0) while(start.length) new run_code(start.shift());
+		if(i>=1) while(end.length) new run_code(end.shift());
 	}
-	if(!e||e.type=='DOMNodeInserted') {
+	function onDOMNodeInserted(){
 		if(document.body) {
 			window.removeEventListener('DOMNodeInserted',runScript,false);
-			while(body.length) run_code(body.shift());
+			while(body.length) new run_code(body.shift());
 		}
 	}
+	if(!e||e.type=='readystatechange') onreadystatechange();
+	if(!e||e.type=='DOMNodeInserted') onDOMNodeInserted();
 }
 function loadScript(data){
 	for(var i=0;i<data.length;i++) {
@@ -164,9 +191,11 @@ function wrapper(c){
 	t.GM_setValue=function(key,val){
 		widget.preferences.setItem(ckey+key,JSON.stringify(val));
 	};
-	t.GM_getResourceText=function(name){for(var i in resources) if(name==i) return cache[resources[i]];};
+	function getCache(name){for(var i in resources) if(name==i) return cache[resources[i]];}
+	t.GM_getResourceText=function(name){
+	};
 	t.GM_getResourceURL=function(name){
-		var b=t.GM_getResourceText(name);
+		var b=getCache(name);
 		if(b) b='data:;base64,'+base64encode(b);
 		return b;
 	};
