@@ -69,7 +69,18 @@ opera.extension.addEventListener('message', function(e) {
 		c=command[message.data];if(c) c();
 	} else if(message.topic=='ConfirmInstall') confirmInstall(message.data);
 	else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
+	else if(message.topic=='ShowMessage') showMessage(message.data);
 }, false);
+function showMessage(data){
+	var d=document.createElement('div');
+	d.style='position:fixed;top:40%;left:40%;right:40%;border-radius:5px;background:orange;padding:20px;z-index:9999;box-shadow:5px 10px 15px rgba(0,0,0,0.4);transition:opacity 1s linear;opacity:0;text-align:left;';
+	d.innerHTML=data;
+	document.body.appendChild(d);
+	function close(){document.body.removeChild(d);delete d;}
+	d.onclick=close;	// close immediately
+	setTimeout(function(){d.style.opacity=1;},1);	// fade in
+	setTimeout(function(){d.style.opacity=0;setTimeout(close,1000);},3000);	// fade out
+}
 function confirmInstall(data){
 	if(!data||!confirm(data)) return;
 	if(installCallback) installCallback();

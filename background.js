@@ -158,6 +158,7 @@ function parseScript(e,d,c){
 	meta.require.forEach(function(i){fetchCache(i);});
 	// @resource: download when installed
 	for(var j in meta.resources) fetchCache(meta.resources[j]);
+	if(e) e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
 }
 function installScript(e,url){
 	if(!url) {

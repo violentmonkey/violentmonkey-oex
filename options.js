@@ -91,15 +91,23 @@ $('bNew').onclick=function(){
 $('bUpdate').onclick=function(){for(var i=0;i<bg.scripts.length;i++) if(allowUpdate(bg.scripts[i])) check(i);};
 if(!($('cDetail').checked=bg.getSetting('showDetails',false))) L.classList.add('simple');
 $('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveSetting('showDetails',this.checked);};
+function showOverlay(){
+	O.classList.remove('hide');
+	setTimeout(function(){O.style.opacity=0.6;},1);
+}
+function hideOverlay(){
+	O.style.opacity=0;
+	setTimeout(function(){O.classList.add('hide');},500);
+}
 function showDialog(D){
-	O.classList.add('o_in');
+	showOverlay();
 	O.onclick=D.onclose;
 	D.classList.remove('hide');
 	D.style.top=(window.innerHeight-D.offsetHeight)/2+'px';
 	D.style.left=(window.innerWidth-D.offsetWidth)/2+'px';
 }
 function closeDialog(D){
-	O.classList.remove('o_in');
+	hideOverlay();
 	D.classList.add('hide');
 }
 
