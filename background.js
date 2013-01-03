@@ -136,9 +136,8 @@ function fetchCache(url){
 	fetchCache.count++;
 	fetchURL(url,function(){
 		var f=new FileReader();
-		f.onload=function(){cache[url]=this.result;};
+		f.onload=function(){cache[url]=this.result;if(!--fetchCache.count) saveCache();};
 		f.readAsBinaryString(this.response);
-		if(!--fetchCache.count) saveCache();
 	},'blob');
 }
 fetchCache.count=0;

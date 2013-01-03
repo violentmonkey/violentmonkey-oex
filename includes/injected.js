@@ -34,7 +34,6 @@ function utf8decode (utftext) {
 	var string = "";
 	var i = 0;
 	var c = 0, c1 = 0, c2 = 0, c3 = 0;
-
 	while ( i < utftext.length ) {
 		c = utftext.charCodeAt(i);
 		if (c < 128) {string += String.fromCharCode(c);i++;}
@@ -120,9 +119,10 @@ if(/\.user\.js$/.test(window.location.href)) window.addEventListener('load',func
 var start=[],body=[],end=[],cache={},scr=[],menu=[],command={};
 function run_code(c){
 	this.wrapper=new wrapper(c);
-	var require=c.meta.require||[];
-	for(var i=0;i<require.length;i++) try{
-		this.code=utf8decode(cache[require[i]]);
+	var require=c.meta.require||[],i,r;
+	for(i=0;i<require.length;i++) try{
+		r=cache[require[i]];if(!r) continue;
+		this.code=utf8decode(r);
 		with(this.wrapper) try{eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	this.code=c.code;

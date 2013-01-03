@@ -107,7 +107,7 @@ Commands:
         for i in self.keys: data[i]=self.data.get(i,i)
         self.data=data
     def cmd_save(self, arg):
-        json.dump(self.data,open(os.path.join(self.path,'locales',self.lang,'messages.json'),'w',encoding='utf-8'))
+        json.dump(self.data,open(os.path.join(self.path,'locales',self.lang,'messages.json'),'w',encoding='utf-8'),separators=(',',':'))
     def cmd_walk(self, arg):
         k=list(sorted(self.data.keys()))
         l=len(k)
