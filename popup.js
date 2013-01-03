@@ -36,9 +36,8 @@ function load(e,data){
 	if(data) addItem(_('Find scripts for this site'),true,{symbol:'>>',onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-		});
-		return bg.opera.extension.tabs.create({url:'http://www.google.com/search?q='+q}).focus();
-		//return bg.opera.extension.tabs.create({url:'http://www.baidu.com/s?wd='+q}).focus();
+		}),url=bg.format(bg.search,q);
+		return bg.opera.extension.tabs.create({url:url}).focus();
 	}});
 	addItem(_('Scripts enabled'),true,{data:bg.isApplied,onclick:function(e){
 		bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);

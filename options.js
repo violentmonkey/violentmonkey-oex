@@ -110,9 +110,14 @@ $('cShow').checked=bg.getSetting('showButton',true);
 $('cShow').onchange=function(){bg.showButton(bg.saveSetting('showButton',this.checked));};
 $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.saveSetting('installFile',bg.installFile=this.checked);};
+$('tSearch').value=bg.search;
+$('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
 $('aExport').onclick=function(){closeDialog(A);showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
-A.onclose=$('aClose').onclick=function(){closeDialog(A);};
+A.onclose=$('aClose').onclick=function(){
+	bg.search=bg.saveSetting('search',$('tSearch').value);
+	closeDialog(A);
+};
 
 // Export
 var X=$('export'),xL=$('xList');

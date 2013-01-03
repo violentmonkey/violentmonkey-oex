@@ -3,7 +3,8 @@ function getSetting(key,def){
 }
 function saveSetting(key,val){widget.preferences.setItem(key,JSON.stringify(val));return val;}
 
-var scripts=getSetting('scripts',[]),cache=getSetting('cache',{}),map={};
+var scripts=getSetting('scripts',[]),cache=getSetting('cache',{}),
+    map={},search;
 scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
 /* ================Data format 0.1=================
  * List	[
@@ -281,6 +282,7 @@ window.addEventListener('DOMContentLoaded', function() {
 			height:100
 		}
 	});
+	search=getSetting('search',_('Search$1'));
 	updateIcon();
 	showButton(getSetting('showButton',true));
 	/*function toggleButton() {button.disabled=!opera.extension.tabs.getFocused();}
