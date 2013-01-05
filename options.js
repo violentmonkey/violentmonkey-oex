@@ -1,5 +1,12 @@
 function $(i){return document.getElementById(i);}
 var bg=opera.extension.bgProcess,L=$('sList'),O=$('overlay'),_=bg.getI18nString;
+function fillCell(e,p){
+	if(p==undefined) p=e.parentNode;
+	var b=0;
+	Array.prototype.forEach.call(p.children,function(i){if(b<i.offsetTop+i.offsetHeight) b=i.offsetTop+i.offsetHeight;});
+	e.style.pixelHeight=e.offsetHeight+window.getComputedStyle(p).pixelHeight-b;
+}
+fillCell(L,document.body);
 
 // Main options
 function updateMove(d){
@@ -81,9 +88,13 @@ L.onclick=function(e){
 			break;
 	}
 };
-L.innerHTML='';
-bg.scripts.forEach(function(i){addItem(i);});
-updateMove(L.firstChild);updateMove(L.lastChild);
+function load() {
+	L.innerHTML='';
+	bg.scripts.forEach(function(i){addItem(i);});
+	updateMove(L.firstChild);updateMove(L.lastChild);
+}
+load();
+bg.optionsLoad(window);
 $('bNew').onclick=function(){
 	var d=bg.newScript(true);d=addItem(d);
 	updateMove(d);updateMove(d.previousSibling);
@@ -99,15 +110,15 @@ function hideOverlay(){
 	O.style.opacity=0;
 	setTimeout(function(){O.classList.add('hide');},500);
 }
-function showDialog(D){
-	showOverlay();
+function showDialog(D,o){
+	if(o==undefined||o) showOverlay();
 	O.onclick=D.onclose;
 	D.classList.remove('hide');
 	D.style.top=(window.innerHeight-D.offsetHeight)/2+'px';
 	D.style.left=(window.innerWidth-D.offsetWidth)/2+'px';
 }
-function closeDialog(D){
-	hideOverlay();
+function closeDialog(D,o){
+	if(o==undefined||o) hideOverlay();
 	D.classList.add('hide');
 }
 
@@ -120,7 +131,7 @@ $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.saveSetting('installFile',bg.installFile=this.checked);};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
-$('aExport').onclick=function(){closeDialog(A);showDialog(X);xLoad();};
+$('aExport').onclick=function(){closeDialog(A,0);showDialog(X,0);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
 A.onclose=$('aClose').onclick=function(){
 	bg.search=bg.saveSetting('search',$('tSearch').value);
@@ -219,7 +230,7 @@ function check(i){
 // Script Editor
 var M=$('editor'),T=$('mCode'),U=$('mUpdate');
 function edit(i){
-	showDialog(M);T.style.height=window.innerHeight-120+'px';
+	showDialog(M);fillCell(T);
 	M.dirty=false;M.scr=bg.scripts[i];M.cur=L.childNodes[i];
 	T.value=M.scr.code;U.checked=M.scr.update;
 }

@@ -30,10 +30,10 @@ function menuScript(i) {
 	}});
 }
 function load(e,data){
-	addItem(_('Manage scripts'),true,{symbol:'>>',onclick:function(){
+	addItem(_('Manage scripts'),true,{symbol:'➤',onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
-	if(data) addItem(_('Find scripts for this site'),true,{symbol:'>>',onclick:function(){
+	if(data) addItem(_('Find scripts for this site'),true,{symbol:'➤',onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
 		}),url=bg.format(bg.search,q);
@@ -44,7 +44,7 @@ function load(e,data){
 	}});
 	if(data&&data[0]&&data[0].length) {
 		P.appendChild(document.createElement('hr'));
-		for(var i=0;i<data[0].length;i++) addItem(data[0][i][0],true,{symbol:'>>',onclick:menuCommand,cmd:data[0][i][0]});
+		for(var i=0;i<data[0].length;i++) addItem(data[0][i][0],true,{symbol:'➤',onclick:menuCommand,cmd:data[0][i][0]});
 	}
 	if(data&&data[1]&&data[1].length) {
 		P.appendChild(document.createElement('hr'));

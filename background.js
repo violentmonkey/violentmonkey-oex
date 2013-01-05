@@ -158,7 +158,10 @@ function parseScript(e,d,c){
 	meta.require.forEach(function(i){fetchCache(i);});
 	// @resource: download when installed
 	for(var j in meta.resources) fetchCache(meta.resources[j]);
-	if(e) e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
+	if(e) {
+		e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
+		optionsUpdate();
+	}
 }
 function installScript(e,url){
 	if(!url) {
@@ -238,7 +241,7 @@ function format(){
 }
 
 var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',true),
-    button,_messages={},messages={
+    button,_messages={},_options=[],messages={
 	'FindScript':findScript,
 	'LoadCache':loadCache,
 	'InstallScript':installScript,
@@ -272,6 +275,22 @@ function showButton(show){
 	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
+function optionsUpdate(){
+	var i=0;
+	while(i<_options.length)
+		if(_options[i].closed) _options.splice(i,1);
+		else {
+			try{_options[i].load();}catch(e){opera.postError(e);}
+			i++;
+		}
+}
+function optionsLoad(w){
+	var i=0;
+	while(i<_options.length)
+		if(_options[i].closed) _options.splice(i,1);
+		else {if(_options[i]==w) w=null;i++;}
+	if(w) _options.push(w);
+}
 window.addEventListener('DOMContentLoaded', function() {
 	opera.extension.onmessage = onMessage;
 	button = opera.contexts.toolbar.createItem({

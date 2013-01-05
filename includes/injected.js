@@ -225,6 +225,7 @@ function wrapper(c){
 		var r=new Request(details);
 		return r.req;
 	};
+	t.VM_info={version:widget.version};
 	// functions and properties
 	function wrapWindow(w){return w==window?t:w;}
 	for(var i in window) try{

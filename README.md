@@ -6,7 +6,7 @@ Greasemonkey is a very popular addon on Firefox and has lot of amazing scripts r
 
 Features
 -------------
-1. Install scripts from <http://userscripts.org/>.
+1. Install scripts from <http://userscripts.org>.
 1. Update automatically according to the meta data.
 1. Wrappers are imported so that variables will be separated in different scripts.
 1. Matching rules can be URLs with wildcards or regular-expressions both start and end with a forward-slash (/), check Greasemonkey documents for more information.
