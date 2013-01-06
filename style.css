@@ -31,6 +31,7 @@ legend{margin-left:10px;}
 #sList .panel>button{width:80px;}
 #sList .panel .move{width:40px;padding:1px 2px;}
 #overlay{background:#000;position:fixed;z-index:10;top:0;bottom:0;left:0;right:0;transition:all .5s linear;opacity:0;}
+#overlay.overlay{opacity:0.6;}
 .float{position:fixed;background:lightgray;margin:0 auto;z-index:10;padding:10px;border-radius:10px;}
 #editor{left:0;right:0;top:0;bottom:0;border-radius:0;}
 textarea{width:100%;border:none;margin:0;padding:0;}

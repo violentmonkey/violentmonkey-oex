@@ -21,7 +21,7 @@ function addItem(h,t,c){
 	for(t in c) d[t]=c[t];
 	if('data' in c) loadItem(d,c.data);
 }
-function menuCommand(e){e=e.target;bg.postMessage('Command',null,e.cmd);}
+function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
 function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
 	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
@@ -52,4 +52,5 @@ function load(e,data){
 	}
 	bg.button.popup.height=document.body.offsetHeight;
 }
-if(tab.port) bg.postMessage('GetPopup','GotPopup',null,load); else load();
+bg.messages['GotPopup']=load;
+if(tab.port) tab.postMessage({topic:'GetPopup'}); else load();

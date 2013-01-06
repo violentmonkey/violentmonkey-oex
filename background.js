@@ -241,7 +241,7 @@ function format(){
 }
 
 var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',true),
-    button,_messages={},_options=[],messages={
+    button,_options=[],messages={
 	'FindScript':findScript,
 	'LoadCache':loadCache,
 	'InstallScript':installScript,
@@ -251,24 +251,8 @@ var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',
 	'AbortRequest':abortRequest,
 };
 function onMessage(e) {
-	var message = e.data,c=messages[message.topic];
-	if(c) c(e,message.data);
-	else {
-		c=_messages[message.topic];
-		if(c&&(c=c.shift()))
-			try{c(e,message.data);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
-	}
-}
-function postMessage(topic,rtopic,data,callback) {
-	var tab=opera.extension.tabs.getFocused();
-	if(tab) {
-		if(rtopic&&callback) {
-			var f=_messages[rtopic];
-			if(!f) _messages[rtopic]=f=[];
-			f.push(callback);
-		}
-		tab.postMessage({topic:topic,data:data});
-	}
+	var message=e.data,c=messages[message.topic];
+	if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
 }
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);

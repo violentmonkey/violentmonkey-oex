@@ -27,7 +27,7 @@ FAQ
 
 1. <a name=faq_lib></a>**Do I need to install the required scripts (e.g. jQuery) to Violentmonkey along with the main one?**
 
-   No. Even if they are installed, they make no difference. Violentmonkey will build a separated environment for each script, as a result, variables from different scripts will not be visited by each other. All you need to do is to make sure the required scripts are required with *@require* rules in meta data. Violentmonkey will do the left.
+   No. Even if they are installed, they make no difference. Violentmonkey will build a separated environment for each script, as a result, variables from different scripts will not be fetched by each other. All you need to do is to make sure the required scripts are required with *@require* rules in meta data. Violentmonkey will do the left.
 
 Preview release (2012-1-2): <https://skydrive.live.com/redir?resid=9F63DC97688A095E!619>
 

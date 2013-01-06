@@ -117,8 +117,8 @@ function Request(details){
 // For UserScripts installation
 var installCallback=null;
 if(/\.user\.js$/.test(window.location.href)) window.addEventListener('load',function(){
-	opera.extension.postMessage({topic:'InstallScript'});
-},false); else window.addEventListener('click',function(e){
+	if(document&&document.body&&!document.querySelector('title')) opera.extension.postMessage({topic:'InstallScript'});
+},false); else if(window.location.host=='userscripts.org') window.addEventListener('click',function(e){
 	if(/\.user\.js$/.test(e.target.href)) {
 		e.preventDefault();
 		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:e.target.href});};

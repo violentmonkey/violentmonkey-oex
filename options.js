@@ -102,23 +102,15 @@ $('bNew').onclick=function(){
 $('bUpdate').onclick=function(){for(var i=0;i<bg.scripts.length;i++) if(allowUpdate(bg.scripts[i])) check(i);};
 if(!($('cDetail').checked=bg.getSetting('showDetails',false))) L.classList.add('simple');
 $('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveSetting('showDetails',this.checked);};
-function showOverlay(){
-	O.classList.remove('hide');
-	setTimeout(function(){O.style.opacity=0.6;},1);
-}
-function hideOverlay(){
-	O.style.opacity=0;
-	setTimeout(function(){O.classList.add('hide');},500);
-}
 function showDialog(D,o){
-	if(o==undefined||o) showOverlay();
+	if(o==undefined||o) {O.classList.remove('hide');setTimeout(function(){O.classList.add('overlay');},1);}
 	O.onclick=D.onclose;
 	D.classList.remove('hide');
 	D.style.top=(window.innerHeight-D.offsetHeight)/2+'px';
 	D.style.left=(window.innerWidth-D.offsetWidth)/2+'px';
 }
 function closeDialog(D,o){
-	if(o==undefined||o) hideOverlay();
+	if(o==undefined||o) {O.classList.remove('overlay');setTimeout(function(){O.classList.add('hide');},500);}
 	D.classList.add('hide');
 }
 
