@@ -25,7 +25,7 @@ function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd})
 function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
 	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
-	addItem(n,i[0],{data:s.enabled,onclick:function(e){
+	addItem(n,s.meta.name,{data:s.enabled,onclick:function(e){
 		loadItem(this,s.enabled=!s.enabled);bg.saveScripts();
 	}});
 }
@@ -37,7 +37,8 @@ function load(e,data){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
 		}),url=bg.format(bg.search,q);
-		return bg.opera.extension.tabs.create({url:url}).focus();
+		var t=bg.opera.extension.tabs.create({url:url});
+		if(t.focus) t.focus();	// Opera 12+ Only
 	}});
 	addItem(_('Scripts enabled'),true,{data:bg.isApplied,onclick:function(e){
 		bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
@@ -53,4 +54,4 @@ function load(e,data){
 	bg.button.popup.height=document.body.offsetHeight;
 }
 bg.messages['GotPopup']=load;
-if(tab.port) tab.postMessage({topic:'GetPopup'}); else load();
+try{tab.postMessage({topic:'GetPopup'});}catch(e){load();}
