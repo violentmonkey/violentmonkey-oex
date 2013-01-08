@@ -31,7 +31,8 @@ function menuScript(i) {
 }
 function load(e,data){
 	addItem(_('Manage scripts'),true,{symbol:'➤',onclick:function(){
-		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
+		var t=bg.opera.extension.tabs.create({url:'/options.html'});
+		if(t.focus) t.focus();	// Opera 12+ Only
 	}});
 	if(data) addItem(_('Find scripts for this site'),true,{symbol:'➤',onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
