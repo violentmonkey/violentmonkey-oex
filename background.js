@@ -10,6 +10,7 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
  * List	[
  * 	Item	{
  * 		id:	Random
+ * 		url:	String
  * 		meta:	List-Dict
  *		enabled:	Boolean
  *		update:	Boolean
@@ -67,6 +68,7 @@ function getId(map,d){
 function newScript(save){
 	var r={
 		meta:newMeta(),
+		url:'',
 		enabled:1,
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
@@ -153,7 +155,9 @@ function parseScript(e,d,c){
 		} else i=-1;
 		if(i<0) c=newScript(); else c=scripts[i];
 	}
-	c.meta=meta;c.code=d;saveScripts();
+	c.meta=meta;c.code=d;
+	if(e&&e.origin&&!c.url) c.url=e.origin;
+	saveScripts();
 	// @require: download when installed
 	meta.require.forEach(function(i){fetchCache(i);});
 	// @resource: download when installed

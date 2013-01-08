@@ -2,6 +2,8 @@
 html,body{background:#eee;}
 h1{text-align:center;}
 h1,h2{text-shadow:#999 3px 3px 5px;}
+h2{display:inline-block;}
+h2+label{margin-left:50px;}
 a{color:dodgerblue;}
 .fill{height:100%;margin:0;padding:0;}
 .em{font-style:italic;}

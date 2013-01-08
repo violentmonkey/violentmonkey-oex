@@ -1,12 +1,16 @@
 function $(i){return document.getElementById(i);}
 var bg=opera.extension.bgProcess,L=$('sList'),O=$('overlay'),_=bg.getI18nString;
-function fillCell(e,p){
+function fillHeight(e,p){
 	if(p==undefined) p=e.parentNode;
 	var b=0;
 	Array.prototype.forEach.call(p.children,function(i){if(b<i.offsetTop+i.offsetHeight) b=i.offsetTop+i.offsetHeight;});
 	e.style.pixelHeight=e.offsetHeight+window.getComputedStyle(p).pixelHeight-b;
 }
-fillCell(L,document.body);
+function fillWidth(e,p){
+	if(p==undefined) p=e.parentNode;
+	e.style.pixelWidth=e.offsetWidth+window.getComputedStyle(p).pixelWidth-e.offsetLeft-e.offsetWidth;
+}
+fillHeight(L,document.body);
 
 // Main options
 function updateMove(d){
@@ -19,7 +23,7 @@ function allowUpdate(n){return n.update&&n.meta.updateURL&&n.meta.downloadURL;}
 function loadItem(d,n){
 	if(!n.enabled) d.className='disabled';
 	d.innerHTML='<a class="name ellipsis"></a>'
-	+'<span class=author>'+(n.meta.author?_('Author: ')+n.meta.author:'')+'</span>'
+	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
 	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
 	+'<div class="descrip ellipsis"></div>'
@@ -31,10 +35,12 @@ function loadItem(d,n){
 		+'<button data=up class=move>'+_('Up')+'</button>'
 		+'<button data=down class=move>'+_('Down')+'</button>'
 	+'</div>';
-	with(d.firstChild) {
+	with(d.querySelector('.name')) {
 		title=n.meta.name||'';
+		if(n.url) href=n.url;
 		innerHTML=n.meta.name?n.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	}
+	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
 }
 function addItem(n){
@@ -191,22 +197,20 @@ function check(i){
 		m.innerHTML=_('Updating...');
 		req=new window.XMLHttpRequest();
 		req.open('GET', s.meta.downloadURL, true);
-		req.onreadystatechange=function(){
-			if(req.readyState==4) {
-				if(req.status==200) {
-					bg.parseScript(null,req.responseText,s);
-					l.querySelector('.version').innerHTML=s.meta.version?'v'+s.meta.version:'';
-					m.innerHTML=_('Update finished!');
-				} else m.innerHTML=_('Update failed!');
-				o.classList.remove('hide');
-			}
+		req.onload=function(){
+			if(req.status==200) {
+				bg.parseScript(null,req.responseText,s);
+				l.querySelector('.version').innerHTML=s.meta.version?'v'+s.meta.version:'';
+				m.innerHTML=_('Update finished!');
+			} else m.innerHTML=_('Update failed!');
+			o.classList.remove('hide');
 		};
 		req.send();
 	}
 	var req=new window.XMLHttpRequest();
 	req.open('GET', s.meta.updateURL, true);
-	req.onreadystatechange=function(){
-		if(req.readyState==4) try {
+	req.onload=function(){
+		try {
 			var r=bg.parseMeta(req.responseText);
 			if(canUpdate(s.meta.version,r.version)) return update();
 			else m.innerHTML=_('No update is found!');
@@ -220,15 +224,16 @@ function check(i){
 }
 
 // Script Editor
-var M=$('editor'),T=$('mCode'),U=$('mUpdate');
+var M=$('editor'),T=$('mCode'),U=$('mUpdate'),H=$('mURL');
 function edit(i){
-	showDialog(M);fillCell(T);
+	showDialog(M);fillHeight(T);fillWidth(H);
 	M.dirty=false;M.scr=bg.scripts[i];M.cur=L.childNodes[i];
-	T.value=M.scr.code;U.checked=M.scr.update;
+	T.value=M.scr.code;U.checked=M.scr.update;H.value=M.scr.url||'';
 }
 function mSave(){
 	if(M.dirty){
-		M.scr.update=U.checked;bg.parseScript(null,T.value,M.scr);
+		M.scr.update=U.checked;M.scr.url=H.value;
+		bg.parseScript(null,T.value,M.scr);
 		M.dirty=false;loadItem(M.cur,M.scr);updateMove(M.cur);
 		return true;
 	} else return false;
