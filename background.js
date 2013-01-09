@@ -37,6 +37,7 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
 				for(var j in v) widget.preferences.setItem(k+j,JSON.stringify(v[j]));
 			}
 		}
+		cache={};vacuum();
 		saveSetting('version_storage',version);
 	}
 })();
