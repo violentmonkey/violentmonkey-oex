@@ -1,16 +1,15 @@
 function $(i){return document.getElementById(i);}
 var bg=opera.extension.bgProcess,L=$('sList'),O=$('overlay'),_=bg.getI18nString;
-function fillHeight(e,p){
+function fillHeight(e,b,p){
 	if(p==undefined) p=e.parentNode;
-	var b=0;
-	Array.prototype.forEach.call(p.children,function(i){if(b<i.offsetTop+i.offsetHeight) b=i.offsetTop+i.offsetHeight;});
+	b=b?b.offsetTop+b.offsetHeight:0;
 	e.style.pixelHeight=e.offsetHeight+window.getComputedStyle(p).pixelHeight-b;
 }
 function fillWidth(e,p){
 	if(p==undefined) p=e.parentNode;
 	e.style.pixelWidth=e.offsetWidth+window.getComputedStyle(p).pixelWidth-e.offsetLeft-e.offsetWidth;
 }
-fillHeight(L,document.body);
+fillHeight(L,$('footer'),document.body);
 
 // Main options
 function updateMove(d){
@@ -226,7 +225,7 @@ function check(i){
 // Script Editor
 var M=$('editor'),T=$('mCode'),U=$('mUpdate'),H=$('mURL');
 function edit(i){
-	showDialog(M);fillHeight(T);fillWidth(H);
+	showDialog(M);fillHeight(T,T.nextElementSibling);fillWidth(H);
 	M.dirty=false;M.scr=bg.scripts[i];M.cur=L.childNodes[i];
 	T.value=M.scr.code;U.checked=M.scr.update;H.value=M.scr.url||'';
 }
