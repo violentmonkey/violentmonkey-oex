@@ -138,10 +138,9 @@ function fetchURL(url,callback,type){
 function fetchCache(url){
 	fetchCache.count++;
 	fetchURL(url,function(){
-		var f=new FileReader();
-		f.onload=function(){cache[url]=this.result;if(!--fetchCache.count) saveCache();};
-		f.readAsBinaryString(this.response);
-	},'blob');
+		cache[url]=String.fromCharCode.apply(this,this.response);
+		if(!--fetchCache.count) saveCache();
+	},'arraybuffer');	// Opera 11.64 does not support Blob
 }
 fetchCache.count=0;
 
@@ -190,24 +189,28 @@ function httpRequest(e,details){
 			statusText:req.statusText,
 		}
 	}
+	function callback(type){
+		var d={
+			topic:'HttpRequested',
+			data:{id:details.id}
+		};
+		if(type) d.data.type=type;
+		return function(evt){	// evt is undefined for Opera 11.64
+			d.data.data=response();
+			e.source.postMessage(d);
+		};
+	}
 	var i,req;
 	if(details.id) req=requests[details.id];
 	else req=new XMLHttpRequest();
-	var d={
-		topic:'HttpRequested',
-		data:{id:details.id}
-	};
 	try{
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		req.onload=req.onreadystatechange=function(evt){
-			d.data.data=response();
-			d.data.type=evt.type;
-			e.source.postMessage(d);
-		};
+		req.onload=callback('load');
+		req.onreadystatechange=callback('readystatechange');
 		req.send(details.data);
-		if(!details.id) {d.data.data=response();e.source.postMessage(d);}
+		if(!details.id) callback()();
 	}catch(e){opera.postError(e);}
 }
 function abortRequest(e,id){
@@ -226,16 +229,6 @@ function loadMessages(locale){
 	req.send();
 	var j=JSON.parse(req.responseText);
 	for(var i in j) i18nMessages[i]=j[i];
-	// since Opera 12.10
-	/*var fobj=opera.extension.getFile(filename);
-	if(fobj) {
-		var fr=new FileReader();
-		fr.onload=function(){
-			var j=JSON.parse(fr.result);
-			for(var i in j) i18nMessages[i]=j[i];
-		};
-		fr.readAsText(fobj,'utf-8');
-	}*/
 }
 function getI18nString(s) {return i18nMessages[s]||s;}
 var _=getI18nString;
@@ -293,8 +286,4 @@ window.addEventListener('DOMContentLoaded', function() {
 	search=getSetting('search',_('Search$1'));
 	updateIcon();
 	showButton(getSetting('showButton',true));
-	/*function toggleButton() {button.disabled=!opera.extension.tabs.getFocused();}
-	opera.extension.onconnect = toggleButton;
-	opera.extension.tabs.onfocus = toggleButton;
-	opera.extension.tabs.onblur = toggleButton;*/
 }, false);
