@@ -112,20 +112,21 @@ function loadCache(e,d){
 }
 function parseMeta(d,meta){
 	var o=-1;
-	if(!meta) meta={include:[],exclude:[],match:[],require:[],resource:[],resources:{}};
+	if(!meta) meta={include:[],exclude:[],match:[],require:[],resources:{}};
+	meta.resource=[];
 	d.replace(/(?:^|\n)\/\/\s*([@=]\S+)(.*)/g,function(m,k,v){
 		if(o<0&&k=='==UserScript==') o=1;
 		else if(k=='==/UserScript==') o=0;
 		if(o==1&&k[0]=='@') k=k.slice(1); else return;
 		v=v.replace(/^\s+|\s+$/g,'');
-		if(meta[k]==undefined) meta[k]=v;
-		else if(typeof meta[k]=='string') meta[k]=[meta[k],v];
-		else meta[k].push(v);
+		if(meta[k]&&meta[k].push) meta[k].push(v);
+		else meta[k]=v;
 	});
-	for(var i=0;i<meta.resource.length;i++) {
-		o=meta.resource[i].match(/^(\w+)\s+(.*)/);
+	meta.resource.forEach(function(i){
+		o=i.match(/^(\w+)\s+(.*)/);
 		if(o) meta.resources[o[1]]=o[2];
-	}
+	});
+	delete meta.resource;
 	return meta;
 }
 function fetchURL(url,callback,type){
@@ -158,10 +159,9 @@ function parseScript(e,d,c){
 	c.meta=meta;c.code=d;
 	if(e&&e.origin&&!c.url) c.url=e.origin;
 	saveScripts();
-	// @require: download when installed
-	meta.require.forEach(function(i){fetchCache(i);});
-	// @resource: download when installed
-	for(var j in meta.resources) fetchCache(meta.resources[j]);
+	meta.require.forEach(function(i){fetchCache(i);});	// @require
+	for(var j in meta.resources) fetchCache(meta.resources[j]);	// @resource
+	if(meta.icon) fetchCache(meta.icon);	// @icon
 	if(e) {
 		e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
 		optionsUpdate();

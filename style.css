@@ -26,9 +26,11 @@ legend{margin-left:10px;}
 #sList.simple .author{display:none;}
 #sList.simple .descrip{display:none;}
 #sList .update{position:absolute;right:10px;top:10px;}
-#sList .message{color:gray;position:absolute;bottom:10px;left:10px;}
+#sList .message{color:gray;position:absolute;bottom:10px;left:50px;}
 #sList .disabled{color:gray;background:silver;}
-#sList .name{font-weight:bold;line-height:150%;display:inline-block;max-width:400px;}
+#sList .icon{width:32px;height:32px;margin:2px;position:absolute;}
+#sList .name{font-weight:bold;line-height:150%;display:inline-block;max-width:400px;margin-left:40px;}
+#sList .descrip{margin-left:40px;}
 #sList .panel{position:absolute;bottom:10px;right:10px;}
 #sList .panel>button{width:80px;}
 #sList .panel .move{width:40px;padding:1px 2px;}
