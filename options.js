@@ -273,7 +273,7 @@ function mClose(){
 	closeDialog(M);
 	M.cur=M.scr=null;
 }
-T.onchange=U.onchange=function(e){M.dirty=true;};
+T.onchange=U.onchange=H.onchange=function(e){M.dirty=true;};
 $('mSave').onclick=function(){mSave();};
 $('mSaveClose').onclick=function(){mSave();mClose();};
 M.onclose=$('mClose').onclick=function(){
