@@ -102,7 +102,7 @@ function testURL(url,e){
 function findScript(e,url){
 	var i,c=[];
 	url=url||e.origin;	// to recognize URLs like data:...
-	if(isApplied&&url.substr(0,5)!='data:')
+	if(url.substr(0,5)!='data:')
 		for(i=0;i<scripts.length;i++) if(testURL(url,scripts[i])) c.push(scripts[i]);
 	e.source.postMessage({topic:'FoundScript',data:c});
 }

@@ -47,6 +47,15 @@ function updateMove(d){
 	b[1].disabled=!d.nextSibling;
 }
 function allowUpdate(n){return n.update&&n.meta.updateURL&&n.meta.downloadURL;}
+var icons={};
+function getIcon(n){
+	if(n.meta.icon) {
+		if(n.meta.icon in icons) return icons[n.meta.icon];
+		var i=bg.cache[n.meta.icon];
+		if(i) return icons[n.meta.icon]='data:image/x;base64,'+base64encode(i);
+	}
+	return 'images/icon64.png';
+}
 function loadItem(d,n){
 	if(!n.enabled) d.className='disabled';
 	d.innerHTML='<img class=icon>'
@@ -63,9 +72,7 @@ function loadItem(d,n){
 		+'<button data=up class=move>'+_('Up')+'</button>'
 		+'<button data=down class=move>'+_('Down')+'</button>'
 	+'</div>';
-	var i=n.meta.icon&&bg.cache[n.meta.icon];
-	with(d.querySelector('.icon'))
-		if(i) src='data:image/x;base64,'+base64encode(i); else src='images/icon64.png';
+	with(d.querySelector('.icon')) src=getIcon(n);
 	with(d.querySelector('.name')) {
 		title=n.meta.name||'';
 		if(n.url) href=n.url;
