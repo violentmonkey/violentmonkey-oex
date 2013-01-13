@@ -74,10 +74,11 @@ function loadItem(d,n){
 	+'</div>';
 	with(d.querySelector('.icon')) src=getIcon(n);
 	with(d.querySelector('.name')) {
-		title=n.meta.name||'';
+		var name=n.custom.name||n.meta.name;
+		title=name||'';
 		var h=n.custom.homepage||n.meta.homepage;
 		if(h) href=h;
-		innerHTML=n.meta.name?n.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
+		innerHTML=name?name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	}
 	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
@@ -284,7 +285,7 @@ function check(i){
 }
 
 // Script Editor
-var E=$('editor'),T=$('eCode'),U=$('eUpdate'),H=$('mURL'),M=$('meta'),
+var E=$('editor'),T=$('eCode'),U=$('eUpdate'),H=$('mURL'),M=$('meta'),I=$('mName'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch');
 function edit(i){
@@ -296,7 +297,7 @@ function eSave(){
 	if(E.dirty){
 		E.scr.update=U.checked;E.scr.custom.homepage=H.value;
 		bg.parseScript(null,T.value,E.scr);
-		E.dirty=false;loadItem(E.cur,E.scr);updateMove(E.cur);
+		E.dirty=false;loadItem(E.cur,E.scr);
 		return true;
 	} else return false;
 }
@@ -305,7 +306,8 @@ function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(fun
 bindChange([T,U,H],[E]);
 $('custom').onclick=function(){
 	var e=[],c=E.scr.custom;M.dirty=false;
-	showDialog(M);fillWidth(H);
+	showDialog(M);fillWidth(I);fillWidth(H);
+	I.value=c.name||'';
 	H.value=c.homepage||'';
 	cI.checked=c._include!=false;
 	mI.value=(c.include||e).join('\n');
@@ -314,12 +316,13 @@ $('custom').onclick=function(){
 	cE.checked=c._exclude!=false;
 	mE.value=(c.exclude||e).join('\n');
 };
-bindChange([H,mI,mM,mE,cI,cM,cE],[M]);
+bindChange([I,H,mI,mM,mE,cI,cM,cE],[M]);
 M.close=function(){if(confirmCancel(M)) closeDialog();};
 $('mCancel').onclick=closeDialog;
 $('mOK').onclick=function(){
 	if(M.dirty) {
 		var c=E.scr.custom;
+		c.name=I.value;
 		c.homepage=H.value;
 		c._include=cI.checked;
 		c.include=split(mI.value);
@@ -327,6 +330,7 @@ $('mOK').onclick=function(){
 		c.match=split(mM.value);
 		c._exclude=cE.checked;
 		c.exclude=split(mE.value);
+		loadItem(E.cur,E.scr);
 		bg.saveScripts();
 	}
 	closeDialog();
