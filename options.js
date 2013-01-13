@@ -1,5 +1,5 @@
 function $(i){return document.getElementById(i);}
-var bg=opera.extension.bgProcess,L=$('sList'),O=$('overlay'),_=bg.getI18nString;
+var bg=opera.extension.bgProcess,N=$('main'),L=$('sList'),O=$('overlay'),_=bg.getI18nString;
 function fillHeight(e,b,p){
 	if(p==undefined) p=e.parentNode;
 	b=b?b.offsetTop+b.offsetHeight:0;
@@ -75,7 +75,8 @@ function loadItem(d,n){
 	with(d.querySelector('.icon')) src=getIcon(n);
 	with(d.querySelector('.name')) {
 		title=n.meta.name||'';
-		if(n.url) href=n.url;
+		var h=n.custom.homepage||n.meta.homepage;
+		if(h) href=h;
 		innerHTML=n.meta.name?n.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	}
 	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
@@ -146,16 +147,37 @@ $('bNew').onclick=function(){
 $('bUpdate').onclick=function(){for(var i=0;i<bg.scripts.length;i++) if(allowUpdate(bg.scripts[i])) check(i);};
 if(!($('cDetail').checked=bg.getSetting('showDetails',false))) L.classList.add('simple');
 $('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveSetting('showDetails',this.checked);};
-function showDialog(D,o){
-	if(o==undefined||o) {O.classList.remove('hide');setTimeout(function(){O.classList.add('overlay');},1);}
-	O.onclick=D.onclose;
+var panel=N;
+function switchTo(D){
+	panel.classList.add('hide');D.classList.remove('hide');panel=D;
+}
+var dialogs=[];
+function showDialog(D){
+	if(!dialogs.length) {
+		O.classList.remove('hide');
+		setTimeout(function(){O.classList.add('overlay');},1);
+	}
+	dialogs.push(D);
+	O.style.zIndex=D.style.zIndex=dialogs.length;
 	D.classList.remove('hide');
 	D.style.top=(window.innerHeight-D.offsetHeight)/2+'px';
 	D.style.left=(window.innerWidth-D.offsetWidth)/2+'px';
 }
-function closeDialog(D,o){
-	if(o==undefined||o) {O.classList.remove('overlay');setTimeout(function(){O.classList.add('hide');},500);}
-	D.classList.add('hide');
+function closeDialog(){
+	dialogs.pop().classList.add('hide');
+	if(dialogs.length) O.style.zIndex=dialogs.length;
+	else {
+		O.classList.remove('overlay');
+		setTimeout(function(){O.classList.add('hide');},500);
+	}
+}
+O.onclick=function(){(dialogs[dialogs.length-1].close||closeDialog)();};
+function confirmCancel(D){
+	return !D.dirty||confirm(_('Modifications are not saved!\nClick OK to discard them or Cancel to stay.'));
+}
+function bindChange(e,d){
+	function change(){d.forEach(function(i){i.dirty=true;});}
+	e.forEach(function(i){i.onchange=change;});
 }
 
 // Advanced
@@ -167,11 +189,11 @@ $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.saveSetting('installFile',bg.installFile=this.checked);};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
-$('aExport').onclick=function(){closeDialog(A,0);showDialog(X,0);xLoad();};
+$('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
-A.onclose=$('aClose').onclick=function(){
+A.close=$('aClose').onclick=function(){
 	bg.search=bg.saveSetting('search',$('tSearch').value);
-	closeDialog(A);
+	closeDialog();
 };
 
 // Export
@@ -207,7 +229,7 @@ $('bExport').onclick=function(){
 	n=z.generate();
 	window.open('data:application/zip;base64,'+n);
 };
-X.onclose=$('bClose').onclick=function(){closeDialog(X);};
+X.close=$('bClose').onclick=closeDialog;
 
 // Update checker
 function canUpdate(o,n){
@@ -262,31 +284,53 @@ function check(i){
 }
 
 // Script Editor
-var M=$('editor'),T=$('mCode'),U=$('mUpdate'),H=$('mURL');
+var E=$('editor'),T=$('eCode'),U=$('eUpdate'),H=$('mURL'),M=$('meta'),
+    mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
+    cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch');
 function edit(i){
-	showDialog(M);fillHeight(T,T.nextElementSibling);fillWidth(H);
-	M.dirty=false;M.scr=bg.scripts[i];M.cur=L.childNodes[i];
-	T.value=M.scr.code;U.checked=M.scr.update;H.value=M.scr.url||'';
+	switchTo(E);fillHeight(T,T.nextElementSibling);
+	E.dirty=false;E.scr=bg.scripts[i];E.cur=L.childNodes[i];
+	T.value=E.scr.code;U.checked=E.scr.update;H.value=E.scr.custom.homepage||'';
 }
-function mSave(){
-	if(M.dirty){
-		M.scr.update=U.checked;M.scr.url=H.value;
-		bg.parseScript(null,T.value,M.scr);
-		M.dirty=false;loadItem(M.cur,M.scr);updateMove(M.cur);
+function eSave(){
+	if(E.dirty){
+		E.scr.update=U.checked;E.scr.custom.homepage=H.value;
+		bg.parseScript(null,T.value,E.scr);
+		E.dirty=false;loadItem(E.cur,E.scr);updateMove(E.cur);
 		return true;
 	} else return false;
 }
-function mClose(){
-	closeDialog(M);
-	M.cur=M.scr=null;
-}
-T.onchange=U.onchange=H.onchange=function(e){M.dirty=true;};
-$('mSave').onclick=function(){mSave();};
-$('mSaveClose').onclick=function(){mSave();mClose();};
-M.onclose=$('mClose').onclick=function(){
-	if(M.dirty) {
-		var e=confirm(_('Modifications are not saved!\nClick OK to discard them or Cancel to stay.'));
-		if(!e) return;
-	}
-	mClose();
+function eClose(){switchTo(N);E.cur=E.scr=null;}
+function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
+bindChange([T,U,H],[E]);
+$('custom').onclick=function(){
+	var e=[],c=E.scr.custom;M.dirty=false;
+	showDialog(M);fillWidth(H);
+	H.value=c.homepage||'';
+	cI.checked=c._include!=false;
+	mI.value=(c.include||e).join('\n');
+	cM.checked=c._match!=false;
+	mM.value=(c.match||e).join('\n');
+	cE.checked=c._exclude!=false;
+	mE.value=(c.exclude||e).join('\n');
 };
+bindChange([H,mI,mM,mE,cI,cM,cE],[M]);
+M.close=function(){if(confirmCancel(M)) closeDialog();};
+$('mCancel').onclick=closeDialog;
+$('mOK').onclick=function(){
+	if(M.dirty) {
+		var c=E.scr.custom;
+		c.homepage=H.value;
+		c._include=cI.checked;
+		c.include=split(mI.value);
+		c._match=cM.checked;
+		c.match=split(mM.value);
+		c._exclude=cE.checked;
+		c.exclude=split(mE.value);
+		bg.saveScripts();
+	}
+	closeDialog();
+};
+$('eSave').onclick=eSave;
+$('eSaveClose').onclick=function(){eSave();eClose();};
+E.close=$('eClose').onclick=function(){if(confirmCancel(E)) eClose();};

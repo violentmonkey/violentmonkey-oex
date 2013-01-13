@@ -6,11 +6,12 @@ function saveSetting(key,val){widget.preferences.setItem(key,JSON.stringify(val)
 var scripts=getSetting('scripts',[]),cache=getSetting('cache',{}),
     map={},search;
 scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
-/* ================Data format 0.1=================
+/* ================Data format 0.2=================
  * List	[
  * 	Item	{
  * 		id:	Random
- * 		url:	String
+ * 		/url:	String/
+ * 		custom:	List-Dict	// Custom meta data
  * 		meta:	List-Dict
  *		enabled:	Boolean
  *		update:	Boolean
@@ -23,8 +24,8 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
  */
 
 (function(){	// upgrade data
-	var version=0.1;
-	if(getSetting('version_storage',0)<version) {
+	var version=getSetting('version_storage',0);
+	if(version<0.1) {
 		for(var i=0;i<widget.preferences.length;i++) {
 			var k=widget.preferences.key(i);
 			if(/^scriptVals\//.test(k)) {
@@ -38,7 +39,13 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
 			}
 		}
 		cache={};vacuum();
-		saveSetting('version_storage',version);
+	}
+	if(version<0.2) {
+		scripts.forEach(function(i){
+			i.custom={};
+			if('url' in i) {i.custom.homepage=i.url;delete i.url;}
+		});
+		saveSetting('version_storage',0.2);
 	}
 })();
 function vacuum(callback){
@@ -68,6 +75,7 @@ function getId(map,d){
 }
 function newScript(save){
 	var r={
+		custom:{},
 		meta:newMeta(),
 		url:'',
 		enabled:1,
@@ -92,8 +100,13 @@ function testURL(url,e){
 		if(m&&u) for(var i=0;i<3;i++) if(!reg(m[i],1).test(u[i])) {m=0;break;}
 		return !!m;
 	}
-	var f=true,i,inc=e.meta.include||[],exc=e.meta.exclude||[],
-	    mat=e.meta.match||[],r=/(.*?):\/\/([^\/]*)\/(.*)/,u=url.match(r);
+	var f=true,i,inc=[],exc=[],mat=[],r=/(.*?):\/\/([^\/]*)\/(.*)/,u=url.match(r);
+	if(e.custom._include!=false&&e.meta.include) inc=inc.concat(e.meta.include);
+	if(e.custom.include) inc=inc.concat(e.custom.include);
+	if(e.custom._match!=false&&e.meta.match) mat=mat.concat(e.meta.match);
+	if(e.custom.match) mat=mat.concat(e.custom.match);
+	if(e.custom._exclude!=false&&e.meta.exclude) exc=exc.concat(e.meta.exclude);
+	if(e.custom.exclude) exc=exc.concat(e.custom.exclude);
 	for(i=0;i<mat.length;i++) if(f=match_test(mat[i])) break;	// @match
 	for(i=0;i<inc.length;i++) if(f=reg(inc[i]).test(url)) break;	// @include
 	if(f) for(i=0;i<exc.length;i++) if(!(f=!reg(exc[i]).test(url))) break;	// @exclude
@@ -157,7 +170,7 @@ function parseScript(e,d,c){
 		if(i<0) c=newScript(); else c=scripts[i];
 	}
 	c.meta=meta;c.code=d;
-	if(e&&e.origin&&!c.url) c.url=e.origin;
+	if(e&&e.origin&&!c.meta.homepage) c.custom.homepage=e.origin;
 	saveScripts();
 	meta.require.forEach(function(i){fetchCache(i);});	// @require
 	for(var j in meta.resources) fetchCache(meta.resources[j]);	// @resource
