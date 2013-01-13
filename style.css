@@ -53,3 +53,4 @@ textarea{width:100%;border:none;margin:0;padding:0;}
 .menu>label.disabled:hover{color:silver;}
 .menu>label span{display:inline-block;width:20px;}
 .menu>hr{border:none;border-top:1px dashed gray;}
+#mCode{font-family:monospace;}
