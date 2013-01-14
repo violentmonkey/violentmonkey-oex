@@ -6,7 +6,7 @@ function saveSetting(key,val){widget.preferences.setItem(key,JSON.stringify(val)
 var scripts=getSetting('scripts',[]),cache=getSetting('cache',{}),
     map={},search;
 scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
-/* ================Data format 0.2=================
+/* ================Data format 0.3=================
  * List	[
  * 	Item	{
  * 		id:	Random
@@ -40,12 +40,12 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
 		}
 		cache={};vacuum();
 	}
-	if(version<0.2) {
+	if(version<0.3) {
 		scripts.forEach(function(i){
-			i.custom={};
+			if(!i.custom) i.custom={};
 			if('url' in i) {i.custom.homepage=i.url;delete i.url;}
 		});
-		saveSetting('version_storage',0.2);
+		saveScripts();saveSetting('version_storage',0.3);
 	}
 })();
 function vacuum(callback){
@@ -289,7 +289,7 @@ function optionsLoad(w){
 window.addEventListener('DOMContentLoaded', function() {
 	opera.extension.onmessage = onMessage;
 	button = opera.contexts.toolbar.createItem({
-		title:"Violentmonkey",
+		title:_('Violentmonkey'),
 		popup:{
 			href:"popup.html",
 			width:222,
