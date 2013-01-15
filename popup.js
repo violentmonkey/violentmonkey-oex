@@ -28,7 +28,7 @@ function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
 	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	addItem(n,s.meta.name,{holder:pB,data:s.enabled,onclick:function(e){
-		loadItem(this,s.enabled=!s.enabled);bg.saveScripts();
+		loadItem(this,s.enabled=!s.enabled);bg.saveScript(s);
 	}});
 }
 function load(e,data){
@@ -57,7 +57,7 @@ function load(e,data){
 		}});
 	}
 	addItem(_('Scripts enabled'),true,{holder:pT,data:bg.isApplied,onclick:function(e){
-		bg.saveSetting('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
+		bg.saveItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
 	if(data&&data[1]&&data[1].length) {
 		pT.appendChild(document.createElement('hr'));
