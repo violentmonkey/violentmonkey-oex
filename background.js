@@ -1,16 +1,27 @@
-function getSetting(key,def){
-	try{return JSON.parse(widget.preferences.getItem(key)||'');}catch(e){return saveSetting(key,def);}
+function getString(key,def){
+	var v=widget.preferences.getItem(key);
+	if(key==null) return def;
+	return v;
 }
-function saveSetting(key,val){widget.preferences.setItem(key,JSON.stringify(val));return val;}
+function saveString(key,val){widget.preferences.setItem(key,val);}
+function getItem(key,def){
+	var v=widget.preferences.getItem(key);
+	if(v==null&&def) return saveItem(key,def);
+	try{return JSON.parse(v);}catch(e){return def;}
+}
+function saveItem(key,val){
+	widget.preferences.setItem(key,JSON.stringify(val));
+	return val;
+}
+function getNameURI(i){
+	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
+	if(!ns&&!n) k+=i.id;return k;
+}
 
-var scripts=getSetting('scripts',[]),cache=getSetting('cache',{}),
-    map={},search;
-scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
-/* ================Data format 0.3=================
+/* ==========Data format 0.3 (Obsoleted)===========
  * List	[
  * 	Item	{
  * 		id:	Random
- * 		/url:	String/
  * 		custom:	List-Dict	// Custom meta data
  * 		meta:	List-Dict
  *		enabled:	Boolean
@@ -19,12 +30,18 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
  *	 	}
  * 	]
  */
-/* ================Storage 0.1=====================
+/* ===========Storage 0.1 (Obsoleted)==============
  * scriptVals:(escape(name)):(escape(namespace)):key=data
+ */
+/* ===============Data format 0.4==================
+ * ids	List [id]
+ * vm:id	JSON-Item
+ * val:nameURI:key	TypeString
+ * cache:url	BinaryString
  */
 
 (function(){	// upgrade data
-	var version=getSetting('version_storage',0);
+	var version=getItem('version_storage',0),scripts=getItem('scripts');
 	if(version<0.1) {
 		for(var i=0;i<widget.preferences.length;i++) {
 			var k=widget.preferences.key(i);
@@ -38,41 +55,59 @@ scripts.forEach(function(i){if(i.id) map[i.id]=i; else i.id=getId(map,i);});
 				for(var j in v) widget.preferences.setItem(k+j,JSON.stringify(v[j]));
 			}
 		}
-		cache={};vacuum();
 	}
 	if(version<0.3) {
-		scripts.forEach(function(i){
+		scripts&&scripts.forEach(function(i){
 			if(!i.custom) i.custom={};
 			if('url' in i) {i.custom.homepage=i.url;delete i.url;}
 		});
-		saveScripts();saveSetting('version_storage',0.3);
+	}
+	if(version<0.4) {
+		var i,cache=getItem('cache');
+		for(i=0;i<widget.preferences.length;i++) {
+			var k=widget.preferences.key(i),m=k.match(/^scriptVals:([^:]*):([^:]*):(.*)/);
+			if(!m) continue;
+			var v=JSON.parse(widget.preferences.getItem(k));
+			if(typeof v=='boolean') v='b'+v;
+			else if(typeof v=='number') v='n'+v;
+			else v='s'+v;
+			widget.preferences.removeItem(k);
+			widget.preferences.setItem('val:'+m[2]+':'+m[1]+':'+m[3],v);
+		}
+		var s=getItem('search'),_s=[];if(s) saveString('search',s);
+		widget.preferences.removeItem('scripts');
+		scripts&&scripts.forEach(function(i){_s.push(i.id);saveItem('vm:'+i.id,i);});
+		saveItem('ids',_s);
+		widget.preferences.removeItem('cache');
+		if(cache) for(i in cache) saveString('cache:'+i,cache[i]);
+		saveItem('version_storage',0.4);
 	}
 })();
+var ids=getItem('ids',[]),map;
+generateMap();
 function vacuum(callback){
 	setTimeout(function(){
-		var ns={},c={},i=0,k,s;
-		scripts.forEach(function(i){
-			ns['scriptVals:'+escape(i.meta.name||'')+':'+escape(i.meta.namespace||'')+':']=1;
-			if(i.meta.require) i.meta.require.forEach(function(i){(c[i]=cache[i])||fetchCache(i);});
-			if(i.meta.resources) for(k in i.meta.resources) (c[k]=cache[k])||fetchCache(k);
+		var k,s,i,ns={},r;
+		ids.forEach(function(i){
+			k=map[i];
+			ns[getNameURI(k)]=1;
+			r=[];
+			if(k.meta.icon) r.push(k.meta.icon);
+			if(k.meta.require) r=r.concat(k.meta.require);
+			if(k.meta.resources) r=r.concat(k.meta.resources);
+			r.forEach(function(i){if(widget.preferences.getItem('cache:'+i)==null) fetchCache(i);});
 		});
-		while(i<widget.preferences.length) {
+		for(i=0;i<widget.preferences.length;) {
 			k=widget.preferences.key(i);
-			s=k.match(/^scriptVals:[^:]*:[^:]*:/);
-			if(s&&!ns[s[0]]) widget.preferences.removeItem(k); else i++;
+			s=k.match(/^val:([^:]*:[^:]*:[^:]*)/);
+			if(s&&!ns[s[1]]) widget.preferences.removeItem(k); else i++;
 		}
+		generateIDs();
 		if(callback) callback();
 	},0);
 }
 
-function saveScripts(){saveSetting('scripts',scripts);}
-function saveCache(){saveSetting('cache',cache);}
 function newMeta(){return {name:'New Script',namespace:'',version:null};}
-function getId(map,d){
-	do{var s=Math.random();}while(map[s]);
-	map[s]=d;
-	return s;
-}
 function newScript(save){
 	var r={
 		custom:{},
@@ -82,12 +117,29 @@ function newScript(save){
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
 	};
-	r.id=getId(map,r);
-	scripts.push(r);
-	if(save) saveScripts();
+	do{r.id=Math.random();}while(widget.preferences.getItem('vm:'+r.id));
+	if(save) saveScript(r);
 	return r;
 }
-function removeScript(i){i=scripts.splice(i,1)[0];delete map[i.id];saveScripts();return i;}
+function generateIDs(){
+	ids=[];
+	for(var i=0;i<widget.preferences.length;i++) {
+		k=widget.preferences.key(i);
+		s=k.match(/^vm:(.*)/);
+		if(s) ids.push(JSON.parse(widget.preferences.getItem(k)).id);
+	}
+	saveIDs();generateMap();
+}
+function generateMap(){map={};ids.forEach(function(i){map[i]=getItem('vm:'+i);});}
+function saveIDs(){saveItem('ids',ids);}
+function saveScript(i){
+	if(!map[i.id]) {ids.push(i.id);saveIDs();}
+	saveItem('vm:'+i.id,map[i.id]=i);
+}
+function removeScript(i){
+	i=ids.splice(i,1)[0];saveIDs();delete map[i];
+	widget.preferences.removeItem('vm:'+i);
+}
 
 function str2RE(s){return s.replace(/(\.|\?|\/)/g,'\\$1').replace(/\*/g,'.*?');}
 function testURL(url,e){
@@ -113,14 +165,15 @@ function testURL(url,e){
 	return f;
 }
 function findScript(e,url){
-	var i,c=[];
+	var i,c=[],v;
 	url=url||e.origin;	// to recognize URLs like data:...
-	if(url.substr(0,5)!='data:')
-		for(i=0;i<scripts.length;i++) if(testURL(url,scripts[i])) c.push(scripts[i]);
+	if(url.substr(0,5)!='data:') ids.forEach(function(i){
+		if(testURL(url,map[i])) c.push(map[i]);
+	});
 	e.source.postMessage({topic:'FoundScript',data:c});
 }
 function loadCache(e,d){
-	for(var i in d) d[i]=cache[i];
+	for(var i in d) d[i]=getString('cache:'+i);
 	e.source.postMessage({topic:'LoadedCache',data:d});
 }
 function parseMeta(d,meta){
@@ -150,29 +203,28 @@ function fetchURL(url,callback,type){
 	req.send();
 }
 function fetchCache(url){
-	fetchCache.count++;
 	fetchURL(url,function(){
-		cache[url]=String.fromCharCode.apply(this,this.response);
-		if(!--fetchCache.count) saveCache();
+		saveString('cache:'+url,String.fromCharCode.apply(this,this.response));
 	},'arraybuffer');	// Opera 11.64 does not support Blob
 }
-fetchCache.count=0;
 
 function parseScript(e,d,c){
 	var i,meta=parseMeta(d);
 	if(!c) {
 		if(meta.name) {
 			if(!meta.namespace) meta.namespace='';
-			for(i=0;i<scripts.length;i++)
-				if(scripts[i].meta.name==meta.name&&scripts[i].meta.namespace==meta.namespace) break;
-			if(i==scripts.length) i=-1;
+			for(i=0;i<ids.length;i++) {
+				c=map[ids[i]];
+				if(c.meta.name==meta.name&&c.meta.namespace==meta.namespace) break;
+			}
+			if(i==ids.length) i=-1;
 		} else i=-1;
-		if(i<0) c=newScript(); else c=scripts[i];
+		if(i<0) c=newScript(); else c=map[ids[i]];
 	}
-	c.meta=meta;c.code=d;
+	meta.custom=c.meta.custom;c.meta=meta;c.code=d;
 	if(e&&e.origin&&!c.meta.homepage) c.custom.homepage=e.origin;
-	saveScripts();
-	meta.require.forEach(function(i){fetchCache(i);});	// @require
+	saveScript(c);
+	meta.require.forEach(fetchCache);	// @require
 	for(var j in meta.resources) fetchCache(meta.resources[j]);	// @resource
 	if(meta.icon) fetchCache(meta.icon);	// @icon
 	if(e) {
@@ -189,19 +241,11 @@ function installScript(e,url){
 // Requests
 var requests={};
 function getRequestId(e){
-	var id=getId(requests,new XMLHttpRequest());
+	do{var id=Math.random();}while(requests[id]);
+	requests[id]=new XMLHttpRequest();
 	e.source.postMessage({topic:'GotRequestId',data:id});
 }
 function httpRequest(e,details){
-	function response(){
-		return {
-			readyState:req.readyState,
-			responseHeaders:req.getAllResponseHeaders(),
-			responseText:req.responseText,
-			status:req.status,
-			statusText:req.statusText,
-		}
-	}
 	function callback(type){
 		var d={
 			topic:'HttpRequested',
@@ -209,7 +253,13 @@ function httpRequest(e,details){
 		};
 		if(type) d.data.type=type;
 		return function(evt){	// evt is undefined for Opera 11.64
-			d.data.data=response();
+			d.data.data={
+				readyState:req.readyState,
+				responseHeaders:req.getAllResponseHeaders(),
+				responseText:req.responseText,
+				status:req.status,
+				statusText:req.statusText,
+			};
 			e.source.postMessage(d);
 		};
 	}
@@ -251,7 +301,7 @@ function format(){
 	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return a[g1||g2]||v;});
 }
 
-var isApplied=getSetting('isApplied',true),installFile=getSetting('installFile',true),
+var isApplied=getItem('isApplied',true),installFile=getItem('installFile',true),
     button,_options=[],messages={
 	'FindScript':findScript,
 	'LoadCache':loadCache,
@@ -270,7 +320,7 @@ function showButton(show){
 	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
-function optionsUpdate(){
+function optionsUpdate(){	// update loaded options pages
 	var i=0;
 	while(i<_options.length)
 		if(_options[i].closed) _options.splice(i,1);
@@ -296,7 +346,7 @@ window.addEventListener('DOMContentLoaded', function() {
 			height:100
 		}
 	});
-	search=getSetting('search',_('Search$1'));
+	search=getString('search',_('Search$1'));
 	updateIcon();
-	showButton(getSetting('showButton',true));
+	showButton(getItem('showButton',true));
 }, false);

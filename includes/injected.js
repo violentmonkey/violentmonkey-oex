@@ -185,15 +185,21 @@ function wrapFunction(o,i,c){
 function wrapper(c){
 	var t=this;
 	t.unsafeWindow=window;
-	var ckey='scriptVals:'+escape(c.meta.name||'')+':'+escape(c.meta.namespace||'')+':';
+	var ns=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(ns)+':'+escape(n)+':';
+	if(!ns&&!n) ckey+=n.id;ckey+=':';
 	var resources=c.meta.resources||{};
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
 	t.GM_deleteValue=function(key){widget.preferences.removeItem(ckey+key);};
 	t.GM_getValue=function(key,def){
-		var v=widget.preferences.getItem(ckey+key)||'';
-		try{v=JSON.parse(v);}catch(e){v=undefined;}
-		if(v==undefined) return def; else return v;
+		var v=widget.preferences.getItem(ckey+key);
+		if(v==null) return def;
+		def=v.substr(1);
+		switch(v[0]){
+			case 'n': return parseInt(def,10);
+			case 'b': return !!JSON.parse(def);
+			default: return def;
+		}
 	};
 	t.GM_listValues=function(){
 		var v=[],i,l=ckey.length,k;
@@ -204,10 +210,18 @@ function wrapper(c){
 		return v;
 	};
 	t.GM_setValue=function(key,val){
-		widget.preferences.setItem(ckey+key,JSON.stringify(val));
+		switch(typeof val){
+			case 'number':val='n'+val;break;
+			case 'boolean':val='b'+val;break;
+			default:val='s'+val;
+		}
+		widget.preferences.setItem(ckey+key,val);
 	};
 	function getCache(name){for(var i in resources) if(name==i) return cache[resources[i]];}
 	t.GM_getResourceText=function(name){
+		var b=getCache(name);
+		if(b) b=utf8decode(b);
+		return b;
 	};
 	t.GM_getResourceURL=function(name){
 		var b=getCache(name);

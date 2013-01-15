@@ -51,7 +51,7 @@ var icons={};
 function getIcon(n){
 	if(n.meta.icon) {
 		if(n.meta.icon in icons) return icons[n.meta.icon];
-		var i=bg.cache[n.meta.icon];
+		var i=bg.getString('cache:'+n.meta.icon);
 		if(i) return icons[n.meta.icon]='data:image/x;base64,'+base64encode(i);
 	}
 	return 'images/icon64.png';
@@ -90,11 +90,11 @@ function addItem(n){
 	return d;
 }
 function moveUp(i,p){
-	var x=bg.scripts[i];
-	bg.scripts[i]=bg.scripts[i-1];
-	bg.scripts[i-1]=x;
+	var x=bg.ids[i];
+	bg.ids[i]=bg.ids[i-1];
+	bg.ids[i-1]=x;
 	L.insertBefore(p,p.previousSibling);
-	bg.saveScripts();
+	bg.saveIDs();
 	updateMove(p);updateMove(p.nextSibling);
 }
 L.onclick=function(e){
@@ -108,14 +108,15 @@ L.onclick=function(e){
 			edit(i);
 			break;
 		case 'enable':
-			if(bg.scripts[i].enabled=!bg.scripts[i].enabled) {
+			e=bg.map[bg.ids[i]];
+			if(e.enabled=!e.enabled) {
 				p.classList.remove('disabled');
 				o.innerText=_('Disable');
 			} else {
 				p.classList.add('disabled');
 				o.innerText=_('Enable');
 			}
-			bg.saveScripts();
+			bg.saveScript(e);
 			break;
 		case 'remove':
 			bg.removeScript(i);
@@ -136,7 +137,7 @@ L.onclick=function(e){
 };
 function load() {
 	L.innerHTML='';
-	bg.scripts.forEach(function(i){addItem(i);});
+	bg.ids.forEach(function(i){addItem(bg.map[i]);});
 	updateMove(L.firstChild);updateMove(L.lastChild);
 }
 load();
@@ -145,9 +146,11 @@ $('bNew').onclick=function(){
 	var d=bg.newScript(true);d=addItem(d);
 	updateMove(d);updateMove(d.previousSibling);
 };
-$('bUpdate').onclick=function(){for(var i=0;i<bg.scripts.length;i++) if(allowUpdate(bg.scripts[i])) check(i);};
-if(!($('cDetail').checked=bg.getSetting('showDetails',false))) L.classList.add('simple');
-$('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveSetting('showDetails',this.checked);};
+$('bUpdate').onclick=function(){
+	for(var i=0;i<bg.ids.length;i++) if(allowUpdate(bg.map[bg.ids[i]])) check(i);
+};
+if(!($('cDetail').checked=bg.getItem('showDetails',false))) L.classList.add('simple');
+$('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveItem('showDetails',this.checked);};
 var panel=N;
 function switchTo(D){
 	panel.classList.add('hide');D.classList.remove('hide');panel=D;
@@ -184,16 +187,16 @@ function bindChange(e,d){
 // Advanced
 var A=$('advanced');
 $('bAdvanced').onclick=function(){showDialog(A);};
-$('cShow').checked=bg.getSetting('showButton',true);
-$('cShow').onchange=function(){bg.showButton(bg.saveSetting('showButton',this.checked));};
+$('cShow').checked=bg.getItem('showButton',true);
+$('cShow').onchange=function(){bg.showButton(bg.saveItem('showButton',this.checked));};
 $('cInstall').checked=bg.installFile;
-$('cInstall').onchange=function(){bg.saveSetting('installFile',bg.installFile=this.checked);};
+$('cInstall').onchange=function(){bg.saveItem('installFile',bg.installFile=this.checked);};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
 A.close=$('aClose').onclick=function(){
-	bg.search=bg.saveSetting('search',$('tSearch').value);
+	bg.search=bg.saveItem('search',$('tSearch').value);
 	closeDialog();
 };
 
@@ -201,10 +204,10 @@ A.close=$('aClose').onclick=function(){
 var X=$('export'),xL=$('xList');
 function xLoad() {
 	xL.innerHTML='';
-	for(var i=0;i<bg.scripts.length;i++) {
+	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
 		d.className='ellipsis';
-		d.innerText=d.title=bg.scripts[i].meta.name;
+		d.innerText=d.title=bg.map[bg.ids[i]].meta.name;
 		xL.appendChild(d);
 	}
 }
@@ -220,12 +223,13 @@ $('bSelect').onclick=function(){
 	for(i=0;i<c.length;i++) if(v) c[i].classList.add('selected'); else c[i].classList.remove('selected');
 };
 $('bExport').onclick=function(){
-	var z=new JSZip(),n,names={};
-	for(i=0;i<bg.scripts.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
-		n=bg.scripts[i].meta.name||'Noname';s=0;
-		while(names[n]) n=bg.scripts[i].meta.name+(++s);
+	var z=new JSZip(),n,names={},s;
+	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
+		s=bg.map[bg.ids[i]];
+		n=s.meta.name||'Noname';s=0;
+		while(names[n]) n=s.meta.name+(++s);
 		names[n]=1;
-		z.file(n+'.user.js',bg.scripts[i].code);
+		z.file(n+'.user.js',s.code);
 	}
 	n=z.generate();
 	window.open('data:application/zip;base64,'+n);
@@ -251,7 +255,7 @@ function canUpdate(o,n){
 	return n.length;
 }
 function check(i){
-	var l=L.childNodes[i],s=bg.scripts[i],o=l.querySelector('[data=update]'),m=l.querySelector('.message');
+	var l=L.childNodes[i],s=bg.map[bg.ids[i]],o=l.querySelector('[data=update]'),m=l.querySelector('.message');
 	m.innerHTML=_('Checking for updates...');
 	o.classList.add('hide');
 	function update(){
@@ -290,7 +294,7 @@ var E=$('editor'),T=$('eCode'),U=$('eUpdate'),H=$('mURL'),M=$('meta'),I=$('mName
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch');
 function edit(i){
 	switchTo(E);fillHeight(T,T.nextElementSibling);
-	E.dirty=false;E.scr=bg.scripts[i];E.cur=L.childNodes[i];
+	E.dirty=false;E.scr=bg.map[bg.ids[i]];E.cur=L.childNodes[i];
 	T.value=E.scr.code;U.checked=E.scr.update;H.value=E.scr.custom.homepage||'';
 }
 function eSave(){
@@ -331,7 +335,7 @@ $('mOK').onclick=function(){
 		c._exclude=cE.checked;
 		c.exclude=split(mE.value);
 		loadItem(E.cur,E.scr);
-		bg.saveScripts();
+		bg.saveScript(E.scr);
 	}
 	closeDialog();
 };
