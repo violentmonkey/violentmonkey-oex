@@ -83,8 +83,8 @@ function getNameURI(i){
 		saveItem('version_storage',0.4);
 	}
 })();
-var ids=getItem('ids',[]),map;
-generateMap();
+var ids=getItem('ids',[]),map={};
+ids.forEach(function(i){map[i]=getItem('vm:'+i);});
 function vacuum(callback){
 	setTimeout(function(){
 		var k,s,i,ns={},r;
@@ -122,15 +122,16 @@ function newScript(save){
 	return r;
 }
 function generateIDs(){
-	ids=[];
+	var _ids=[],_map={};
+	ids.forEach(function(i){if(map[i]) {_ids.push(i);_map[i]=map[i];}});
 	for(var i=0;i<widget.preferences.length;i++) {
 		k=widget.preferences.key(i);
 		s=k.match(/^vm:(.*)/);
-		if(s) ids.push(JSON.parse(widget.preferences.getItem(k)).id);
+		if(!s) continue; s=s[1];
+		if(!_map[s]) _ids.push((_map[s]=getItem(k)).id);
 	}
-	saveIDs();generateMap();
+	ids=_ids;map=_map;saveIDs();
 }
-function generateMap(){map={};ids.forEach(function(i){map[i]=getItem('vm:'+i);});}
 function saveIDs(){saveItem('ids',ids);}
 function saveScript(i){
 	if(!map[i.id]) {ids.push(i.id);saveIDs();}
@@ -170,7 +171,7 @@ function findScript(e,url){
 	if(url.substr(0,5)!='data:') ids.forEach(function(i){
 		if(testURL(url,map[i])) c.push(map[i]);
 	});
-	e.source.postMessage({topic:'FoundScript',data:[isApplied,c]});
+	e.source.postMessage({topic:'FoundScript',data:{isApplied:isApplied,data:c}});
 }
 function loadCache(e,d){
 	for(var i in d) d[i]=getString('cache:'+i);

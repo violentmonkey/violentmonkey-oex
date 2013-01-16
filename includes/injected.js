@@ -159,21 +159,20 @@ function runScript(e){
 	if(!e||e.type=='DOMNodeInserted') onDOMNodeInserted();
 }
 function loadScript(data){
-	var isApplied=data[0];data=data[1];
-	for(var i=0;i<data.length;i++) {
-		scr.push(data[i].id);
-		if(isApplied&&data[i].enabled) {
-			var l;
-			switch(data[i].meta['run-at']){
+	var l;
+	data.data.forEach(function(i){
+		scr.push(i.id);
+		if(data.isApplied&&i.enabled) {
+			switch(i.meta['run-at']){
 				case 'document-start': l=start;break;
 				case 'document-body': l=body;break;
 				default: l=end;
 			}
-			l.push(data[i]);
-			(data[i].meta.require||[]).forEach(function(i){cache[i]=null;});
-			for(l in data[i].meta.resources) cache[data[i].meta.resources[l]]=null;
+			l.push(i);
+			if(i.meta.require) i.meta.require.forEach(function(i){cache[i]=null;});
+			for(l in i.meta.resources) cache[i.meta.resources[l]]=null;
 		}
-	}
+	});
 	opera.extension.postMessage({topic:'LoadCache',data:cache});
 }
 function wrapFunction(o,i,c){
