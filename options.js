@@ -140,8 +140,6 @@ function load() {
 	bg.ids.forEach(function(i){addItem(bg.map[i]);});
 	updateMove(L.firstChild);updateMove(L.lastChild);
 }
-load();
-bg.optionsLoad(window);
 $('bNew').onclick=function(){
 	var d=bg.newScript(true);d=addItem(d);
 	updateMove(d);updateMove(d.previousSibling);
@@ -342,3 +340,6 @@ $('mOK').onclick=function(){
 $('eSave').onclick=eSave;
 $('eSaveClose').onclick=function(){eSave();eClose();};
 E.close=$('eClose').onclick=function(){if(confirmCancel(E)) eClose();};
+// Allow fixing unexpected errors
+load();
+bg.optionsLoad(window);

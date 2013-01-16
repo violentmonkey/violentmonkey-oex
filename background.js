@@ -170,7 +170,7 @@ function findScript(e,url){
 	if(url.substr(0,5)!='data:') ids.forEach(function(i){
 		if(testURL(url,map[i])) c.push(map[i]);
 	});
-	e.source.postMessage({topic:'FoundScript',data:c});
+	e.source.postMessage({topic:'FoundScript',data:[isApplied,c]});
 }
 function loadCache(e,d){
 	for(var i in d) d[i]=getString('cache:'+i);
@@ -222,7 +222,7 @@ function parseScript(e,d,c){
 		if(i<0) c=newScript(); else c=map[ids[i]];
 	}
 	meta.custom=c.meta.custom;c.meta=meta;c.code=d;
-	if(e&&e.origin&&!c.meta.homepage) c.custom.homepage=e.origin;
+	if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
 	saveScript(c);
 	meta.require.forEach(fetchCache);	// @require
 	for(var j in meta.resources) fetchCache(meta.resources[j]);	// @resource

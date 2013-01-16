@@ -159,9 +159,10 @@ function runScript(e){
 	if(!e||e.type=='DOMNodeInserted') onDOMNodeInserted();
 }
 function loadScript(data){
+	var isApplied=data[0];data=data[1];
 	for(var i=0;i<data.length;i++) {
 		scr.push(data[i].id);
-		if(data[i].enabled) {
+		if(isApplied&&data[i].enabled) {
 			var l;
 			switch(data[i].meta['run-at']){
 				case 'document-start': l=start;break;
