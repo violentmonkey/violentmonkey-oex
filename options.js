@@ -194,7 +194,7 @@ $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
 A.close=$('aClose').onclick=function(){
-	bg.search=bg.saveItem('search',$('tSearch').value);
+	bg.saveString('search',bg.search=$('tSearch').value);
 	closeDialog();
 };
 
