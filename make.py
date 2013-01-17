@@ -8,7 +8,7 @@ class packager:
     name=None
     commands=['help','load']
     ex_dir=re.compile('(^\.git)')
-    ex_file=re.compile('(^\.git|\.py$|\.oex$|^[^\.]*$)')
+    ex_file=re.compile('(^\.git|\.(py|oex|md)$|^[^\.]*$)')
     def __init__(self):
         print('Packager for Opera addons - designed by Gerald\nType "help" for more information.')
         if self.cmd_load(): return self.cmd_pack()

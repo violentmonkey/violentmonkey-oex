@@ -1,15 +1,15 @@
 function getString(key,def){
 	var v=widget.preferences.getItem(key);
-	if(key==null) return def;
+	if(v==null) return def;
 	return v;
 }
 function saveString(key,val){widget.preferences.setItem(key,val);}
 function getItem(key,def){
 	var v=widget.preferences.getItem(key);
-	if(v==null&&def) return saveItem(key,def);
+	if(v==null&&def) return setItem(key,def);
 	try{return JSON.parse(v);}catch(e){return def;}
 }
-function saveItem(key,val){
+function setItem(key,val){
 	widget.preferences.setItem(key,JSON.stringify(val));
 	return val;
 }
@@ -76,11 +76,11 @@ function getNameURI(i){
 		}
 		var s=getItem('search'),_s=[];if(s) saveString('search',s);
 		widget.preferences.removeItem('scripts');
-		scripts&&scripts.forEach(function(i){_s.push(i.id);saveItem('vm:'+i.id,i);});
-		saveItem('ids',_s);
+		scripts&&scripts.forEach(function(i){_s.push(i.id);setItem('vm:'+i.id,i);});
+		setItem('ids',_s);
 		widget.preferences.removeItem('cache');
 		if(cache) for(i in cache) saveString('cache:'+i,cache[i]);
-		saveItem('version_storage',0.4);
+		setItem('version_storage',0.4);
 	}
 })();
 var ids=getItem('ids',[]),map={};
@@ -132,10 +132,10 @@ function generateIDs(){
 	}
 	ids=_ids;map=_map;saveIDs();
 }
-function saveIDs(){saveItem('ids',ids);}
+function saveIDs(){setItem('ids',ids);}
 function saveScript(i){
 	if(!map[i.id]) {ids.push(i.id);saveIDs();}
-	saveItem('vm:'+i.id,map[i.id]=i);
+	setItem('vm:'+i.id,map[i.id]=i);
 }
 function removeScript(i){
 	i=ids.splice(i,1)[0];saveIDs();delete map[i];

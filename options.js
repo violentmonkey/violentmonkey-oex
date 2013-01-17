@@ -148,7 +148,7 @@ $('bUpdate').onclick=function(){
 	for(var i=0;i<bg.ids.length;i++) if(allowUpdate(bg.map[bg.ids[i]])) check(i);
 };
 if(!($('cDetail').checked=bg.getItem('showDetails',false))) L.classList.add('simple');
-$('cDetail').onchange=function(){L.classList.toggle('simple');bg.saveItem('showDetails',this.checked);};
+$('cDetail').onchange=function(){L.classList.toggle('simple');bg.setItem('showDetails',this.checked);};
 var panel=N;
 function switchTo(D){
 	panel.classList.add('hide');D.classList.remove('hide');panel=D;
@@ -186,9 +186,9 @@ function bindChange(e,d){
 var A=$('advanced');
 $('bAdvanced').onclick=function(){showDialog(A);};
 $('cShow').checked=bg.getItem('showButton',true);
-$('cShow').onchange=function(){bg.showButton(bg.saveItem('showButton',this.checked));};
+$('cShow').onchange=function(){bg.showButton(bg.setItem('showButton',this.checked));};
 $('cInstall').checked=bg.installFile;
-$('cInstall').onchange=function(){bg.saveItem('installFile',bg.installFile=this.checked);};
+$('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};

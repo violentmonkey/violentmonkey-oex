@@ -57,7 +57,7 @@ function load(e,data){
 		}});
 	}
 	addItem(_('Scripts enabled'),true,{holder:pT,data:bg.isApplied,onclick:function(e){
-		bg.saveItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
+		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
 	if(data&&data[1]&&data[1].length) {
 		pT.appendChild(document.createElement('hr'));
