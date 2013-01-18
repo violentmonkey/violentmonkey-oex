@@ -171,7 +171,7 @@ O.onclick=function(){
 	if(dialogs.length) (dialogs[dialogs.length-1].close||closeDialog)();
 };
 function confirmCancel(D){
-	return !D.dirty||confirm(_('Modifications are not saved!\nClick OK to discard them or Cancel to stay.'));
+	return !D.dirty||confirm(_('Modifications are not saved!'));
 }
 function bindChange(e,d){
 	function change(){d.forEach(function(i){i.dirty=true;});}
@@ -217,11 +217,11 @@ $('bSelect').onclick=function(){
 	for(i=0;i<c.length;i++) if(v) c[i].classList.add('selected'); else c[i].classList.remove('selected');
 };
 $('bExport').onclick=function(){
-	var z=new JSZip(),n,names={},s;
+	var z=new JSZip(),n,names={},s,i;
 	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
 		s=bg.map[bg.ids[i]];
-		n=s.meta.name||'Noname';s=0;
-		while(names[n]) n=s.meta.name+(++s);
+		n=s.meta.name||'Noname';i=0;
+		while(names[n]) n=s.meta.name+(++i);
 		names[n]=1;
 		z.file(n+'.user.js',s.code);
 	}
