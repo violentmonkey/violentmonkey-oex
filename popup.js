@@ -28,7 +28,7 @@ function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
 	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
 	addItem(n,s.meta.name,{holder:pB,data:s.enabled,onclick:function(e){
-		loadItem(this,s.enabled=!s.enabled);bg.saveScript(s);
+		loadItem(this,s.enabled=!s.enabled);bg.saveScript(s);bg.optionsUpdate('save',s);
 	}});
 }
 function load(e,data){

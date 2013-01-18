@@ -87,27 +87,27 @@ var ids=getItem('ids',[]),map={};
 ids.forEach(function(i){map[i]=getItem('vm:'+i);});
 function vacuum(callback){
 	setTimeout(function(){
-		var k,s,i,ns={},r;
+		var k,s,i,ns={},cc={};
 		ids.forEach(function(i){
 			k=map[i];
 			ns[getNameURI(k)]=1;
-			r=[];
-			if(k.meta.icon) r.push(k.meta.icon);
-			if(k.meta.require) r=r.concat(k.meta.require);
-			if(k.meta.resources) r=r.concat(k.meta.resources);
-			r.forEach(function(i){if(widget.preferences.getItem('cache:'+i)==null) fetchCache(i);});
+			if(k.meta.icon) cc[k.meta.icon]=1;
+			if(k.meta.require) k.meta.require.forEach(function(i){cc[i]=1;});
+			if(k.meta.resources) for(i in k.meta.resources) cc[i]=1;
 		});
+		for(i in cc) if(widget.preferences.getItem('cache:'+i)==null) fetchCache(i);
 		for(i=0;i<widget.preferences.length;) {
 			k=widget.preferences.key(i);
-			s=k.match(/^val:([^:]*:[^:]*:[^:]*)/);
-			if(s&&!ns[s[1]]) widget.preferences.removeItem(k); else i++;
+			if((s=k.match(/^val:([^:]*:[^:]*:[^:]*)/))&&!ns[s[1]]) widget.preferences.removeItem(k);
+			else if((s=k.match(/^cache:(.*)/))&&!cc[s[1]]) widget.preferences.removeItem(k);
+			else i++;
 		}
 		generateIDs();
 		if(callback) callback();
 	},0);
 }
 
-function newMeta(){return {name:'New Script',namespace:'',version:null};}
+function newMeta(){return {name:'New Script',namespace:'',version:''};}
 function newScript(save){
 	var r={
 		custom:{},
@@ -138,6 +138,7 @@ function saveScript(i){
 	setItem('vm:'+i.id,map[i.id]=i);
 }
 function removeScript(i){
+	optionsUpdate('remove',i);
 	i=ids.splice(i,1)[0];saveIDs();delete map[i];
 	widget.preferences.removeItem('vm:'+i);
 }
@@ -210,7 +211,7 @@ function fetchCache(url){
 }
 
 function parseScript(e,d,c){
-	var i,meta=parseMeta(d);
+	var i,meta=parseMeta(d),t='update';
 	if(!c) {
 		if(meta.name) {
 			if(!meta.namespace) meta.namespace='';
@@ -220,18 +221,17 @@ function parseScript(e,d,c){
 			}
 			if(i==ids.length) i=-1;
 		} else i=-1;
-		if(i<0) c=newScript(); else c=map[ids[i]];
-	}
+		if(i<0) {c=newScript();t='add';i=ids.length;}
+		else c=map[ids[i]];
+	} else i=Array.prototype.indexOf.call(ids,c.id);
 	meta.custom=c.meta.custom;c.meta=meta;c.code=d;
 	if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
 	saveScript(c);
 	meta.require.forEach(fetchCache);	// @require
-	for(var j in meta.resources) fetchCache(meta.resources[j]);	// @resource
+	for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
 	if(meta.icon) fetchCache(meta.icon);	// @icon
-	if(e) {
-		e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
-		optionsUpdate();
-	}
+	optionsUpdate(t,i);
+	if(e) e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
 }
 function installScript(e,url){
 	if(!url) {
@@ -321,12 +321,14 @@ function showButton(show){
 	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
-function optionsUpdate(){	// update loaded options pages
+function optionsUpdate(t,j){	// update loaded options pages
+	if(typeof j!='number') j=Array.prototype.indexOf.call(ids,j.id);
+	if(j<0) return;
 	var i=0;
 	while(i<_options.length)
 		if(_options[i].closed) _options.splice(i,1);
 		else {
-			try{_options[i].load();}catch(e){opera.postError(e);}
+			try{_options[i].updateItem(t,j);}catch(e){opera.postError(e);}
 			i++;
 		}
 }

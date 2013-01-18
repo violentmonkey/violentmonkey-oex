@@ -56,7 +56,7 @@ function getIcon(n){
 	}
 	return 'images/icon64.png';
 }
-function loadItem(d,n){
+function loadItem(d,n,m){
 	if(!n.enabled) d.className='disabled';
 	d.innerHTML='<img class=icon>'
 	+'<a class="name ellipsis"></a>'
@@ -82,6 +82,7 @@ function loadItem(d,n){
 	}
 	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
+	if(m) d.querySelector('.message').innerHTML=m;
 }
 function addItem(n){
 	var d=document.createElement('div');
@@ -117,12 +118,10 @@ L.onclick=function(e){
 				o.innerText=_('Enable');
 			}
 			bg.saveScript(e);
+			bg.optionsUpdate('save',i);
 			break;
 		case 'remove':
 			bg.removeScript(i);
-			L.removeChild(p);
-			if(!i) updateMove(L.firstChild);
-			if(i>=L.childNodes.length) updateMove(L.lastChild);
 			break;
 		case 'update':
 			check(i);
@@ -135,11 +134,6 @@ L.onclick=function(e){
 			break;
 	}
 };
-function load() {
-	L.innerHTML='';
-	bg.ids.forEach(function(i){addItem(bg.map[i]);});
-	updateMove(L.firstChild);updateMove(L.lastChild);
-}
 $('bNew').onclick=function(){
 	var d=bg.newScript(true);d=addItem(d);
 	updateMove(d);updateMove(d.previousSibling);
@@ -173,7 +167,9 @@ function closeDialog(){
 		setTimeout(function(){O.classList.add('hide');},500);
 	}
 }
-O.onclick=function(){(dialogs[dialogs.length-1].close||closeDialog)();};
+O.onclick=function(){
+	if(dialogs.length) (dialogs[dialogs.length-1].close||closeDialog)();
+};
 function confirmCancel(D){
 	return !D.dirty||confirm(_('Modifications are not saved!\nClick OK to discard them or Cancel to stay.'));
 }
@@ -340,6 +336,20 @@ $('mOK').onclick=function(){
 $('eSave').onclick=eSave;
 $('eSaveClose').onclick=function(){eSave();eClose();};
 E.close=$('eClose').onclick=function(){if(confirmCancel(E)) eClose();};
-// Allow fixing unexpected errors
-load();
+
+// Load at last
+L.innerHTML='';
+bg.ids.forEach(function(i){addItem(bg.map[i]);});
+updateMove(L.firstChild);updateMove(L.lastChild);
+function updateItem(c,i){
+	var p=L.childNodes[i],n=bg.map[bg.ids[i]];
+	if(c=='add') addItem(n);
+	else if(c=='update') loadItem(p,n,_('Update finished!'));
+	else if(c=='save') loadItem(p,n);
+	else if(c=='remove') {
+		L.removeChild(p);
+		if(!i) updateMove(L.firstChild);
+		if(i>=L.childNodes.length) updateMove(L.lastChild);
+	}
+}
 bg.optionsLoad(window);
