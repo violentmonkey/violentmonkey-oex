@@ -57,7 +57,6 @@ function getIcon(n){
 	return 'images/icon64.png';
 }
 function loadItem(d,n,m){
-	if(!n.enabled) d.className='disabled';
 	d.innerHTML='<img class=icon>'
 	+'<a class="name ellipsis"></a>'
 	+'<span class=author></span>'
@@ -72,6 +71,7 @@ function loadItem(d,n,m){
 		+'<button data=up class=move>'+_('Up')+'</button>'
 		+'<button data=down class=move>'+_('Down')+'</button>'
 	+'</div>';
+	d.className=n.enabled?'':'disabled';
 	with(d.querySelector('.icon')) src=getIcon(n);
 	with(d.querySelector('.name')) {
 		var name=n.custom.name||n.meta.name;
