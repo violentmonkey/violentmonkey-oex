@@ -195,9 +195,9 @@ A.close=$('aClose').onclick=function(){
 };
 
 // Export
-var X=$('export'),xL=$('xList');
+var X=$('export'),xL=$('xList'),xE=$('bExport');
 function xLoad() {
-	xL.innerHTML='';
+	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
 		d.className='ellipsis';
@@ -216,7 +216,8 @@ $('bSelect').onclick=function(){
 	v=i<c.length;
 	for(i=0;i<c.length;i++) if(v) c[i].classList.add('selected'); else c[i].classList.remove('selected');
 };
-$('bExport').onclick=function(){
+xE.onclick=function(){
+	this.disabled=true;this.innerHTML=_('Exporting...');
 	var z=new JSZip(),n,names={},s,i,j;
 	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
 		s=bg.map[bg.ids[i]];
@@ -227,6 +228,7 @@ $('bExport').onclick=function(){
 	}
 	n=z.generate();
 	window.open('data:application/zip;base64,'+n);
+	X.close();
 };
 X.close=$('bClose').onclick=closeDialog;
 
