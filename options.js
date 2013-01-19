@@ -217,11 +217,11 @@ $('bSelect').onclick=function(){
 	for(i=0;i<c.length;i++) if(v) c[i].classList.add('selected'); else c[i].classList.remove('selected');
 };
 $('bExport').onclick=function(){
-	var z=new JSZip(),n,names={},s,i;
+	var z=new JSZip(),n,names={},s,i,j;
 	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
 		s=bg.map[bg.ids[i]];
-		n=s.meta.name||'Noname';i=0;
-		while(names[n]) n=s.meta.name+(++i);
+		n=s.custom.name||s.meta.name||'Noname';j=0;
+		while(names[n]) n=s.meta.name+(++j);
 		names[n]=1;
 		z.file(n+'.user.js',s.code);
 	}
