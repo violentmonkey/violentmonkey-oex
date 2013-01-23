@@ -3,7 +3,7 @@ function getString(key,def){
 	if(v==null) return def;
 	return v;
 }
-function saveString(key,val){widget.preferences.setItem(key,val);}
+function setString(key,val){widget.preferences.setItem(key,val||'');}
 function getItem(key,def){
 	var v=widget.preferences.getItem(key);
 	if(v==null&&def) return setItem(key,def);
@@ -74,12 +74,12 @@ function getNameURI(i){
 			widget.preferences.removeItem(k);
 			widget.preferences.setItem('val:'+m[2]+':'+m[1]+':'+m[3],v);
 		}
-		var s=getItem('search'),_s=[];if(s) saveString('search',s);
+		var s=getItem('search'),_s=[];if(s) setString('search',s);
 		widget.preferences.removeItem('scripts');
 		scripts&&scripts.forEach(function(i){_s.push(i.id);setItem('vm:'+i.id,i);});
 		setItem('ids',_s);
 		widget.preferences.removeItem('cache');
-		if(cache) for(i in cache) saveString('cache:'+i,cache[i]);
+		if(cache) for(i in cache) setString('cache:'+i,cache[i]);
 		setItem('version_storage',0.4);
 	}
 })();
@@ -117,7 +117,7 @@ function newScript(save){
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
 	};
-	do{r.id=Math.random();}while(widget.preferences.getItem('vm:'+r.id));
+	r.id=Date.now()+Math.random().toString().substr(1);
 	if(save) saveScript(r);
 	return r;
 }
@@ -206,7 +206,7 @@ function fetchURL(url,callback,type){
 }
 function fetchCache(url){
 	fetchURL(url,function(){
-		saveString('cache:'+url,String.fromCharCode.apply(this,this.response));
+		setString('cache:'+url,String.fromCharCode.apply(this,this.response));
 	},'arraybuffer');	// Opera 11.64 does not support Blob
 }
 
@@ -242,7 +242,7 @@ function installScript(e,url){
 // Requests
 var requests={};
 function getRequestId(e){
-	do{var id=Math.random();}while(requests[id]);
+	var id=Date.now()+'.'+Math.random().toString().substr(1);
 	requests[id]=new XMLHttpRequest();
 	e.source.postMessage({topic:'GotRequestId',data:id});
 }
@@ -254,6 +254,7 @@ function httpRequest(e,details){
 		};
 		if(type) d.data.type=type;
 		return function(evt){	// evt is undefined for Opera 11.64
+			if(evt&&evt.type) d.data.type=evt.type;
 			d.data.data={
 				readyState:req.readyState,
 				responseHeaders:req.getAllResponseHeaders(),

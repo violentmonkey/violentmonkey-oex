@@ -190,7 +190,7 @@ $('bDefSearch').onclick=function(){$('tSearch').value=bg.search=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
 A.close=$('aClose').onclick=function(){
-	bg.saveString('search',bg.search=$('tSearch').value);
+	bg.setString('search',bg.search=$('tSearch').value);
 	closeDialog();
 };
 
@@ -348,10 +348,7 @@ function updateItem(c,i){
 	if(c=='add') addItem(n);
 	else if(c=='update') loadItem(p,n,_('Update finished!'));
 	else if(c=='save') loadItem(p,n);
-	else if(c=='remove') {
-		L.removeChild(p);
-		if(!i) updateMove(L.firstChild);
-		if(i>=L.childNodes.length) updateMove(L.lastChild);
-	}
+	else if(c=='remove') {L.removeChild(p);if(i==L.childNodes.length) i--;}
+	updateMove(L.childNodes[i]);
 }
 bg.optionsLoad(window);
