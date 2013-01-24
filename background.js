@@ -18,50 +18,46 @@ function getNameURI(i){
 	if(!ns&&!n) k+=i.id;return k;
 }
 
-/* ==========Data format 0.3 (Obsoleted)===========
- * List	[
- * 	Item	{
- * 		id:	Random
- * 		custom:	List-Dict	// Custom meta data
- * 		meta:	List-Dict
- *		enabled:	Boolean
- *		update:	Boolean
- *		code:	String
- *	 	}
- * 	]
- */
-/* ===========Storage 0.1 (Obsoleted)==============
- * scriptVals:(escape(name)):(escape(namespace)):key=data
- */
+// Multilingual
+var i18nMessages={};
+function loadMessages(locale){
+	var filename='messages.json';
+	if(locale) filename='locales/'+locale+'/'+filename;
+	var req=new XMLHttpRequest();
+	req.open('GET',filename,false);
+	req.send();
+	var j=JSON.parse(req.responseText);
+	for(var i in j) i18nMessages[i]=j[i];
+}
+function getI18nString(s) {return i18nMessages[s]||s;}
+var _=getI18nString;
+try{loadMessages();}catch(e){opera.postError(e);}
+function format(){
+	var a=arguments;
+	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return a[g1||g2]||v;});
+}
+
 /* ===============Data format 0.4==================
  * ids	List [id]
- * vm:id	JSON-Item
+ * vm:id	Item	{
+ * 			id:	Random
+ * 			custom:	List-Dict	// Custom meta data
+ * 			meta:	List-Dict
+ *			enabled:	Boolean
+ *			update:	Boolean
+ *			code:	String
+ *	 	}
  * val:nameURI:key	TypeString
  * cache:url	BinaryString
  */
 
 (function(){	// upgrade data
 	var version=getItem('version_storage',0),scripts=getItem('scripts');
-	if(version<0.1) {
-		for(var i=0;i<widget.preferences.length;i++) {
-			var k=widget.preferences.key(i);
-			if(/^scriptVals\//.test(k)) {
-				var v=JSON.parse(widget.preferences.getItem(k));
-				widget.preferences.removeItem(k);
-				k=k.match(/^scriptVals\/([^\/]*)\/(.*)/);
-				if(!k) continue;
-				k[1]=decodeURIComponent(k[1]);
-				k='scriptVals:'+escape(k[1])+':'+escape(k[2])+':';
-				for(var j in v) widget.preferences.setItem(k+j,JSON.stringify(v[j]));
-			}
-		}
-	}
-	if(version<0.3) {
-		scripts&&scripts.forEach(function(i){
-			if(!i.custom) i.custom={};
-			if('url' in i) {i.custom.homepage=i.url;delete i.url;}
-		});
-	}
+	if(version<0.3) scripts&&scripts.forEach(function(i){
+		if(!i.id) i.id=Date.now()+Math.random().toString().substr(1);
+		if(!i.custom) i.custom={};
+		if('url' in i) {i.custom.homepage=i.url;delete i.url;}
+	});
 	if(version<0.4) {
 		var i,cache=getItem('cache');
 		for(i=0;i<widget.preferences.length;i++) {
@@ -89,7 +85,7 @@ function vacuum(callback){
 	setTimeout(function(){
 		var k,s,i,ns={},cc={};
 		ids.forEach(function(i){
-			k=map[i];
+			k=map[i];if(!k) return;
 			ns[getNameURI(k)]=1;
 			if(k.meta.icon) cc[k.meta.icon]=1;
 			if(k.meta.require) k.meta.require.forEach(function(i){cc[i]=1;});
@@ -282,25 +278,6 @@ function abortRequest(e,id){
 	var req=requests[id];
 	if(req) req.abort();
 	delete requests[id];
-}
-
-// Multilingual
-var i18nMessages={};
-function loadMessages(locale){
-	var filename='messages.json';
-	if(locale) filename='locales/'+locale+'/'+filename;
-	var req=new XMLHttpRequest();
-	req.open('GET',filename,false);
-	req.send();
-	var j=JSON.parse(req.responseText);
-	for(var i in j) i18nMessages[i]=j[i];
-}
-function getI18nString(s) {return i18nMessages[s]||s;}
-var _=getI18nString;
-try{loadMessages();}catch(e){opera.postError(e);}
-function format(){
-	var a=arguments;
-	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return a[g1||g2]||v;});
 }
 
 var isApplied=getItem('isApplied',true),installFile=getItem('installFile',true),
