@@ -182,6 +182,15 @@ function wrapFunction(o,i,c){
 	f.prototype=new p();*/
 	return f;
 }
+function each(obj, fn) {
+	if(typeof Object.getOwnPropertyNames === 'function') {
+		Object.getOwnPropertyNames(obj).forEach(fn);
+	} else {
+		for(var i in obj) {
+			fn(i);
+		}
+	}
+}
 function wrapper(c){
 	var t=this;
 	t.unsafeWindow=window;
@@ -246,18 +255,14 @@ function wrapper(c){
 	t.VM_info={version:widget.version};
 	// functions and properties
 	function wrapWindow(w){return w==window?t:w;}
-	for(var i in window) try{
+	each(window, function(i) { try {
 		if(typeof window[i]=='function') t[i]=wrapFunction(window,i,wrapWindow);
-		else if(typeof window[i]=='object') t[i]=wrapWindow(window[i]);
-		else (function(i){
-			Object.defineProperty(t,i,{
-				get:function(){return wrapWindow(window[i]);},
-				set:function(v){window[i]=v;},
-				enumerable:true,
-				configurable:true
-			});
-		})(i);
-	} catch(e) {}	// avoid reading protected data*/
+		else if(window[i] instanceof Object) t[i]=wrapWindow(window[i]);
+		else {
+			t.__defineGetter__(i, function() {return wrapWindow(window[i]);});
+			t.__defineSetter__(i, function(v) { window[i] = v; });
+		}
+	} catch(e) {}});	// avoid reading protected data*/
 }
 wrapper.prototype=window;
 opera.extension.postMessage({topic:'FindScript',data:window.location.href});
