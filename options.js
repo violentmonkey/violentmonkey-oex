@@ -153,7 +153,7 @@ function showDialog(D,z){
 		O.classList.remove('hide');
 		setTimeout(function(){O.classList.add('overlay');},1);
 	}
-	if(!z) z=dialogs.length?dialogs[dialogs.length-1].zIndex:1;
+	if(!z) z=dialogs.length?dialogs[dialogs.length-1].zIndex+1:1;
 	dialogs.push(D);
 	O.style.zIndex=D.style.zIndex=D.zIndex=z;
 	D.classList.remove('hide');
@@ -162,7 +162,7 @@ function showDialog(D,z){
 }
 function closeDialog(){
 	dialogs.pop().classList.add('hide');
-	if(dialogs.length) O.style.zIndex=dialogs.length;
+	if(dialogs.length) O.style.zIndex=dialogs.length>1?dialogs[dialogs.length-1]:1;
 	else {
 		O.classList.remove('overlay');
 		setTimeout(function(){O.classList.add('hide');},500);
