@@ -118,10 +118,11 @@ L.onclick=function(e){
 				o.innerText=_('Enable');
 			}
 			bg.saveScript(e);
-			bg.optionsUpdate('save',i);
 			break;
 		case 'remove':
-			bg.removeScript(i);
+			bg.removeScript(i--);
+			L.removeChild(p);
+			updateMove(L.childNodes[i]);
 			break;
 		case 'update':
 			check(i);
@@ -265,11 +266,8 @@ function check(i){
 		req=new window.XMLHttpRequest();
 		req.open('GET', s.meta.downloadURL, true);
 		req.onload=function(){
-			if(req.status==200) {
-				bg.parseScript(null,req.responseText,s);
-				l.querySelector('.version').innerHTML=s.meta.version?'v'+s.meta.version:'';
-				m.innerHTML=_('Update finished!');
-			} else m.innerHTML=_('Update failed!');
+			var r=bg.parseScript(null,{status:req.status,code:req.responseText},s);
+			if(r) m.innerHTML=r;
 			o.classList.remove('hide');
 		};
 		req.send();
@@ -358,12 +356,12 @@ E.close=$('eClose').onclick=function(){if(confirmCancel(!T.isClean())) eClose();
 L.innerHTML='';
 bg.ids.forEach(function(i){addItem(bg.map[i]);});
 updateMove(L.firstChild);updateMove(L.lastChild);
-function updateItem(c,i){
+function updateItem(t,i,r){
 	var p=L.childNodes[i],n=bg.map[bg.ids[i]];
-	if(c=='add') {addItem(n);updateMove(L.childNodes[i-1]);}
-	else if(c=='update') loadItem(p,n,_('Update finished!'));
-	else if(c=='save') loadItem(p,n);
-	else if(c=='remove') {L.removeChild(p);if(i==L.childNodes.length) i--;}
+	switch(t){
+		case 'add':addItem(n);updateMove(L.childNodes[i-1]);break;
+		case 'update':loadItem(p,n,r);break;
+	}
 	updateMove(L.childNodes[i]);
-}
-bg.optionsLoad(window);
+};
+if(!bg.options.window) bg.options.window=window;

@@ -1,4 +1,3 @@
-(function(){
 /**
  *  Base64 encode / decode
  *  http://www.webtoolkit.info/
@@ -53,7 +52,7 @@ function utf8decode (utftext) {
 
 // Messages
 var requests={},qrequests=[];
-opera.extension.addEventListener('message', function(e) {
+opera.extension.onmessage = function(e) {
 	var message=e.data,c;
 	if(message.topic=='FoundScript') loadScript(message.data);
 	else if(message.topic=='HttpRequested') {
@@ -67,7 +66,7 @@ opera.extension.addEventListener('message', function(e) {
 	} else if(message.topic=='ConfirmInstall') confirmInstall(message.data);
 	else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
 	else if(message.topic=='ShowMessage') showMessage(message.data);
-}, false);
+};
 function showMessage(data){
 	var d=document.createElement('div');
 	d.style='position:fixed;top:40%;left:40%;right:40%;border-radius:5px;background:orange;padding:20px;z-index:9999;box-shadow:5px 10px 15px rgba(0,0,0,0.4);transition:opacity 1s linear;opacity:0;text-align:left;';
@@ -81,7 +80,7 @@ function showMessage(data){
 function confirmInstall(data){
 	if(!data||!confirm(data)) return;
 	if(installCallback) installCallback();
-	else opera.extension.postMessage({topic:'ParseScript',data:document.body.innerText});
+	else opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText}});
 }
 function Request(details){
 	this.callback=function(d){
@@ -263,4 +262,3 @@ function wrapper(c){
 	for(n in window.Window.prototype) wrapItem(n);
 }
 opera.extension.postMessage({topic:'FindScript',data:window.location.href});
-})();

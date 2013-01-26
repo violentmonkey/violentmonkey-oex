@@ -134,9 +134,10 @@ function saveScript(i){
 	setItem('vm:'+i.id,map[i.id]=i);
 }
 function removeScript(i){
-	optionsUpdate('remove',i);
-	i=ids.splice(i,1)[0];saveIDs();delete map[i];
+	i=ids.splice(i,1)[0];saveIDs();
+	var o=map[i];delete map[i];
 	widget.preferences.removeItem('vm:'+i);
+	return o;
 }
 
 function str2RE(s){return s.replace(/(\.|\?|\/)/g,'\\$1').replace(/\*/g,'.*?');}
@@ -202,37 +203,41 @@ function fetchURL(url,callback,type){
 }
 function fetchCache(url){
 	fetchURL(url,function(){
-		setString('cache:'+url,String.fromCharCode.apply(this,this.response));
+		if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
 	},'arraybuffer');	// Opera 11.64 does not support Blob
 }
 
 function parseScript(e,d,c){
-	var i,meta=parseMeta(d),t='update';
-	if(!c) {
-		if(meta.name) {
-			if(!meta.namespace) meta.namespace='';
-			for(i=0;i<ids.length;i++) {
-				c=map[ids[i]];
-				if(c.meta.name==meta.name&&c.meta.namespace==meta.namespace) break;
-			}
-			if(i==ids.length) i=-1;
-		} else i=-1;
-		if(i<0) {c=newScript();t='add';i=ids.length;}
-		else c=map[ids[i]];
-	} else i=Array.prototype.indexOf.call(ids,c.id);
-	meta.custom=c.meta.custom;c.meta=meta;c.code=d;
-	if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
-	saveScript(c);
-	meta.require.forEach(fetchCache);	// @require
-	for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
-	if(meta.icon) fetchCache(meta.icon);	// @icon
-	optionsUpdate(t,i);
-	if(e) e.source.postMessage({topic:'ShowMessage',data:_('Script installed.')});
+	var r={error:0,message:_('Script updated.')},t,i;
+	if(d.status&&d.status!=200) {r.error=-1;r.message=_('Error fetching script!');}
+	else {
+		var meta=parseMeta(d.code);t='update';
+		if(!c) {
+			if(meta.name) {
+				if(!meta.namespace) meta.namespace='';
+				for(i=0;i<ids.length;i++) {
+					c=map[ids[i]];
+					if(c.meta.name==meta.name&&c.meta.namespace==meta.namespace) break;
+				}
+				if(i==ids.length) i=-1;
+			} else i=-1;
+			if(i<0) {c=newScript();t='add';r.message=_('Script installed.');i=ids.length;}
+			else c=map[ids[i]];
+		} else i=Array.prototype.indexOf.call(ids,c.id);
+		meta.custom=c.meta.custom;c.meta=meta;c.code=d.code;
+		if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
+		saveScript(c);
+		meta.require.forEach(fetchCache);	// @require
+		for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
+		if(meta.icon) fetchCache(meta.icon);	// @icon
+	}
+	if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
+	if(r.error) return r.message; else optionsUpdate(t,i,r.message);
 }
 function installScript(e,url){
 	if(!url) {
 		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
-	} else fetchURL(url,function(){parseScript(e,this.responseText);});
+	} else fetchURL(url,function(){parseScript(e,{status:this.status,code:this.responseText});});
 }
 
 // Requests
@@ -281,7 +286,7 @@ function abortRequest(e,id){
 }
 
 var isApplied=getItem('isApplied',true),installFile=getItem('installFile',true),
-    button,_options=[],messages={
+    search=getString('search',_('Search$1')),messages={
 	'FindScript':findScript,
 	'LoadCache':loadCache,
 	'InstallScript':installScript,
@@ -299,35 +304,26 @@ function showButton(show){
 	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
-function optionsUpdate(t,j){	// update loaded options pages
+function optionsUpdate(t,j,r){	// update loaded options pages
 	if(typeof j!='number') j=Array.prototype.indexOf.call(ids,j.id);
-	if(j<0) return;
-	var i=0;
-	while(i<_options.length)
-		if(_options[i].closed) _options.splice(i,1);
-		else {
-			try{_options[i].updateItem(t,j);}catch(e){opera.postError(e);}
-			i++;
-		}
+	if(j>=0&&options&&options.window)
+		try{options.window.updateItem(t,j,r);}catch(e){opera.postError(e);options={};}
 }
-function optionsLoad(w){
-	var i=0;
-	while(i<_options.length)
-		if(_options[i].closed) _options.splice(i,1);
-		else {if(_options[i]==w) w=null;i++;}
-	if(w) _options.push(w);
-}
-window.addEventListener('DOMContentLoaded', function() {
-	opera.extension.onmessage = onMessage;
-	button = opera.contexts.toolbar.createItem({
-		title:_('Violentmonkey'),
-		popup:{
-			href:"popup.html",
-			width:222,
-			height:100
-		}
-	});
-	search=getString('search',_('Search$1'));
-	updateIcon();
-	showButton(getItem('showButton',true));
-}, false);
+opera.extension.onmessage = onMessage;
+var button = opera.contexts.toolbar.createItem({
+	title:_('Violentmonkey'),
+	popup:{
+		href:"popup.html",
+		width:222,
+		height:100
+	}
+    }),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
+updateIcon();
+showButton(getItem('showButton',true));
+opera.extension.tabs.oncreate=function(e){
+	if(optionsURL.test(e.tab.url)) {
+		if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
+		else options={tab:e.tab};
+	}
+};
+opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
