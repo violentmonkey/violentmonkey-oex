@@ -5,10 +5,12 @@
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link rel="stylesheet" type="text/css" href="lib/codemirror.css" />
 		<link rel="stylesheet" type="text/css" href="lib/javascript.css" />
+		<link rel="shortcut icon" type="image/png" href="images/icon18.png" />
 		<script type="text/javascript" src="lib/codemirror.js"></script>
+		<script type="text/javascript" src="lib/matchbrackets.js"></script>
+		<script type="text/javascript" src="lib/continuecomment.js"></script>
 		<script type="text/javascript" src="lib/javascript.js"></script>
 		<script type="text/javascript" src="lib/jszip.js"></script>
-		<link rel="shortcut icon" type="image/png" href="images/icon18.png" />
 		<title class=i18n>Options - Violentmonkey</title>
 	</head>
 	<body class=fill>
@@ -33,7 +35,9 @@
 		</div>
 		<div id=overlay class=hide></div>
 		<div id=editor class="float hide">
-			<h2 class="i18n inline">Script Editor</h2><button id=custom class=i18n>Custom meta data</button>
+			<h2 class="i18n inline">Script Editor</h2>
+			<button id=bcustom class=i18n>Custom meta data</button>
+			<button id=beditor></button>
 			<textarea id=eCode></textarea>
 			<div class=left><input type=checkbox id=eUpdate><label for=eUpdate class=i18n>Allow update</label></div>
 			<div class=right>
@@ -80,7 +84,7 @@
 		<div id=advanced class="float hide">
 			<h2 class=i18n>Advanced</h2>
 			<div><input type=checkbox id=cShow><label for=cShow class=i18n>Show button on toolbar</label></div>
-			<div><input type=checkbox id=cInstall><label for=cInstall class=i18n>Allow installing .user.js files loaded by Opera.</label></div>
+			<div><input type=checkbox id=cInstall><label for=cInstall class=i18n>Allow installing .user.js files</label></div>
 			<div>
 				<label class=i18n>Search URL: </label><span class=i18n>Search hint</span> <button id=bDefSearch class=i18n>Default</button><br>
 				<textarea id=tSearch></textarea>

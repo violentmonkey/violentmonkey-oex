@@ -223,7 +223,7 @@ function parseScript(e,d,c){
 			} else i=-1;
 			if(i<0) {c=newScript();t='add';r.message=_('Script installed.');i=ids.length;}
 			else c=map[ids[i]];
-		} else i=Array.prototype.indexOf.call(ids,c.id);
+		} else i=ids.indexOf(c.id);
 		meta.custom=c.meta.custom;c.meta=meta;c.code=d.code;
 		if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
 		saveScript(c);
@@ -305,7 +305,7 @@ function showButton(show){
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
 function optionsUpdate(t,j,r){	// update loaded options pages
-	if(typeof j!='number') j=Array.prototype.indexOf.call(ids,j.id);
+	if(typeof j!='number') j=ids.indexOf(j.id);
 	if(j>=0&&options&&options.window)
 		try{options.window.updateItem(t,j,r);}catch(e){opera.postError(e);options={};}
 }
