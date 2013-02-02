@@ -68,8 +68,8 @@ function loadItem(d,n,m){
 		+'<button data=edit>'+_('Edit')+'</button> '
 		+'<button data=enable>'+_(n.enabled?'Disable':'Enable')+'</button> '
 		+'<button data=remove>'+_('Remove')+'</button>'
-		+'<button data=up class=move>'+_('Up')+'</button>'
-		+'<button data=down class=move>'+_('Down')+'</button>'
+		+'<button data=up class=move>'+_('&uarr;')+'</button>'
+		+'<button data=down class=move>'+_('&darr;')+'</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
 	with(d.querySelector('.icon')) src=getIcon(n);
@@ -195,7 +195,7 @@ $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.c
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
-$('aVacuum').onclick=function(){var t=this;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');t.disabled=true;});};
+$('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');});};
 A.close=$('aClose').onclick=function(){
 	bg.setString('search',bg.search=$('tSearch').value);
 	closeDialog();
