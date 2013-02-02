@@ -158,8 +158,8 @@ function testURL(url,e){
 	if(e.custom.match) mat=mat.concat(e.custom.match);
 	if(e.custom._exclude!=false&&e.meta.exclude) exc=exc.concat(e.meta.exclude);
 	if(e.custom.exclude) exc=exc.concat(e.custom.exclude);
-	for(i=0;i<mat.length;i++) if(f=match_test(mat[i])) break;	// @match
-	for(i=0;i<inc.length;i++) if(f=reg(inc[i]).test(url)) break;	// @include
+	if(mat.length) {for(i=0;i<mat.length;i++) if(f=match_test(mat[i])) break;}	// @match
+	else for(i=0;i<inc.length;i++) if(f=reg(inc[i]).test(url)) break;	// @include
 	if(f) for(i=0;i<exc.length;i++) if(!(f=!reg(exc[i]).test(url))) break;	// @exclude
 	return f;
 }
