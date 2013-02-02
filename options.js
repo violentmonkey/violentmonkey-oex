@@ -225,13 +225,12 @@ $('bSelect').onclick=function(){
 };
 xE.onclick=function(){
 	this.disabled=true;this.innerHTML=_('Exporting...');
-	var z=new JSZip(),n,names={},s,i,j;
+	var z=new JSZip(),n,_n,names={},c,i,j;
 	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
-		s=bg.map[bg.ids[i]];
-		n=s.custom.name||s.meta.name||'Noname';j=0;
-		while(names[n]) n=s.meta.name+(++j);
-		names[n]=1;
-		z.file(n+'.user.js',s.code);
+		c=bg.map[bg.ids[i]];
+		n=_n=c.custom.name||c.meta.name||'Noname';j=0;
+		while(names[n]) n=_n+(++j);names[n]=1;
+		z.file(n+'.user.js',c.code);
 	}
 	n=z.generate();
 	window.open('data:application/zip;base64,'+n);
@@ -278,7 +277,7 @@ function check(i){
 		try {
 			var r=bg.parseMeta(req.responseText);
 			if(canUpdate(s.meta.version,r.version)) return update();
-			else m.innerHTML=_('No update is found!');
+			else m.innerHTML=_('No update found.');
 		} catch(e) {
 			m.innerHTML=_('Failed fetching update information.');
 			opera.postError(e);

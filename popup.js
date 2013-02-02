@@ -13,7 +13,7 @@ function loadItem(d,c){
 	}
 }
 function addItem(h,t,c){
-	var d=document.createElement('label'),s='';
+	var d=document.createElement('div'),s='';
 	d.innerHTML='<span></span>'+h;
 	if(t) {if(typeof t!='string') t=h;d.title=t;}
 	d.className='ellipsis';

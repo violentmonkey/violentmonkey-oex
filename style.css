@@ -48,9 +48,9 @@ textarea{width:100%;border:none;margin:0;padding:0;}
 .list>div{display:block;padding:2px 10px;cursor:pointer;border-bottom:1px dashed lightgray;}
 .list .selected{background:gray;color:white;}
 #export .list{width:400px;height:420px;}
-.menu>label{cursor:pointer;padding:5px;display:block;}
-.menu>label:hover{background:gray;color:gold;}
-.menu>label.disabled{color:gray;}
-.menu>label.disabled:hover{color:silver;}
-.menu>label span{display:inline-block;width:20px;}
+.menu>div{cursor:pointer;padding:5px;display:block;}
+.menu>div:hover{background:gray;color:gold;}
+.menu>div.disabled{color:gray;}
+.menu>div.disabled:hover{color:silver;}
+.menu>div span{display:inline-block;width:20px;}
 .menu>hr{border:none;border-top:1px dashed gray;}
