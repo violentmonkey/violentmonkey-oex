@@ -130,13 +130,13 @@ if(/\.user\.js$/.test(window.location.href)) (function(){
 var start=[],body=[],end=[],cache={},scr=[],menu=[],command={};
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
-	code.push('try{');
+	code.push('try{(function(){');
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
-	code.push('}catch(e){opera.postError(e+"\\n"+e.stacktrace);}');
+	code.push('})();}catch(e){opera.postError(e+"\\n"+e.stacktrace);}');
 	this.code=code.join('\n');
 	try{with(w) eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 }
@@ -225,10 +225,9 @@ function wrapper(c){
 		return b;
 	});
 	addProperty('GM_addStyle',function(css){
-		if(!document.head) return;
 		var v=document.createElement('style');
 		v.innerHTML=css;
-		document.head.appendChild(v);
+		(document.head||document.documentElement).appendChild(v);
 		return v;
 	});
 	addProperty('GM_log',console.log);
@@ -259,6 +258,6 @@ function wrapper(c){
 		}catch(e){}
 	}
 	Object.getOwnPropertyNames(window).forEach(wrapItem);
-	for(n in window.Window.prototype) wrapItem(n);
+	for(n in window.Window?window.Window.prototype:window) wrapItem(n);
 }
 opera.extension.postMessage({topic:'FindScript',data:window.location.href});
