@@ -28,7 +28,7 @@
 				<div class=x></div>
 			</div>
 			<fieldset id=fMain class=main>
-				<legend><span class=i18n>Installed Scripts</span> <input type=checkbox id=cDetail><label for=cDetail class=i18n>Show details</label></legend>
+				<legend><span class=i18n>Installed Scripts</span> <label><input type=checkbox id=cDetail><span class=i18n>Show details</span></label></legend>
 				<div id=sList></div>
 			</fieldset>
 			<div id=footer class="i18n main">Designed by Gerald</div>
@@ -39,7 +39,7 @@
 			<button id=bcustom class=i18n>Custom meta data</button>
 			<button id=beditor></button>
 			<textarea id=eCode></textarea>
-			<div class=left><input type=checkbox id=eUpdate><label for=eUpdate class=i18n>Allow update</label></div>
+			<label class=left><input type=checkbox id=eUpdate><span class=i18n>Allow update</span></label>
 			<div class=right>
 				<button id=eSave class=i18n>Save</button>
 				<button id=eSaveClose class=i18n>Save and Close</button>
@@ -47,31 +47,40 @@
 			</div>
 		</div>
 		<div id=meta class="float hide">
-			<div><label class=i18n for=mName>Name: </label><input type=text id=mName></div>
-			<div><label class=i18n for=mURL>Homepage: </label><input type=text id=mURL></div>
+			<label><span class=i18n>Name: </span><input type=text id=mName></label>
+			<label><span class=i18n>Homepage: </span><input type=text id=mURL></label>
+			<label>
+				<span class=i18n>Run at: </span>
+				<select id=mRunAt>
+					<option class=i18n value=0>default</option>
+					<option value=1>document-start</option>
+					<option value=2>document-body</option>
+					<option value=3>document-end</option>
+				</select>
+			</label>
 			<fieldset>
 				<legend class=i18n>Includes</legend>
-				<div><input type=checkbox id=cInclude><label for=cInclude class=i18n>Keep original include rules</label></div>
-				<label class=i18n>Custom include rules:</label>
+				<label><input type=checkbox id=cInclude><span class=i18n>Keep original include rules</span></label>
+				<span class=i18n>Custom include rules:</span>
 				<textarea id=mInclude></textarea>
 			</fieldset>
 			<fieldset>
 				<legend class=i18n>Matches</legend>
-				<div><input type=checkbox id=cMatch><label for=cMatch class=i18n>Keep original match rules</label></div>
-				<label class=i18n>Custom match rules:</label>
+				<label><input type=checkbox id=cMatch><span class=i18n>Keep original match rules</span></label>
+				<span class=i18n>Custom match rules:</span>
 				<textarea id=mMatch></textarea>
 			</fieldset>
 			<fieldset>
 				<legend class=i18n>Excludes</legend>
-				<div><input type=checkbox id=cExclude><label for=cExclude class=i18n>Keep original exclude rules</label></div>
-				<label class=i18n>Custom exclude rules:</label>
+				<label><input type=checkbox id=cExclude><span class=i18n>Keep original exclude rules</span></label>
+				<span class=i18n>Custom exclude rules:</span>
 				<textarea id=mExclude></textarea>
 			</fieldset>
 			<div class=right><button id=mOK class=i18n>OK</button> <button id=mCancel class=i18n>Cancel</button></div>
 		</div>
 		<div id=export class="float hide">
 			<h2 class=i18n>Data Export</h2>
-			<label class=i18n>Installed Scripts</label>
+			<span class=i18n>Installed Scripts</span>
 			<div class=right>
 				<button id=bSelect class=i18n>All/None</button>
 			</div>
@@ -83,15 +92,15 @@
 		</div>
 		<div id=advanced class="float hide">
 			<h2 class=i18n>Advanced</h2>
-			<div><input type=checkbox id=cShow><label for=cShow class=i18n>Show button on toolbar</label></div>
-			<div><input type=checkbox id=cInstall><label for=cInstall class=i18n>Allow installing .user.js files</label></div>
+			<label><input type=checkbox id=cShow><span class=i18n>Show button on toolbar</span></label>
+			<label><input type=checkbox id=cInstall><span class=i18n>Allow installing .user.js files</span></label>
 			<div>
-				<label class=i18n>Search URL: </label><span class=i18n>Search hint</span> <button id=bDefSearch class=i18n>Default</button><br>
+				<span class=i18n>Search URL: </span><span class=i18n>Search hint</span> <button id=bDefSearch class=i18n>Default</button><br>
 				<textarea id=tSearch></textarea>
 			</div>
 			<fieldset>
 				<legend class=i18n>Data</legend>
-				<button id=aExport class=i18n>Export to zip file</button><br>
+				<button id=aExport class=i18n>Export scripts to a zip file</button><br>
 				<button id=aVacuum class=i18n>Vacuum data</button> <span class=i18n>Vacuum hint</span>
 			</fieldset>
 			<div class=right><button id=aClose class=i18n>Close</button></div>

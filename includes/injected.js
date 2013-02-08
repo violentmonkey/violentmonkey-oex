@@ -63,8 +63,9 @@ opera.extension.onmessage = function(e) {
 		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
-	} else if(message.topic=='ConfirmInstall') confirmInstall(message.data);
-	else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
+	} else if(message.topic=='ConfirmInstall') {
+		if(message.data&&confirm(message.data)&&installCallback) installCallback();
+	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
 	else if(message.topic=='ShowMessage') showMessage(message.data);
 };
 function showMessage(data){
@@ -76,11 +77,6 @@ function showMessage(data){
 	d.onclick=close;	// close immediately
 	setTimeout(function(){d.style.opacity=1;},1);	// fade in
 	setTimeout(function(){d.style.opacity=0;setTimeout(close,1000);},3000);	// fade out
-}
-function confirmInstall(data){
-	if(!data||!confirm(data)) return;
-	if(installCallback) installCallback();
-	else opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText}});
 }
 function Request(details){
 	this.callback=function(d){
@@ -112,13 +108,19 @@ function Request(details){
 
 // For UserScripts installation
 var installCallback=null;
-if(/\.user\.js$/.test(window.location.href)) (function(){
+if((function(){
+	var m=window.location.href.match(/(\.user\.js)$/);
 	function install(){
-		if(document&&document.body&&!document.querySelector('title')) opera.extension.postMessage({topic:'InstallScript'});
+		if(document&&document.body&&!document.querySelector('title')) {	// plain text
+			installCallback=function(){opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText}});};
+			opera.extension.postMessage({topic:'InstallScript'});
+		}
 	}
-	if(document.readyState!='complete') window.addEventListener('load',install,false);
-	else  install();
-})(); else if(window.location.host=='userscripts.org') window.addEventListener('click',function(e){
+	if(m){
+		if(document.readyState!='complete') window.addEventListener('load',install,false);
+		else install();
+	}else return true;
+})()&&window.location.host=='userscripts.org') window.addEventListener('click',function(e){
 	if(/\.user\.js$/.test(e.target.href)) {
 		e.preventDefault();
 		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:e.target.href});};
@@ -165,7 +167,7 @@ function loadScript(data){
 	data.data.forEach(function(i){
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
-			switch(i.meta['run-at']){
+			switch(i.custom['run-at']||i.meta['run-at']){
 				case 'document-start': l=start;break;
 				case 'document-body': l=body;break;
 				default: l=end;
@@ -260,4 +262,4 @@ function wrapper(c){
 	Object.getOwnPropertyNames(window).forEach(wrapItem);
 	for(n in window.Window?window.Window.prototype:window) wrapItem(n);
 }
-opera.extension.postMessage({topic:'FindScript',data:window.location.href});
+if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});

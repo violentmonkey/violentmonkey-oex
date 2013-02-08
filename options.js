@@ -288,7 +288,7 @@ function check(i){
 }
 
 // Script Editor
-var E=$('editor'),U=$('eUpdate'),H=$('mURL'),M=$('meta'),I=$('mName'),
+var E=$('editor'),U=$('eUpdate'),H=$('mURL'),R=$('mRunAt'),M=$('meta'),I=$('mName'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch');
 function editor(e,i){
@@ -356,10 +356,17 @@ function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
 bindChange([U,H],[E]);
 $('bcustom').onclick=function(){
-	var e=[],c=E.scr.custom;M.dirty=false;
-	showDialog(M,10);fillWidth(I);fillWidth(H);
+	var e=[],c=E.scr.custom;
+	M.dirty=false;showDialog(M,10);
+	fillWidth(I);fillWidth(H);
 	I.value=c.name||'';
 	H.value=c.homepage||'';
+	switch(c['run-at']){
+		case 'document-start':R.value=1;break;
+		case 'document-body':R.value=2;break;
+		case 'document-end':R.value=3;break;
+		default:R.value=0;
+	}
 	cI.checked=c._include!=false;
 	mI.value=(c.include||e).join('\n');
 	cM.checked=c._match!=false;
@@ -367,14 +374,20 @@ $('bcustom').onclick=function(){
 	cE.checked=c._exclude!=false;
 	mE.value=(c.exclude||e).join('\n');
 };
-bindChange([I,H,mI,mM,mE,cI,cM,cE],[M]);
+bindChange([I,H,R,mI,mM,mE,cI,cM,cE],[M]);
 M.close=function(){if(confirmCancel(M.dirty)) closeDialog();};
 $('mCancel').onclick=closeDialog;
 $('mOK').onclick=function(){
 	if(M.dirty) {
-		var c=E.scr.custom;
+		var c=E.scr.custom,r=R.value;
 		c.name=I.value;
 		c.homepage=H.value;
+		switch(r){
+			case 1:c['run-at']='document-start';break;
+			case 2:c['run-at']='document-body';break;
+			case 3:c['run-at']='document-end';break;
+			default:delete c['run-at'];
+		}
 		c._include=cI.checked;
 		c.include=split(mI.value);
 		c._match=cM.checked;
