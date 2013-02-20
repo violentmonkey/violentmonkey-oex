@@ -1,6 +1,6 @@
 function getString(key,def){
 	var v=widget.preferences.getItem(key);
-	if(v==null) return def;
+	if(v==null) (v=def)&&widget.preferences.setItem(key,v);
 	return v;
 }
 function setString(key,val){widget.preferences.setItem(key,val||'');}
