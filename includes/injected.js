@@ -129,10 +129,11 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache={},scr=[],menu=[],command={};
+var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
-	code.push('try{(function(){');
+	elements.forEach(function(i){code.push(i+'=window.'+i);});
+	code=['try{(function(){var '+code.join(',')+';'];
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
@@ -142,25 +143,20 @@ function run_code(c){
 	this.code=code.join('\n');
 	try{with(w) eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 }
-function runScript(e){
-	function onreadystatechange(){
-		var i=['loading','interactive','complete'].indexOf(document.readyState);
-		if(i>=0) while(start.length) new run_code(start.shift());
-		if(i>=1) while(end.length) new run_code(end.shift());
+function runStart(){while(start.length) new run_code(start.shift());}
+function runBody(){
+	if(document.body) {
+		window.removeEventListener('DOMNodeInserted',runBody,true);
+		while(body.length) new run_code(body.shift());
 	}
-	function onDOMNodeInserted(){
-		if(document.body) {
-			window.removeEventListener('DOMNodeInserted',runScript,false);
-			while(body.length) new run_code(body.shift());
-		}
-	}
-	if(!e||e.type=='readystatechange') onreadystatechange();
-	if(!e||e.type=='DOMNodeInserted') onDOMNodeInserted();
 }
+function runEnd(){while(end.length) new run_code(end.shift());}
 function initRunScript(data){
-	if(data) cache=data;document.onreadystatechange=runScript;
-	window.addEventListener('DOMNodeInserted',runScript,false);
-	runScript();
+	if(data) cache=data;
+	window.addEventListener('DOMNodeInserted',runBody,true);
+	window.addEventListener('DOMContentLoaded',runEnd,false);
+	runStart();runBody();
+	if(document.readyState=='complete') runEnd();
 }
 function loadScript(data){
 	var l,c=null;
@@ -182,8 +178,8 @@ function loadScript(data){
 }
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
-	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;
-	function addProperty(name,prop){t[name]=prop;}
+	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;elements=[];
+	function addProperty(name,prop){t[name]=prop;elements.push(name);}
 	var resources=c.meta.resources||{};
 	addProperty('unsafeWindow',window);
 	// GM functions
