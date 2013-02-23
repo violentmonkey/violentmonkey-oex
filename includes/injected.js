@@ -58,8 +58,7 @@ opera.extension.onmessage = function(e) {
 	else if(message.topic=='HttpRequested') {
 		c=requests[message.data.id];
 		if(c) c.callback(message.data);
-	} else if(message.topic=='LoadedCache') initRunScript(message.data);
-	else if(message.topic=='GetPopup')
+	} else if(message.topic=='GetPopup')
 		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
@@ -133,13 +132,13 @@ var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=window.'+i);});
-	code=['try{(function(){var '+code.join(',')+';'];
+	code=['(function(){var '+code.join(',')+';try{'];
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
-	code.push('})();}catch(e){opera.postError(e+"\\n"+e.stacktrace);}');
+	code.push('}catch(e){opera.postError(e+"\\n"+e.stacktrace);}})();');
 	this.code=code.join('\n');
 	try{with(w) eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 }
@@ -151,15 +150,8 @@ function runBody(){
 	}
 }
 function runEnd(){while(end.length) new run_code(end.shift());}
-function initRunScript(data){
-	if(data) cache=data;
-	window.addEventListener('DOMNodeInserted',runBody,true);
-	window.addEventListener('DOMContentLoaded',runEnd,false);
-	runStart();runBody();
-	if(document.readyState=='complete') runEnd();
-}
 function loadScript(data){
-	var l,c=null;
+	var l;
 	data.data.forEach(function(i){
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
@@ -169,17 +161,20 @@ function loadScript(data){
 				default: l=end;
 			}
 			l.push(i);
-			if(i.meta.require) i.meta.require.forEach(function(i){cache[c=i]=null;});
-			for(l in i.meta.resources) cache[c=i.meta.resources[l]]=null;
 		}
 	});
-	if(c) opera.extension.postMessage({topic:'LoadCache',data:cache});
-	else initRunScript();
+	cache=data.cache;
+	runStart();
+	window.addEventListener('DOMNodeInserted',runBody,true);
+	window.addEventListener('DOMContentLoaded',runEnd,false);
+	runBody();
+	if(document.readyState=='complete') runEnd();
 }
+function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
 	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;elements=[];
-	function addProperty(name,prop){t[name]=prop;elements.push(name);}
+	function addProperty(name,prop){t[name]=prop;t[name].toString=propertyToString;elements.push(name);}
 	var resources=c.meta.resources||{};
 	addProperty('unsafeWindow',window);
 	// GM functions

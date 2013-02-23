@@ -9,4 +9,6 @@
   <update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
   <description xml:lang="en">UserScript support for Opera.</description>
   <description xml:lang="zh">为Opera提供UserScript支持。</description>
+  <description xml:lang="fr">UserScript support for Opera.</description>
+  <description xml:lang="cs">UserScript support for Opera.</description>
 </widget>

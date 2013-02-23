@@ -164,16 +164,16 @@ function testURL(url,e){
 	return f;
 }
 function findScript(e,url){
-	var i,c=[],v;
+	var i,j,c=[],cache={};
 	url=url||e.origin;	// to recognize URLs like data:...
+	function getCache(i){cache[i]=getString('cache:'+i);}
 	if(url.substr(0,5)!='data:') ids.forEach(function(i){
-		if(testURL(url,map[i])) c.push(map[i]);
+		if(!testURL(url,map[i])) return;
+		c.push(i=map[i]);
+		if(i.meta.require) i.meta.require.forEach(getCache);
+		for(j in i.meta.resources) getCache(i.meta.resources[j]);
 	});
-	e.source.postMessage({topic:'FoundScript',data:{isApplied:isApplied,data:c}});
-}
-function loadCache(e,d){
-	for(var i in d) d[i]=getString('cache:'+i);
-	e.source.postMessage({topic:'LoadedCache',data:d});
+	e.source.postMessage({topic:'FoundScript',data:{isApplied:isApplied,data:c,cache:cache}});
 }
 function parseMeta(d,meta){
 	var o=-1;
@@ -288,7 +288,6 @@ function abortRequest(e,id){
 var isApplied=getItem('isApplied',true),installFile=getItem('installFile',true),
     search=getString('search',_('Search$1')),messages={
 	'FindScript':findScript,
-	'LoadCache':loadCache,
 	'InstallScript':installScript,
 	'ParseScript':parseScript,
 	'GetRequestId':getRequestId,
