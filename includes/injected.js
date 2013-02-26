@@ -1,32 +1,4 @@
 /**
- *  Base64 encode / decode
- *  http://www.webtoolkit.info/
- **/
-function base64encode(input) {
-	var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-	var output = "";
-	var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-	var i = 0;
-	while (i < input.length) {
-		chr1 = input.charCodeAt(i++);
-        	chr2 = input.charCodeAt(i++);
-        	chr3 = input.charCodeAt(i++);
-		enc1 = chr1 >> 2;
-		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-		enc4 = chr3 & 63;
-		if (isNaN(chr2)) {
-			enc3 = enc4 = 64;
-		} else if (isNaN(chr3)) {
-			enc4 = 64;
-		}
-		output = output +
-		_keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
-		_keyStr.charAt(enc3) + _keyStr.charAt(enc4);
-	}
-	return output;
-}
-/**
 * http://www.webtoolkit.info/javascript-utf8.html
 */
 function utf8decode (utftext) {
@@ -132,13 +104,13 @@ var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=window.'+i);});
-	code=['(function(){var '+code.join(',')+';try{'];
+	code=['(function(){var '+code.join(',')+';'];
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
-	code.push('}catch(e){opera.postError(e+"\\n"+e.stacktrace);}})();');
+	code.push('})();');
 	this.code=code.join('\n');
 	try{with(w) eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 }
@@ -183,11 +155,13 @@ function wrapper(c){
 	addProperty('GM_getValue',function(key,def){
 		var v=widget.preferences.getItem(ckey+key);
 		if(v==null) return def;
-		def=v.substr(1);
-		switch(v[0]){
-			case 'n': return parseInt(def,10);
-			case 'b': return !!JSON.parse(def);
-			default: return def;
+		var t=v[0];
+		v=v.substr(1);
+		switch(t){
+			case 'n': return Number(v);
+			case 'b': return v=='true';
+			case 'o': try{return JSON.parse(v);}catch(e){opera.postError(e);return def;}
+			default: return v;
 		}
 	});
 	addProperty('GM_listValues',function(){
@@ -199,10 +173,10 @@ function wrapper(c){
 		return v;
 	});
 	addProperty('GM_setValue',function(key,val){
-		switch(typeof val){
-			case 'number':val='n'+val;break;
-			case 'boolean':val='b'+val;break;
-			default:val='s'+val;
+		var t=(typeof val)[0];
+		switch(t){
+			case 'o':val=t+JSON.stringify(val);break;
+			default:val=t+val;
 		}
 		widget.preferences.setItem(ckey+key,val);
 	});
@@ -214,7 +188,7 @@ function wrapper(c){
 	});
 	addProperty('GM_getResourceURL',function(name){
 		var b=getCache(name);
-		if(b) b='data:;base64,'+base64encode(b);
+		if(b) b='data:;base64,'+btoa(b);
 		return b;
 	});
 	addProperty('GM_addStyle',function(css){
@@ -234,12 +208,11 @@ function wrapper(c){
 	addProperty('VM_info',{version:widget.version});
 	// functions and properties
 	function wrapFunction(o,i,c){
-		var f=function(){var r=o[i].apply(o,arguments);if(c) r=c(r);return r;};
-		return f;
+		return function(){var r=o[i].apply(o,arguments);if(c) r=c(r);return r;};
 	}
 	function wrapWindow(w){return w==window?t:w;}
 	function wrapItem(i,nowrap){
-	       	try{	// avoid reading protected data*/
+		try{	// avoid reading protected data*/
 			if(typeof window[i]=='function') {
 				if(nowrap) t[i]=window[i];
 				else t[i]=wrapFunction(window,i,wrapWindow);
