@@ -316,7 +316,7 @@ var button = opera.contexts.toolbar.createItem({
 		width:222,
 		height:100
 	}
-    }),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
+}),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
 updateIcon();
 showButton(getItem('showButton',true));
 opera.extension.tabs.oncreate=function(e){

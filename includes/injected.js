@@ -76,6 +76,11 @@ function Request(details){
 	qrequests.push(this);
 	opera.extension.postMessage({topic:'GetRequestId'});
 };
+if(window===window.top) {
+	window.addEventListener('message',function(e){
+		e.data.forEach(function(i){if(!_scr[i]){_scr[i]=1;scr.push(i);}});
+	},false);
+}
 
 // For UserScripts installation
 var installCallback=null;
@@ -100,7 +105,7 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
+var start=[],body=[],end=[],cache={},scr=[],_scr={},menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=window.'+i);});
@@ -112,7 +117,7 @@ function run_code(c){
 	code.push(c.code);
 	code.push('})();');
 	this.code=code.join('\n');
-	try{with(w) eval(this.code);}catch(e){opera.postError(e+'\n'+e.stacktrace);}
+	try{with(w) eval(this.code);}catch(e){opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e+'\n'+e.stacktrace);}
 }
 function runStart(){while(start.length) new run_code(start.shift());}
 function runBody(){
@@ -125,6 +130,7 @@ function runEnd(){while(end.length) new run_code(end.shift());}
 function loadScript(data){
 	var l;
 	data.data.forEach(function(i){
+		_scr[i.id]=1;
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
@@ -136,6 +142,7 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
+	if(window!==window.top) window.top.postMessage(scr,'*');
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
