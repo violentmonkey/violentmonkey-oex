@@ -334,10 +334,10 @@ $('bcustom').onclick=function(){
 	I.value=c.name||'';
 	H.value=c.homepage||'';
 	switch(c['run-at']){
-		case 'document-start':R.value=1;break;
-		case 'document-body':R.value=2;break;
-		case 'document-end':R.value=3;break;
-		default:R.value=0;
+		case 'document-start':R.value='start';break;
+		case 'document-body':R.value='body';break;
+		case 'document-end':R.value='end';break;
+		default:R.value='default';
 	}
 	cI.checked=c._include!=false;
 	mI.value=(c.include||e).join('\n');
@@ -355,9 +355,9 @@ $('mOK').onclick=function(){
 		c.name=I.value;
 		c.homepage=H.value;
 		switch(r){
-			case 1:c['run-at']='document-start';break;
-			case 2:c['run-at']='document-body';break;
-			case 3:c['run-at']='document-end';break;
+			case 'start':c['run-at']='document-start';break;
+			case 'body':c['run-at']='document-body';break;
+			case 'end':c['run-at']='document-end';break;
 			default:delete c['run-at'];
 		}
 		c._include=cI.checked;
