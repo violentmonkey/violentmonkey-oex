@@ -11,6 +11,9 @@
 		<script type="text/javascript" src="lib/continuecomment.js"></script>
 		<script type="text/javascript" src="lib/javascript.js"></script>
 		<script type="text/javascript" src="lib/jszip.js"></script>
+		<script type="text/javascript" src="lib/jszip-deflate.js"></script>
+		<script type="text/javascript" src="lib/jszip-inflate.js"></script>
+		<script type="text/javascript" src="lib/jszip-load.js"></script>
 		<title class=i18n>Options - Violentmonkey</title>
 	</head>
 	<body class=fill>
@@ -103,7 +106,8 @@
 			</div>
 			<fieldset>
 				<legend class=i18n>Data</legend>
-				<button id=aExport class=i18n>Export scripts to a zip file</button><br>
+				<button id=aExport class=i18n>Export to zip</button><br>
+				<div id=dImport><button class=i18n>Import from zip</button><input id=aImport type=file></div>
 				<button id=aVacuum class=i18n>Vacuum data</button> <span class=i18n>Vacuum hint</span>
 			</fieldset>
 			<div class=right><button id=aClose class=i18n>Close</button></div>

@@ -94,7 +94,7 @@ L.onclick=function(e){
 		case 'remove':
 			bg.removeScript(i--);
 			L.removeChild(p);
-			updateMove(L.childNodes[i]);
+			updateMove(L.childNodes[i<0?0:i]);
 			break;
 		case 'update':
 			check(i);
@@ -167,11 +167,41 @@ $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.c
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
+$('aImport').onchange=function(e){
+	var i,f,files=e.target.files;
+	for(i=0;f=files[i];i++) {
+		var r=new FileReader();
+		r.onload=function(e){impo(e.target.result);};
+		r.readAsBinaryString(f);
+	}
+};
 $('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');});};
 A.close=$('aClose').onclick=function(){
 	bg.setString('search',bg.search=$('tSearch').value);
 	closeDialog();
 };
+
+// Import
+function impo(b){
+	var z=new JSZip();
+	try{z.load(b);}catch(e){opera.postError(_('Error loading zip file.'));return;}
+	var files=z.file(/\.user\.js$/),vm=z.file('ViolentMonkey'),count=0;
+	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){opera.postError(_('Error parsing ViolentMonkey configuration.'));}
+	files.forEach(function(o){
+		if(o.dir) return;
+		var c=null,v,i;
+		try{
+			if(vm&&(v=vm[o.name])) {
+				c=bg.map[v.id];
+				if(c) for(i in v) c[i]=v[i];
+				else c=v;
+			}
+			bg.parseScript(null,{code:o.asText()},c);
+			count++;
+		}catch(e){opera.postError(_('Error importing data: ')+o.name+'\n'+e);}
+	});
+	alert(bg.format(_('$1 item(s) are imported.'),count));
+}
 
 // Export
 var X=$('export'),xL=$('xList'),xE=$('bExport');
@@ -197,14 +227,17 @@ $('bSelect').onclick=function(){
 };
 xE.onclick=function(){
 	this.disabled=true;this.innerHTML=_('Exporting...');
-	var z=new JSZip(),n,_n,names={},c,i,j;
-	for(i=0;i<bg.ids.length;i++) if(xL.childNodes[i].classList.contains('selected')) {
-		c=bg.map[bg.ids[i]];
-		n=_n=c.custom.name||c.meta.name||'Noname';j=0;
-		while(names[n]) n=_n+(++j);names[n]=1;
-		z.file(n+'.user.js',c.code);
-	}
-	n=z.generate();
+	var z=new JSZip(),n,_n,names={},c,i,j,vm={};
+	for(i=0;i<bg.ids.length;i++)
+		if(xL.childNodes[i].classList.contains('selected')) {
+			c=bg.map[bg.ids[i]];
+			n=_n=c.custom.name||c.meta.name||'Noname';j=0;
+			while(names[n]) n=_n+(++j);names[n]=1;n+='.user.js';
+			z.file(n,c.code);
+			vm[n]={id:bg.ids[i],custom:c.custom,enabled:c.enabled,update:c.update};
+		}
+	z.file('ViolentMonkey',JSON.stringify(vm));
+	n=z.generate({compression:'DEFLATE'});
 	window.open('data:application/zip;base64,'+n);
 	X.close();
 };

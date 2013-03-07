@@ -34,7 +34,7 @@ var _=getI18nString;
 try{loadMessages();}catch(e){opera.postError(e);}
 function format(){
 	var a=arguments;
-	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return a[g1||g2]||v;});
+	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){g1=a[g1||g2];if(g1==undefined) g1=v;return g1;});
 }
 
 /* ===============Data format 0.4==================
@@ -108,7 +108,6 @@ function newScript(save){
 	var r={
 		custom:{},
 		meta:newMeta(),
-		url:'',
 		enabled:1,
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
@@ -221,10 +220,10 @@ function parseScript(e,d,c){
 				}
 				if(i==ids.length) i=-1;
 			} else i=-1;
-			if(i<0) {c=newScript();t='add';r.message=_('Script installed.');i=ids.length;}
-			else c=map[ids[i]];
+			if(i<0) c=newScript(); else c=map[ids[i]];
 		} else i=ids.indexOf(c.id);
-		meta.custom=c.meta.custom;c.meta=meta;c.code=d.code;
+		if(i<0){t='add';r.message=_('Script installed.');i=ids.length;}
+		c.meta=meta;c.code=d.code;
 		if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
 		saveScript(c);
 		meta.require.forEach(fetchCache);	// @require
