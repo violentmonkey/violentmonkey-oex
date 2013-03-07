@@ -184,9 +184,9 @@ A.close=$('aClose').onclick=function(){
 // Import
 function impo(b){
 	var z=new JSZip();
-	try{z.load(b);}catch(e){opera.postError(_('Error loading zip file.'));return;}
+	try{z.load(b);}catch(e){alert(_('Error loading zip file.'));return;}
 	var files=z.file(/\.user\.js$/),vm=z.file('ViolentMonkey'),count=0;
-	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){opera.postError(_('Error parsing ViolentMonkey configuration.'));}
+	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){opera.postError('Error parsing ViolentMonkey configuration.');}
 	files.forEach(function(o){
 		if(o.dir) return;
 		var c=null,v,i;
@@ -198,7 +198,7 @@ function impo(b){
 			}
 			bg.parseScript(null,{code:o.asText()},c);
 			count++;
-		}catch(e){opera.postError(_('Error importing data: ')+o.name+'\n'+e);}
+		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
 	alert(bg.format(_('$1 item(s) are imported.'),count));
 }
