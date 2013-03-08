@@ -185,9 +185,9 @@ A.close=$('aClose').onclick=function(){
 function impo(b){
 	var z=new JSZip();
 	try{z.load(b);}catch(e){alert(_('Error loading zip file.'));return;}
-	var files=z.file(/\.user\.js$/),vm=z.file('ViolentMonkey'),count=0;
+	var vm=z.file('ViolentMonkey'),count=0;
 	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){opera.postError('Error parsing ViolentMonkey configuration.');}
-	files.forEach(function(o){
+	z.file(/\.user\.js$/).forEach(function(o){
 		if(o.dir) return;
 		var c=null,v,i;
 		try{

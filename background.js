@@ -53,11 +53,6 @@ function format(){
 
 (function(){	// upgrade data
 	var version=getItem('version_storage',0),scripts=getItem('scripts');
-	if(version<0.3) scripts&&scripts.forEach(function(i){
-		if(!i.id) i.id=Date.now()+Math.random().toString().substr(1);
-		if(!i.custom) i.custom={};
-		if('url' in i) {i.custom.homepage=i.url;delete i.url;}
-	});
 	if(version<0.4) {
 		var i,cache=getItem('cache');
 		for(i=0;i<widget.preferences.length;i++) {
@@ -197,13 +192,20 @@ function fetchURL(url,callback,type){
 	var req=new XMLHttpRequest();
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
-	if(callback) req.onload=callback;
+	if(callback) req.onloadend=callback;
 	req.send();
 }
 function fetchCache(url){
 	fetchURL(url,function(){
 		if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
-	},'arraybuffer');	// Opera 11.64 does not support Blob
+	},'arraybuffer');
+	/*	Not supported by Opera 11.64
+	fetchURL(url,function(){
+		if(this.status!=200) return;
+		var r=new FileReader();
+		r.onload=function(e){setString('cache:'+url,e.target.result);};
+		r.readAsBinaryString(this.response);
+	},'blob');*/
 }
 
 function parseScript(e,d,c){
