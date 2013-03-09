@@ -41,9 +41,10 @@ opera.extension.onmessage = function(e) {
 };
 function showMessage(data){
 	var d=document.createElement('div');
-	d.style='position:fixed;top:40%;left:40%;right:40%;border-radius:5px;background:orange;padding:20px;z-index:9999;box-shadow:5px 10px 15px rgba(0,0,0,0.4);transition:opacity 1s linear;opacity:0;text-align:left;';
-	d.innerHTML=data;
-	document.body.appendChild(d);
+	d.style='position:fixed;border-radius:5px;background:orange;padding:20px;z-index:9999;box-shadow:5px 10px 15px rgba(0,0,0,0.4);transition:opacity 1s linear;opacity:0;text-align:left;';
+	document.body.appendChild(d);d.innerHTML=data;
+	d.style.top=(window.innerHeight-d.offsetHeight)/2+'px';
+	d.style.left=(window.innerWidth-d.offsetWidth)/2+'px';
 	function close(){document.body.removeChild(d);delete d;}
 	d.onclick=close;	// close immediately
 	setTimeout(function(){d.style.opacity=1;},1);	// fade in

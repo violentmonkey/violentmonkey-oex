@@ -192,21 +192,16 @@ function fetchURL(url,cb,type){
 	var req=new XMLHttpRequest();
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
-	if(cb) req.onload=req.onerror=cb;
-	//if(cb) req.onloadend=cb;	// Not supported in Opera 11.64
+	if(cb) req.onloadend=cb;
 	req.send();
 }
 function fetchCache(url){
-	fetchURL(url,function(){
-		if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
-	},'arraybuffer');
-	/*	Not supported in Opera 11.64
 	fetchURL(url,function(){
 		if(this.status!=200) return;
 		var r=new FileReader();
 		r.onload=function(e){setString('cache:'+url,e.target.result);};
 		r.readAsBinaryString(this.response);
-	},'blob');*/
+	},'blob');
 }
 
 function parseScript(e,d,c){
@@ -250,7 +245,7 @@ function getRequestId(e){
 	e.source.postMessage({topic:'GotRequestId',data:id});
 }
 function httpRequest(e,details){
-	function callback(evt){	// evt is undefined for Opera 11.64
+	function callback(evt){
 		var d={
 			topic:'HttpRequested',
 			data:{
@@ -274,9 +269,7 @@ function httpRequest(e,details){
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){
-			req['on'+i]=function(){callback({type:i});};	// Compatible with Opera 11.64
-		});
+		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=callback;});
 		req.send(details.data);
 		if(!details.id) callback()();
 	}catch(e){opera.postError(e);}
