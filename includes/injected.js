@@ -71,14 +71,16 @@ function Request(details){
 			overrideMimeType:details.overrideMimeType,
 		}});
 	};
-	this.abort=function(){opera.extension.postMessage({topic:'AbortRequest',data:this.id});};
-	this.req={abort:this.abort};
+	this.req={
+		abort:function(){opera.extension.postMessage({topic:'AbortRequest',data:this.id});}
+	};
 	qrequests.push(this);
 	opera.extension.postMessage({topic:'GetRequestId'});
 };
 if(window===window.top) {
 	window.addEventListener('message',function(e){
-		e.data.forEach(function(i){if(!_scr[i]){_scr[i]=1;scr.push(i);}});
+		e=e.data;
+		if(e&&e.topic=='VM_Scripts') e.data.forEach(function(i){if(!_scr[i]){_scr[i]=1;scr.push(i);}});
 	},false);
 }
 
@@ -142,7 +144,7 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
-	if(window!==window.top) window.top.postMessage(scr,'*');
+	if(window!==window.top) window.top.postMessage({topic:'VM_Scripts',data:scr},'*');
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);

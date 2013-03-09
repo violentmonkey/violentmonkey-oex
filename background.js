@@ -188,18 +188,19 @@ function parseMeta(d,meta){
 	delete meta.resource;
 	return meta;
 }
-function fetchURL(url,callback,type){
+function fetchURL(url,cb,type){
 	var req=new XMLHttpRequest();
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
-	if(callback) req.onloadend=callback;
+	if(cb) req.onload=req.onerror=cb;
+	//if(cb) req.onloadend=cb;	// Not supported in Opera 11.64
 	req.send();
 }
 function fetchCache(url){
 	fetchURL(url,function(){
 		if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
 	},'arraybuffer');
-	/*	Not supported by Opera 11.64
+	/*	Not supported in Opera 11.64
 	fetchURL(url,function(){
 		if(this.status!=200) return;
 		var r=new FileReader();
@@ -249,23 +250,22 @@ function getRequestId(e){
 	e.source.postMessage({topic:'GotRequestId',data:id});
 }
 function httpRequest(e,details){
-	function callback(type){
+	function callback(evt){	// evt is undefined for Opera 11.64
 		var d={
 			topic:'HttpRequested',
-			data:{id:details.id}
+			data:{
+				id:details.id,
+				type:evt.type,
+				data:{
+					readyState:req.readyState,
+					responseHeaders:req.getAllResponseHeaders(),
+					responseText:req.responseText,
+					status:req.status,
+					statusText:req.statusText,
+				}
+			}
 		};
-		if(type) d.data.type=type;
-		return function(evt){	// evt is undefined for Opera 11.64
-			if(evt&&evt.type) d.data.type=evt.type;
-			d.data.data={
-				readyState:req.readyState,
-				responseHeaders:req.getAllResponseHeaders(),
-				responseText:req.responseText,
-				status:req.status,
-				statusText:req.statusText,
-			};
-			e.source.postMessage(d);
-		};
+		e.source.postMessage(d);
 	}
 	var i,req;
 	if(details.id) req=requests[details.id];
@@ -274,8 +274,9 @@ function httpRequest(e,details){
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		req.onload=callback('load');
-		req.onreadystatechange=callback('readystatechange');
+		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){
+			req['on'+i]=function(){callback({type:i});};	// Compatible with Opera 11.64
+		});
 		req.send(details.data);
 		if(!details.id) callback()();
 	}catch(e){opera.postError(e);}
