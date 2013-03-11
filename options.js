@@ -316,6 +316,8 @@ editor.prototype={
 					matchBrackets:true,
 					mode:'text/typescript',
 					lineWrapping:true,
+					indentUnit:4,
+					indentWithTabs:true,
 					extraKeys:{"Enter":"newlineAndIndentContinueComment"}
 				});
 			else {
