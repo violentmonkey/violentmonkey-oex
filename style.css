@@ -14,7 +14,6 @@ h2.inline+*{margin-left:20px;}
 #footer{text-align:center;}
 .left{float:left;}
 .right{float:right;}
-.tab{margin-left:20px;}
 .menu,.x{clear:both;margin:0;padding:0;}
 .hide{display:none;}
 #meta label,#advanced label{display:block;}
@@ -29,13 +28,14 @@ legend{margin-left:10px;}
 #sList.simple .descrip{display:none;}
 #sList .update{position:absolute;right:10px;top:10px;}
 #sList .message{color:gray;position:absolute;bottom:10px;left:50px;}
-#sList .disabled{color:gray;background:silver;}
 #sList .icon{width:32px;height:32px;margin:2px;position:absolute;}
 #sList .name{font-weight:bold;line-height:150%;display:inline-block;max-width:400px;margin-left:40px;}
 #sList .descrip{margin-left:40px;}
 #sList .panel{position:absolute;bottom:10px;right:10px;}
 #sList .panel>button{width:80px;}
 #sList .panel .move{width:40px;padding:1px 2px;}
+#sList .disabled{color:gray;background:silver;}
+#sList .disabled a{color:gray;}
 #overlay{background:#000;position:fixed;top:0;bottom:0;left:0;right:0;transition:all .5s linear;opacity:0;}
 #overlay.overlay{opacity:0.6;}
 .float{position:fixed;background:lightgray;margin:0 auto;padding:10px;border-radius:10px;}
@@ -44,6 +44,7 @@ legend{margin-left:10px;}
 textarea{width:100%;border:none;margin:0;padding:0;}
 #advanced{padding:20px;}
 #advanced fieldset{padding:10px;margin:10px;}
+#advanced fieldset>*:not(:first-child){display:inline-block;}
 #advanced legend{margin:0;}
 .list{background:white;overflow-x:hidden;overflow-y:auto;}
 .list>div{display:block;padding:2px 10px;cursor:pointer;border-bottom:1px dashed lightgray;}

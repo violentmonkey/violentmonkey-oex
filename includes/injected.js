@@ -111,14 +111,14 @@ if((function(){
 var start=[],body=[],end=[],cache={},scr=[],_scr={},menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
-	elements.forEach(function(i){code.push(i+'=window.'+i);});
+	elements.forEach(function(i){code.push(i+'=this.'+i);});
 	code=['(function(){var '+code.join(',')+';'];
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
-	code.push('})();');
+	code.push('}).apply(window,[]);');
 	this.code=code.join('\n');
 	try{with(w) eval(this.code);}catch(e){opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e+'\n'+e.stacktrace);}
 }
@@ -156,7 +156,11 @@ function propertyToString(){return 'Property for Violentmonkey: designed by Gera
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
 	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;elements=[];
-	function addProperty(name,prop){t[name]=prop;t[name].toString=propertyToString;elements.push(name);}
+	function addProperty(name,prop){
+		t[name]=prop;
+		t[name].toString=propertyToString;
+		elements.push(name);
+	}
 	var resources=c.meta.resources||{};
 	addProperty('unsafeWindow',window);
 	// GM functions
