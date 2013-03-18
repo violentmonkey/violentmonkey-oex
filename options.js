@@ -29,7 +29,7 @@ function getIcon(n){
 	return 'images/icon64.png';
 }
 function loadItem(d,n,m){
-	d.innerHTML='<img class=icon>'
+	d.innerHTML='<img class=icon src="'+getIcon(n)+'">'
 	+'<a class="name ellipsis"></a>'
 	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
@@ -44,7 +44,6 @@ function loadItem(d,n,m){
 		+'<button data=down class=move>'+_('&darr;')+'</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
-	with(d.querySelector('.icon')) src=getIcon(n);
 	with(d.querySelector('.name')) {
 		var name=n.custom.name||n.meta.name,h=n.custom.homepage||n.meta.homepage;
 		title=name||'';if(h) href=h;
