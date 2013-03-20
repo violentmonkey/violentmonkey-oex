@@ -292,11 +292,16 @@ function check(i){
 // Script Editor
 var E=$('editor'),U=$('eUpdate'),H=$('mURL'),R=$('mRunAt'),M=$('meta'),I=$('mName'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
-    cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch');
+    cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch'),
+		eS=$('eSave'),eSC=$('eSaveClose');
+CodeMirror.keyMap.vm={
+	'Esc':'close',
+	'Ctrl-S':'save',
+	fallthrough:'default'
+};
 function editor(e,i){
 	var t=this;
-	t.clean=true;
-	e.onchange=function(){t.clean=false;};
+	e.onchange=function(){t.clean=false;eS.disabled=eSC.disabled=t.isClean();};
 	e.isClean=function(){return t.clean;};
 	e.markClean=function(){t.clean=true;};
 	e.getValue=function(){return this.value;};
@@ -307,34 +312,39 @@ function editor(e,i){
 }
 editor.prototype={
 	switchEditor:function(i){
-		if(i==undefined) i=!this.type;
-		if(i!=this.type) {
-			if(this.type=!this.type)
-				this.editor=CodeMirror.fromTextArea(this.editor,{
+		var t=this;
+		if(i==undefined) i=!t.type;
+		if(i!=t.type) {
+			if(t.type=!t.type) {
+				t.editor=CodeMirror.fromTextArea(t.editor,{
 					lineNumbers:true,
 					matchBrackets:true,
 					mode:'text/typescript',
 					lineWrapping:true,
 					indentUnit:4,
 					indentWithTabs:true,
-					extraKeys:{"Enter":"newlineAndIndentContinueComment"}
+					extraKeys:{"Enter":"newlineAndIndentContinueComment"},
+					keyMap:'vm'
 				});
-			else {
-				this.clean&=this.editor.isClean();
-				this.editor.toTextArea();this.editor=this.textarea;
+				t.editor.on('change',function(){t.clean=false;eS.disabled=eSC.disabled=t.isClean();});
+			} else {
+				t.clean&=t.editor.isClean();
+				t.editor.toTextArea();t.editor=t.textarea;
 			}
-			this.type=i;
+			t.type=i;
 		}
 	},
+	clean:true,
+	focus:function(){return this.editor.focus();},
 	resize:function(){var w=this.getWrapperElement();fillHeight(w,w.nextElementSibling);},
 	isClean:function(){return this.clean&&this.editor.isClean();},
-	markClean:function(){this.clean=true;this.editor.markClean();},
+	markClean:function(){this.clean=true;this.editor.markClean();eS.disabled=eSC.disabled=true;},
 	getValue:function(){return this.editor.getValue();},
 	setValue:function(t){this.editor.setValue(t);this.editor.getDoc&&this.editor.getDoc().clearHistory();},
 	getWrapperElement:function(e){e=this.editor;return e.getWrapperElement?e.getWrapperElement():e;},
 };
 var T=new editor($('eCode'),bg.getItem('editorType',0));
-(function (b){
+(function(b){
 	function switchCommand(){
 		b.innerHTML=T.type?_('Switch to normal editor'):_('Switch to advanced editor');
 	}
@@ -346,17 +356,14 @@ var T=new editor($('eCode'),bg.getItem('editorType',0));
 function edit(i){
 	switchTo(E);E.scr=bg.map[bg.ids[i]];E.cur=L.childNodes[i];
 	U.checked=E.scr.update;H.value=E.scr.custom.homepage||'';
-	T.resize();T.setValue(E.scr.code);T.markClean();
+	T.resize();T.setValue(E.scr.code);T.markClean();T.focus();
 }
 function eSave(){
-	if(!T.isClean()){
-		E.scr.update=U.checked;E.scr.custom.homepage=H.value;
-		bg.parseScript(null,{code:T.getValue()},E.scr);
-		T.markClean();loadItem(E.cur,E.scr);
-		return true;
-	} else return false;
+	E.scr.update=U.checked;E.scr.custom.homepage=H.value;
+	bg.parseScript(null,{code:T.getValue()},E.scr);
+	T.markClean();loadItem(E.cur,E.scr);eS.disabled=eSC.disabled=true;
 }
-function eClose(){switchTo(N);E.cur=E.scr=null;}
+function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
 bindChange([U,H],[E]);
 $('bcustom').onclick=function(){
@@ -383,10 +390,10 @@ M.close=function(){if(confirmCancel(M.dirty)) closeDialog();};
 $('mCancel').onclick=closeDialog;
 $('mOK').onclick=function(){
 	if(M.dirty) {
-		var c=E.scr.custom,r=R.value;
+		var c=E.scr.custom;
 		c.name=I.value;
 		c.homepage=H.value;
-		switch(r){
+		switch(R.value){
 			case 'start':c['run-at']='document-start';break;
 			case 'body':c['run-at']='document-body';break;
 			case 'end':c['run-at']='document-end';break;
@@ -404,9 +411,10 @@ $('mOK').onclick=function(){
 	}
 	closeDialog();
 };
-$('eSave').onclick=eSave;
-$('eSaveClose').onclick=function(){eSave();eClose();};
-E.close=$('eClose').onclick=function(){if(confirmCancel(!T.isClean())) eClose();};
+eS.onclick=eSave;
+eSC.onclick=function(){eSave();eClose();};
+CodeMirror.commands.save=function(){if(!eS.disabled) setTimeout(eSave,0);};
+CodeMirror.commands.close=E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
 
 // Load at last
 L.innerHTML='';

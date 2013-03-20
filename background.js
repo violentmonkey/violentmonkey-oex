@@ -196,12 +196,14 @@ function fetchURL(url,cb,type){
 	req.send();
 }
 function fetchCache(url){
-	fetchURL(url,function(){
-		if(this.status!=200) return;
-		var r=new FileReader();
-		r.onload=function(e){setString('cache:'+url,e.target.result);};
-		r.readAsBinaryString(this.response);
-	},'blob');
+	setTimeout(function(){
+		fetchURL(url,function(){
+			if(this.status!=200) return;
+			var r=new FileReader();
+			r.onload=function(e){setString('cache:'+url,e.target.result);};
+			r.readAsBinaryString(this.response);
+		},'blob');
+	},0);
 }
 
 function parseScript(e,d,c){
