@@ -99,11 +99,10 @@ if((function(){
 		if(document.readyState!='complete') window.addEventListener('load',install,false);
 		else install();
 	}else return true;
-})()&&['userscripts.org','j.mozest.com'].indexOf(window.location.host)>=0) window.addEventListener('click',function(e){
-	var o=e.target;while(o&&o.tagName!='A') o=o.parentNode;
-	if(o&&/\.user\.js$/.test(o.href)) {
+})()&&window.location.host=='userscripts.org') window.addEventListener('click',function(e){
+	if(/\.user\.js$/.test(e.target.href)) {
 		e.preventDefault();
-		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:o.href});};
+		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:e.target.href});};
 		opera.extension.postMessage({topic:'InstallScript'});
 	}
 },false);
@@ -121,12 +120,7 @@ function run_code(c){
 	code.push(c.code);
 	code.push('}).apply(window,[]);');
 	this.code=code.join('\n');
-	try{with(w) eval(this.code);}catch(e){
-		e=e.toString()+'\n'+e.stacktrace;
-		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
-		if(i>0) e=e.substr(0,i);
-		opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e);
-	}
+	try{with(w) eval(this.code);}catch(e){opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e+'\n'+e.stacktrace);}
 }
 function runStart(){while(start.length) new run_code(start.shift());}
 function runBody(){
@@ -151,7 +145,7 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
-	if(window!==window.top) window.Window.prototype.postMessage.call(window.top,{topic:'VM_Scripts',data:scr},'*');
+	if(window!==window.top) window.top.postMessage({topic:'VM_Scripts',data:scr},'*');
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
@@ -161,40 +155,13 @@ function loadScript(data){
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
-	if(!t&&!n) ckey+=c.id;ckey+=':';t=this;
-
-	// functions and properties
-	function wrapFunction(o,i,c){
-		var f=function(){
-			var r=Function.apply.apply(o[i],[o,arguments]);
-			if(c) r=c(r);return r;
-		};
-		f.__proto__=o[i];f.prototype=o[i].prototype;
-		return f;
-	}
-	function wrapWindow(w){return w==window?t:w;}
-	function wrapItem(i){
-		try{	// avoid reading protected data*/
-			if(typeof window[i]=='function') {
-				if(itemWrapper) t[i]=itemWrapper(window,i,wrapWindow);
-				else t[i]=window[i];
-			} else {
-				t.__defineGetter__(i,function(){return wrapWindow(window[i]);});
-				t.__defineSetter__(i,function(v){window[i]=v;});
-			}
-		}catch(e){}
-	}
-	var itemWrapper=null;
-	Object.getOwnPropertyNames(window).forEach(wrapItem);
-	itemWrapper=wrapFunction;
-	for(n=Object.getPrototypeOf(window);n;n=Object.getPrototypeOf(n)) Object.getOwnPropertyNames(n).forEach(wrapItem);
-
+	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;elements=[];
 	function addProperty(name,prop){
 		t[name]=prop;
 		t[name].toString=propertyToString;
 		elements.push(name);
 	}
-	var resources=c.meta.resources||{};elements=[];
+	var resources=c.meta.resources||{};
 	addProperty('unsafeWindow',window);
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
@@ -253,5 +220,24 @@ function wrapper(c){
 		return r.req;
 	});
 	addProperty('VM_info',{version:widget.version});
+	// functions and properties
+	function wrapFunction(o,i,c){
+		return function(){var r=o[i].apply(o,arguments);if(c) r=c(r);return r;};
+	}
+	function wrapWindow(w){return w==window?t:w;}
+	function wrapItem(i,nowrap){
+		try{	// avoid reading protected data*/
+			if(typeof window[i]=='function') {
+				if(nowrap) t[i]=window[i];
+				else t[i]=wrapFunction(window,i,wrapWindow);
+			}
+			else {
+				t.__defineGetter__(i,function(){return wrapWindow(window[i]);});
+				t.__defineSetter__(i,function(v){window[i]=v;});
+			}
+		}catch(e){}
+	}
+	Object.getOwnPropertyNames(window).forEach(wrapItem);
+	for(n in window) wrapItem(n);
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
