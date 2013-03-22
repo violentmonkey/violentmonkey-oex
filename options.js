@@ -421,6 +421,6 @@ function updateItem(t,i,r){
 		case 'update':loadItem(p,n,r);break;
 	}
 	updateMove(L.childNodes[i]);
-};
-try{bg.optionsWindow.close();}catch(e){}
+}
+if(bg.optionsWindow!==window) try{bg.optionsWindow.close();}catch(e){}
 bg.optionsWindow=window;
