@@ -37,8 +37,7 @@ legend{margin-left:10px;}
 #sList .disabled{color:gray;background:silver;}
 #sList .disabled a{color:gray;}
 #sList .disabled img{opacity:0.3;}
-#overlay{background:#000;position:fixed;top:0;bottom:0;left:0;right:0;transition:all .5s linear;opacity:0;}
-#overlay.overlay{opacity:0.6;}
+#overlay{background:#000;position:fixed;top:0;bottom:0;left:0;right:0;opacity:0.6;}
 .float{position:fixed;background:lightgray;margin:0 auto;padding:10px;border-radius:10px;}
 .CodeMirror{background:white;}
 #editor{left:0;right:0;top:0;bottom:0;border-radius:0;}

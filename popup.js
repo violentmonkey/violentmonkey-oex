@@ -33,13 +33,13 @@ function menuScript(i) {
 }
 function load(e,data){
 	addItem(_('Manage scripts'),true,{holder:pT,symbol:'➤',onclick:function(){
-		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
+		bg.opera.extension.tabs.create({url:'/options.html'});
 	}});
 	if(data) addItem(_('Find scripts for this site'),true,{holder:pT,symbol:'➤',onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
 		}),url=bg.format(bg.search,q);
-		bg.opera.extension.tabs.create({url:url}).focus();
+		bg.opera.extension.tabs.create({url:url});
 	}});
 	if(data&&data[0]&&data[0].length) {
 		addItem(_('Back'),true,{holder:cT,symbol:'◄',onclick:function(){

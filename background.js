@@ -192,17 +192,14 @@ function fetchURL(url,cb,type){
 	var req=new XMLHttpRequest();
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
-	if(cb) req.onloadend=cb;
+	if(cb) req.onload=req.onerror=cb;
 	req.send();
 }
 function fetchCache(url){
 	setTimeout(function(){
 		fetchURL(url,function(){
-			if(this.status!=200) return;
-			var r=new FileReader();
-			r.onload=function(e){setString('cache:'+url,e.target.result);};
-			r.readAsBinaryString(this.response);
-		},'blob');
+			if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
+		},'arraybuffer');
 	},0);
 }
 
@@ -271,9 +268,9 @@ function httpRequest(e,details){
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=callback;});
+		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=function(){callback({type:i});};});
 		req.send(details.data);
-		if(!details.id) callback()();
+		if(!details.id) callback({type:'load'});
 	}catch(e){opera.postError(e);}
 }
 function abortRequest(e,id){
@@ -302,8 +299,8 @@ function showButton(show){
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
 function optionsUpdate(t,j,r){	// update loaded options pages
 	if(typeof j!='number') j=ids.indexOf(j.id);
-	if(j>=0&&options&&options.window)
-		try{options.window.updateItem(t,j,r);}catch(e){opera.postError(e);options={};}
+	if(j>=0&&optionsWindow)
+		try{optionsWindow.updateItem(t,j,r);}catch(e){opera.postError(e);optionsWindow=null;}
 }
 opera.extension.onmessage = onMessage;
 var button = opera.contexts.toolbar.createItem({
@@ -313,13 +310,6 @@ var button = opera.contexts.toolbar.createItem({
 		width:222,
 		height:100
 	}
-}),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
+}),optionsWindow=null;
 updateIcon();
 showButton(getItem('showButton',true));
-opera.extension.tabs.oncreate=function(e){
-	if(optionsURL.test(e.tab.url)) {
-		if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
-		else options={tab:e.tab};
-	}
-};
-opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};

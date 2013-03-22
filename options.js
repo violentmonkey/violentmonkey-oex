@@ -119,10 +119,7 @@ function switchTo(D){
 }
 var dialogs=[];
 function showDialog(D,z){
-	if(!dialogs.length) {
-		O.classList.remove('hide');
-		setTimeout(function(){O.classList.add('overlay');},1);
-	}
+	if(!dialogs.length) O.classList.remove('hide');
 	if(!z) z=dialogs.length?dialogs[dialogs.length-1].zIndex+1:1;
 	dialogs.push(D);
 	O.style.zIndex=D.style.zIndex=D.zIndex=z;
@@ -133,10 +130,7 @@ function showDialog(D,z){
 function closeDialog(){
 	dialogs.pop().classList.add('hide');
 	if(dialogs.length) O.style.zIndex=dialogs.length>1?dialogs[dialogs.length-1]:1;
-	else {
-		O.classList.remove('overlay');
-		setTimeout(function(){O.classList.add('hide');},500);
-	}
+	else O.classList.add('hide');
 }
 O.onclick=function(){
 	if(dialogs.length) (dialogs[dialogs.length-1].close||closeDialog)();
@@ -428,4 +422,5 @@ function updateItem(t,i,r){
 	}
 	updateMove(L.childNodes[i]);
 };
-if(!bg.options.window) bg.options.window=window;
+try{bg.optionsWindow.close();}catch(e){}
+bg.optionsWindow=window;
