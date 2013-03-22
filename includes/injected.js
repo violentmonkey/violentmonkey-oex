@@ -238,6 +238,6 @@ function wrapper(c){
 		}catch(e){}
 	}
 	Object.getOwnPropertyNames(window).forEach(wrapItem);
-	for(n in window.Window?window.Window.prototype:window) wrapItem(n);
+	for(n in Window.prototype) wrapItem(n);
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});

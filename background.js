@@ -273,7 +273,7 @@ function httpRequest(e,details){
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
 		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=callback;});
 		req.send(details.data);
-		if(!details.id) callback()();
+		if(!details.id) callback({type:'load'});
 	}catch(e){opera.postError(e);}
 }
 function abortRequest(e,id){
