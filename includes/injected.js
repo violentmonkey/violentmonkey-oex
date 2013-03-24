@@ -155,13 +155,37 @@ function loadScript(data){
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
-	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;elements=[];
+	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;
+
+	// functions and properties
+	function wrapFunction(o,i,c){
+		var f=function(){
+			var r=Function.apply.apply(o[i],[o,arguments]);
+			if(c) r=c(r);return r;
+		};
+		f.__proto__=o[i];f.prototype=o[i].prototype;
+		return f;
+	}
+	function wrapWindow(w){return w==window?t:w;}
+	function wrapItem(i){
+		try{	// avoid reading protected data*/
+			if(typeof window[i]=='function') {
+				if(!(i in t)) t[i]=wrapFunction(window,i,wrapWindow);
+			} else {
+				t.__defineGetter__(i,function(){return wrapWindow(window[i]);});
+				t.__defineSetter__(i,function(v){window[i]=v;});
+			}
+		}catch(e){}
+	}
+	['eval','Date','Array','RegExp','String','Math','Number','Audio','Image'].forEach(function(i){t[i]=window[i];});	// no wrap
+	for(n=window;n;n=Object.getPrototypeOf(n)) Object.getOwnPropertyNames(n).forEach(wrapItem);
+
 	function addProperty(name,prop){
 		t[name]=prop;
 		t[name].toString=propertyToString;
 		elements.push(name);
 	}
-	var resources=c.meta.resources||{};
+	var resources=c.meta.resources||{};elements=[];
 	addProperty('unsafeWindow',window);
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
@@ -220,24 +244,5 @@ function wrapper(c){
 		return r.req;
 	});
 	addProperty('VM_info',{version:widget.version});
-	// functions and properties
-	function wrapFunction(o,i,c){
-		return function(){var r=o[i].apply(o,arguments);if(c) r=c(r);return r;};
-	}
-	function wrapWindow(w){return w==window?t:w;}
-	function wrapItem(i,nowrap){
-		try{	// avoid reading protected data*/
-			if(typeof window[i]=='function') {
-				if(nowrap) t[i]=window[i];
-				else t[i]=wrapFunction(window,i,wrapWindow);
-			}
-			else {
-				t.__defineGetter__(i,function(){return wrapWindow(window[i]);});
-				t.__defineSetter__(i,function(v){window[i]=v;});
-			}
-		}catch(e){}
-	}
-	Object.getOwnPropertyNames(window).forEach(wrapItem);
-	for(n in Window.prototype) wrapItem(n);
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
