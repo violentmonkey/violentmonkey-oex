@@ -224,7 +224,7 @@ function parseScript(e,d,c){
 		} else i=ids.indexOf(c.id);
 		if(i<0){t='add';r.message=_('Script installed.');i=ids.length;}
 		c.meta=meta;c.code=d.code;
-		if(e&&!/^(file|data):/.test(e.origin)&&!c.meta.homepage) c.custom.homepage=e.origin;
+		if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 		saveScript(c);
 		meta.require.forEach(fetchCache);	// @require
 		for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
