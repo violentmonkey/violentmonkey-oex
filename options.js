@@ -201,9 +201,10 @@ function impo(b){
 }
 
 // Export
-var X=$('export'),xL=$('xList'),xE=$('bExport');
+var X=$('export'),xL=$('xList'),xE=$('bExport'),xC=$('cCompress');
 function xLoad() {
 	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
+	xC.checked=bg.getItem('compress',true);
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
 		d.className='ellipsis';
@@ -211,6 +212,7 @@ function xLoad() {
 		xL.appendChild(d);
 	}
 }
+xC.onchange=function(){bg.setItem('compress',this.checked);};
 xL.onclick=function(e){
 	var t=e.target;
 	if(t.parentNode!=this) return;
@@ -234,7 +236,8 @@ xE.onclick=function(){
 			vm[n]={id:bg.ids[i],custom:c.custom,enabled:c.enabled,update:c.update};
 		}
 	z.file('ViolentMonkey',JSON.stringify(vm));
-	n=z.generate({compression:'DEFLATE'});
+	c={};if(xC.checked) c.compression='DEFLATE';
+	n=z.generate(c);
 	window.open('data:application/zip;base64,'+n);
 	X.close();
 };
