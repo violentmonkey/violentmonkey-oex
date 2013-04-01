@@ -18,7 +18,6 @@ function updateMove(d){
 	b[0].disabled=!d.previousSibling;
 	b[1].disabled=!d.nextSibling;
 }
-function allowUpdate(n){return n.update&&n.meta.updateURL&&n.meta.downloadURL;}
 var icons={};
 function getIcon(n){
 	if(n.meta.icon) {
@@ -28,12 +27,18 @@ function getIcon(n){
 	}
 	return 'images/icon64.png';
 }
-function loadItem(d,n,m){
+function modifyItem(d,r){
+	if(r) {
+		if(r.message) d.querySelector('.message').innerHTML=r.message;
+		if(r.hideUpdate) d.querySelector('.update').classList.add('hide');
+	}
+}
+function loadItem(d,n,r){
 	d.innerHTML='<img class=icon src="'+getIcon(n)+'">'
 	+'<a class="name ellipsis"></a>'
 	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
-	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
+	+(bg.allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
 	+'<div class="descrip ellipsis"></div>'
 	+'<span class=message></span>'
 	+'<div class=panel>'
@@ -51,7 +56,7 @@ function loadItem(d,n,m){
 	}
 	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
 	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
-	if(m) d.querySelector('.message').innerHTML=m;
+	modifyItem(d,r);
 }
 function addItem(n){
 	var d=document.createElement('div');
@@ -94,7 +99,7 @@ L.onclick=function(e){
 			updateMove(L.childNodes[i<0?0:i]);
 			break;
 		case 'update':
-			check(i);
+			bg.checkUpdate(i);
 			break;
 		case 'up':
 			if(p.previousSibling) moveUp(i,p);
@@ -108,9 +113,7 @@ $('bNew').onclick=function(){
 	var d=bg.newScript(true);d=addItem(d);
 	updateMove(d);updateMove(d.previousSibling);
 };
-$('bUpdate').onclick=function(){
-	for(var i=0;i<bg.ids.length;i++) if(allowUpdate(bg.map[bg.ids[i]])) check(i);
-};
+$('bUpdate').onclick=bg.checkUpdateAll;
 if(!($('cDetail').checked=bg.getItem('showDetails',false))) L.classList.add('simple');
 $('cDetail').onchange=function(){L.classList.toggle('simple');bg.setItem('showDetails',this.checked);};
 var panel=N;
@@ -161,6 +164,8 @@ $('cShow').checked=bg.getItem('showButton',true);
 $('cShow').onchange=function(){bg.showButton(bg.setItem('showButton',this.checked));};
 $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
+$('cUpdate').checked=bg.autoUpdate;
+$('cUpdate').onchange=function(){bg.setItem('autoUpdate',bg.autoUpdate=this.checked);};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
@@ -193,7 +198,7 @@ function impo(b){
 				if(c) for(i in v) c[i]=v[i];
 				else c=v;
 			}
-			bg.parseScript(null,{code:o.asText()},c);
+			bg.importScript(null,{code:o.asText()},c);
 			count++;
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
@@ -242,55 +247,6 @@ xE.onclick=function(){
 	X.close();
 };
 X.close=$('bClose').onclick=closeDialog;
-
-// Update checker
-function canUpdate(o,n){
-	o=(o||'').split('.');n=(n||'').split('.');
-	var r=/(\d*)([a-z]*)(\d*)([a-z]*)/i;
-	while(o.length&&n.length) {
-		var vo=o.shift().match(r),vn=n.shift().match(r);
-		vo.shift();vn.shift();	// origin string
-		vo[0]=parseInt(vo[0]||0,10);
-		vo[2]=parseInt(vo[2]||0,10);
-		vn[0]=parseInt(vn[0]||0,10);
-		vn[2]=parseInt(vn[2]||0,10);
-		while(vo.length&&vn.length) {
-			var eo=vo.shift(),en=vn.shift();
-			if(eo!=en) return eo<en;
-		}
-	}
-	return n.length;
-}
-function check(i){
-	var l=L.childNodes[i],s=bg.map[bg.ids[i]],o=l.querySelector('[data=update]'),m=l.querySelector('.message');
-	m.innerHTML=_('Checking for updates...');
-	o.classList.add('hide');
-	function update(){
-		m.innerHTML=_('Updating...');
-		req=new window.XMLHttpRequest();
-		req.open('GET', s.meta.downloadURL, true);
-		req.onload=function(){
-			var r=bg.parseScript(null,{status:req.status,code:req.responseText},s);
-			if(r) m.innerHTML=r;
-			o.classList.remove('hide');
-		};
-		req.send();
-	}
-	var req=new window.XMLHttpRequest();
-	req.open('GET', s.meta.updateURL, true);
-	req.onload=function(){
-		try {
-			var r=bg.parseMeta(req.responseText);
-			if(canUpdate(s.meta.version,r.version)) return update();
-			else m.innerHTML=_('No update found.');
-		} catch(e) {
-			m.innerHTML=_('Failed fetching update information.');
-			opera.postError(e);
-		}
-		o.classList.remove('hide');
-	};
-	req.send();
-}
 
 // Script Editor
 var E=$('editor'),U=$('eUpdate'),H=$('mURL'),R=$('mRunAt'),M=$('meta'),I=$('mName'),
@@ -364,7 +320,8 @@ function edit(i){
 function eSave(){
 	E.scr.update=U.checked;E.scr.custom.homepage=H.value;
 	bg.parseScript(null,{code:T.getValue()},E.scr);
-	T.markClean();loadItem(E.cur,E.scr);eS.disabled=eSC.disabled=true;
+	T.markClean();loadItem(E.cur,E.scr);updateMove(E.cur);
+	eS.disabled=eSC.disabled=true;
 }
 function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
@@ -423,12 +380,14 @@ CodeMirror.commands.close=E.close=$('eClose').onclick=function(){if(confirmCance
 L.innerHTML='';
 bg.ids.forEach(function(i){addItem(bg.map[i]);});
 updateMove(L.firstChild);updateMove(L.lastChild);
-function updateItem(t,i,r){
-	var p=L.childNodes[i],n=bg.map[bg.ids[i]];
-	switch(t){
-		case 'add':addItem(n);updateMove(L.childNodes[i-1]);break;
-		case 'update':loadItem(p,n,r);break;
-	}
-	updateMove(L.childNodes[i]);
-};
+function updateItem(r){
+	var n=bg.map[bg.ids[r.item]];
+	if(r.status>0){
+		switch(r.status){
+			case 1:addItem(n);updateMove(L.childNodes[r.item-1]);break;
+			case 2:modifyItem(L.childNodes[r.item],r);break;
+		}
+	} else loadItem(L.childNodes[r.item],n,r);
+	updateMove(L.childNodes[r.item]);
+}
 if(!bg.options.window) bg.options.window=window;

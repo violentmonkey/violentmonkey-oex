@@ -207,10 +207,10 @@ function fetchCache(url){
 }
 
 function parseScript(e,d,c){
-	var r={error:0,message:_('Script updated.')},t,i;
-	if(d.status&&d.status!=200) {r.error=-1;r.message=_('Error fetching script!');}
+	var r={status:0,message:_('Script updated.')},i;
+	if(d.status&&d.status!=200) {r.status=-1;r.message=_('Error fetching script!');}
 	else {
-		var meta=parseMeta(d.code);t='update';
+		var meta=parseMeta(d.code);
 		if(!c) {
 			if(meta.name) {
 				if(!meta.namespace) meta.namespace='';
@@ -222,8 +222,8 @@ function parseScript(e,d,c){
 			} else i=-1;
 			if(i<0) c=newScript(); else c=map[ids[i]];
 		} else i=ids.indexOf(c.id);
-		if(i<0){t='add';r.message=_('Script installed.');i=ids.length;}
-		c.meta=meta;c.code=d.code;
+		if(i<0){r.status=1;r.message=_('Script installed.');i=ids.length;}
+		c.meta=meta;c.code=d.code;r.item=i;
 		if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 		saveScript(c);
 		meta.require.forEach(fetchCache);	// @require
@@ -231,13 +231,58 @@ function parseScript(e,d,c){
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
 	if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
-	if(r.error) return r.message; else optionsUpdate(t,i,r.message);
+	return r;
 }
+function importScript(e,o,c){var r=parseScript(e,o,c);optionsUpdate(r);}
 function installScript(e,url){
 	if(!url) {
 		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
-	} else fetchURL(url,function(){parseScript(e,{status:this.status,code:this.responseText});});
+	} else fetchURL(url,function(){
+		importScript(e,{status:this.status,code:this.responseText});
+	});
 }
+function canUpdate(o,n){
+	o=(o||'').split('.');n=(n||'').split('.');
+	var r=/(\d*)([a-z]*)(\d*)([a-z]*)/i;
+	while(o.length&&n.length) {
+		var vo=o.shift().match(r),vn=n.shift().match(r);
+		vo.shift();vn.shift();	// origin string
+		vo[0]=parseInt(vo[0]||0,10);
+		vo[2]=parseInt(vo[2]||0,10);
+		vn[0]=parseInt(vn[0]||0,10);
+		vn[2]=parseInt(vn[2]||0,10);
+		while(vo.length&&vn.length) {
+			var eo=vo.shift(),en=vn.shift();
+			if(eo!=en) return eo<en;
+		}
+	}
+	return n.length;
+}
+function allowUpdate(n){return n.update&&n.meta.updateURL&&n.meta.downloadURL;}
+function checkUpdate(i){
+	var o=map[ids[i]],r={item:i,hideUpdate:1,status:2};
+	if(!allowUpdate(o)) return;
+	function update(){
+		r.message=_('Updating...');optionsUpdate(r);
+		fetchURL(o.meta.downloadURL,function(){
+			importScript(null,{status:this.status,code:this.responseText},o);
+		});
+	}
+	r.message=_('Checking for updates...');optionsUpdate(r);
+	fetchURL(o.meta.updateURL,function(){
+		try{
+			var m=parseMeta(this.responseText);
+			if(canUpdate(o.meta.version,m.version)) return update();
+			r.message=_('No update found.');
+		}catch(e){
+			r.message=_('Failed fetching update information.');
+			opera.postError(e);
+		}
+		delete r.hideUpdate;
+		optionsUpdate(r);
+	});
+}
+function checkUpdateAll(){for(var i=0;i<ids.length;i++) checkUpdate(i);}
 
 // Requests
 var requests={};
@@ -282,8 +327,12 @@ function abortRequest(e,id){
 	delete requests[id];
 }
 
-var isApplied=getItem('isApplied',true),installFile=getItem('installFile',true),
-    search=getString('search',_('Search$1')),messages={
+var isApplied=getItem('isApplied',true),
+		installFile=getItem('installFile',true),
+		autoUpdate=getItem('autoUpdate',true),
+		lastUpdate=getItem('lastUpdate',0),
+    search=getString('search',_('Search$1')),
+		messages={
 	'FindScript':findScript,
 	'InstallScript':installScript,
 	'ParseScript':parseScript,
@@ -300,10 +349,9 @@ function showButton(show){
 	else opera.contexts.toolbar.removeItem(button);
 }
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
-function optionsUpdate(t,j,r){	// update loaded options pages
-	if(typeof j!='number') j=ids.indexOf(j.id);
-	if(j>=0&&options&&options.window)
-		try{options.window.updateItem(t,j,r);}catch(e){opera.postError(e);options={};}
+function optionsUpdate(r){	// update loaded options pages
+	if(options&&options.window)
+		try{options.window.updateItem(r);}catch(e){opera.postError(e);options={};}
 }
 opera.extension.onmessage = onMessage;
 var button = opera.contexts.toolbar.createItem({
@@ -323,3 +371,10 @@ opera.extension.tabs.oncreate=function(e){
 	}
 };
 opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
+if(autoUpdate) setTimeout(function(){	// check for updates automatically in 20 seconds
+	var n=Date.now();
+	if(n-lastUpdate>864e5) {
+		setItem('lastUpdate',lastUpdate=n);
+		checkUpdateAll();
+	}
+},20000);
