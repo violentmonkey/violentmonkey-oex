@@ -371,10 +371,12 @@ opera.extension.tabs.oncreate=function(e){
 	}
 };
 opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
-if(autoUpdate) setTimeout(function(){	// check for updates automatically in 20 seconds
+function autoCheck{	// check for updates automatically in 20 seconds
 	var n=Date.now();
 	if(n-lastUpdate>864e5) {
 		setItem('lastUpdate',lastUpdate=n);
 		checkUpdateAll();
 	}
-},20000);
+	setTimeout(autoCheck,36e5);
+}
+if(autoUpdate) setTimeout(autoCheck,20000);
