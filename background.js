@@ -207,7 +207,7 @@ function fetchCache(url){
 }
 
 function parseScript(e,d,c){
-	var r={status:0,message:_('Script updated.')},i;
+	var r={status:0,message:'message' in d?d.message:_('Script updated.')},i;
 	if(d.status&&d.status!=200) {r.status=-1;r.message=_('Error fetching script!');}
 	else {
 		var meta=parseMeta(d.code);
@@ -231,14 +231,13 @@ function parseScript(e,d,c){
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
 	if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
-	return r;
+	optionsUpdate(r);
 }
-function importScript(e,o,c){var r=parseScript(e,o,c);optionsUpdate(r);}
 function installScript(e,url){
 	if(!url) {
 		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
 	} else fetchURL(url,function(){
-		importScript(e,{status:this.status,code:this.responseText});
+		parseScript(e,{status:this.status,code:this.responseText});
 	});
 }
 function canUpdate(o,n){
@@ -265,7 +264,7 @@ function checkUpdate(i){
 	function update(){
 		r.message=_('Updating...');optionsUpdate(r);
 		fetchURL(o.meta.downloadURL,function(){
-			importScript(null,{status:this.status,code:this.responseText},o);
+			parseScript(null,{status:this.status,code:this.responseText},o);
 		});
 	}
 	r.message=_('Checking for updates...');optionsUpdate(r);
@@ -276,7 +275,6 @@ function checkUpdate(i){
 			r.message=_('No update found.');
 		}catch(e){
 			r.message=_('Failed fetching update information.');
-			opera.postError(e);
 		}
 		delete r.hideUpdate;
 		optionsUpdate(r);
