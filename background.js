@@ -371,7 +371,7 @@ opera.extension.tabs.oncreate=function(e){
 	}
 };
 opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
-function autoCheck{	// check for updates automatically in 20 seconds
+function autoCheck(){	// check for updates automatically in 20 seconds
 	var n=Date.now();
 	if(n-lastUpdate>864e5) {
 		setItem('lastUpdate',lastUpdate=n);
