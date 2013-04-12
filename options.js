@@ -1,15 +1,9 @@
 function $(i){return document.getElementById(i);}
 var bg=opera.extension.bgProcess,N=$('main'),L=$('sList'),O=$('overlay'),_=bg.getI18nString;
-function fillHeight(e,b,p){
-	if(p==undefined) p=e.parentNode;
-	b=b?b.offsetTop+b.offsetHeight:0;
-	e.style.pixelHeight=e.offsetHeight+window.getComputedStyle(p).pixelHeight-b;
-}
 function fillWidth(e,p){
 	if(p==undefined) p=e.parentNode;
 	e.style.pixelWidth=e.offsetWidth+window.getComputedStyle(p).pixelWidth-e.offsetLeft-e.offsetWidth;
 }
-fillHeight(L,$('footer'),document.body);
 
 // Main options
 function updateMove(d){
@@ -297,7 +291,6 @@ editor.prototype={
 	},
 	clean:true,
 	focus:function(){return this.editor.focus();},
-	resize:function(){var w=this.getWrapperElement();fillHeight(w,w.nextElementSibling);},
 	isClean:function(){return this.clean&&this.editor.isClean();},
 	markClean:function(){this.clean=true;this.editor.markClean();eS.disabled=eSC.disabled=true;},
 	getValue:function(){return this.editor.getValue();},
@@ -310,14 +303,14 @@ var T=new editor($('eCode'),bg.getItem('editorType',0));
 		b.innerHTML=T.type?_('Switch to normal editor'):_('Switch to advanced editor');
 	}
 	b.onclick=function(){
-		T.switchEditor();T.resize();bg.setItem('editorType',T.type);switchCommand();
+		T.switchEditor();bg.setItem('editorType',T.type);switchCommand();
 	};
 	switchCommand();
 })($('beditor'));
 function edit(i){
 	switchTo(E);E.scr=bg.map[bg.ids[i]];E.cur=L.childNodes[i];
 	U.checked=E.scr.update;H.value=E.scr.custom.homepage||'';
-	T.resize();T.setValue(E.scr.code);T.markClean();T.focus();
+	T.setValue(E.scr.code);T.markClean();T.focus();
 }
 function eSave(){
 	E.scr.update=U.checked;E.scr.custom.homepage=H.value;

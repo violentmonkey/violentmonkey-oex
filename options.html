@@ -19,42 +19,57 @@
 		<title class=i18n>Options - Violentmonkey</title>
 	</head>
 	<body class=fill>
-		<div id=main>
-			<div id=header class=main>
-				<h1 class=i18n>Options - Violentmonkey</h1>
-				<div class=left>
-					<button id=bNew class=i18n>New</button>
-					<a href=http://userscripts.org target=_blank class=i18n>Get more scripts from userscripts.org</a>
-				</div>
-				<div class=right>
-					<a id=bUpdate class=i18n href=#>Check all for updates</a>
-					<button id=bAdvanced class=i18n>Advanced</button>
-				</div>
-				<div class=x></div>
-			</div>
-			<fieldset id=fMain class=main>
-				<legend>
-					<span class=i18n>Installed Scripts</span>
-					<label><input type=checkbox id=cDetail><span class=i18n>Show details</span></label>
-				</legend>
-				<div id=sList></div>
-			</fieldset>
-			<div id=footer class=main><span class=i18n>Violentmonkey link</span> - <span class=i18n>Designed by Gerald</span> - 2013</div>
-		</div>
+		<table id=main class=frame>
+			<tr><td><h1 class="i18n center">Options - Violentmonkey</h1></td></tr>
+			<tr>
+				<td>
+					<div class=left>
+						<button id=bNew class=i18n>New</button>
+						<a href=http://userscripts.org target=_blank class=i18n>Get more scripts from userscripts.org</a>
+					</div>
+					<div class=right>
+						<a id=bUpdate class=i18n href=#>Check all for updates</a>
+						<button id=bAdvanced class=i18n>Advanced</button>
+					</div>
+					<div class=x></div>
+				</td>
+			</tr>
+			<tr class="expand expandr">
+				<td class=expanda>
+					<fieldset>
+						<legend>
+							<span class=i18n>Installed Scripts</span>
+							<label><input type=checkbox id=cDetail><span class=i18n>Show details</span></label>
+						</legend>
+						<div id=sList></div>
+					</fieldset>
+				</td>
+			</tr>
+			<tr><td class=center><span class=i18n>Violentmonkey link</span> - <span class=i18n>Designed by Gerald</span> - 2013</td></tr>
+		</table>
 		<div id=overlay class=hide></div>
-		<div id=editor class="float hide">
-			<h2 class="i18n inline">Script Editor</h2>
-			<button id=bcustom class=i18n>Custom meta data</button>
-			<button id=beditor></button>
-			<textarea id=eCode></textarea>
-			<label class=left><input type=checkbox id=eUpdate><span class=i18n>Allow update</span></label>
-			<div class=right>
-				<button id=eSave class=i18n>Save</button>
-				<button id=eSaveClose class=i18n>Save and Close</button>
-				<button id=eClose class=i18n>Close</button>
-			</div>
-		</div>
-		<div id=meta class="float hide">
+		<table id=editor class="frame hide">
+			<tr>
+				<td><h2 class=i18n>Script Editor</h2></td>
+				<td class=buttons>
+					<button id=bcustom class=i18n>Custom meta data</button>
+					<button id=beditor></button>
+				</td>
+			</tr>
+			<tr class=expand><td colspan=2 class=expandr><textarea id=eCode class=expanda></textarea></td></tr>
+			<tr>
+				<td colspan=2>
+					<label class=left><input type=checkbox id=eUpdate><span class=i18n>Allow update</span></label>
+					<div class=right>
+						<button id=eSave class=i18n>Save</button>
+						<button id=eSaveClose class=i18n>Save and Close</button>
+						<button id=eClose class=i18n>Close</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table id=meta class="float hide">
+			<tr><td>
 			<label><span class=i18n>Name: </span><input type=text id=mName></label>
 			<label><span class=i18n>Homepage: </span><input type=text id=mURL></label>
 			<label>
@@ -85,7 +100,8 @@
 				<textarea id=mExclude></textarea>
 			</fieldset>
 			<div class=right><button id=mOK class=i18n>OK</button> <button id=mCancel class=i18n>Cancel</button></div>
-		</div>
+	</td></tr>
+		</table>
 		<div id=export class="float hide">
 			<h2 class=i18n>Data Export</h2>
 			<span class=i18n>Installed Scripts</span>
