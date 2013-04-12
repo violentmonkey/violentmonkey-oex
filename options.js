@@ -143,10 +143,6 @@ O.onclick=function(){
 function confirmCancel(dirty){
 	return !dirty||confirm(_('Modifications are not saved!'));
 }
-function bindChange(e,d){
-	function change(){d.forEach(function(i){i.dirty=true;});}
-	e.forEach(function(i){i.onchange=change;});
-}
 window.addEventListener('DOMContentLoaded',function(){
 	var nodes=document.querySelectorAll('.i18n'),c,s,i,j;
 	for(i=0;i<nodes.length;i++)
@@ -256,7 +252,7 @@ CodeMirror.keyMap.vm={
 };
 function editor(e,i){
 	var t=this;
-	e.onchange=function(){t.clean=false;eS.disabled=eSC.disabled=t.isClean();};
+	e.onchange=t.markDirty;
 	e.isClean=function(){return t.clean;};
 	e.markClean=function(){t.clean=true;};
 	e.getValue=function(){return this.value;};
@@ -281,7 +277,7 @@ editor.prototype={
 					extraKeys:{"Enter":"newlineAndIndentContinueComment"},
 					keyMap:'vm'
 				});
-				t.editor.on('change',function(){t.clean=false;eS.disabled=eSC.disabled=t.isClean();});
+				t.editor.on('change',t.markDirty);
 			} else {
 				t.clean&=t.editor.isClean();
 				t.editor.toTextArea();t.editor=t.textarea;
@@ -293,9 +289,9 @@ editor.prototype={
 	focus:function(){return this.editor.focus();},
 	isClean:function(){return this.clean&&this.editor.isClean();},
 	markClean:function(){this.clean=true;this.editor.markClean();eS.disabled=eSC.disabled=true;},
+	markDirty:function(){this.clean=false;E.markDirty();},
 	getValue:function(){return this.editor.getValue();},
 	setValue:function(t){this.editor.setValue(t);this.editor.getDoc&&this.editor.getDoc().clearHistory();},
-	getWrapperElement:function(e){e=this.editor;return e.getWrapperElement?e.getWrapperElement():e;},
 };
 var T=new editor($('eCode'),bg.getItem('editorType',0));
 (function(b){
@@ -319,7 +315,9 @@ function eSave(){
 }
 function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
-bindChange([U,H],[E]);
+U.onchange=E.markDirty=function(){eS.disabled=eSC.disabled=false;};
+function metaChange(){M.dirty=true;}
+[I,H,R,mI,mM,mE,cI,cM,cE].forEach(function(i){i.onchange=metaChange;});
 $('bcustom').onclick=function(){
 	var e=[],c=E.scr.custom;
 	M.dirty=false;showDialog(M,10);
@@ -339,7 +337,6 @@ $('bcustom').onclick=function(){
 	cE.checked=c._exclude!=false;
 	mE.value=(c.exclude||e).join('\n');
 };
-bindChange([I,H,R,mI,mM,mE,cI,cM,cE],[M]);
 M.close=function(){if(confirmCancel(M.dirty)) closeDialog();};
 $('mCancel').onclick=closeDialog;
 $('mOK').onclick=function(){
