@@ -37,6 +37,13 @@ function format(){
 	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){g1=a[g1||g2];if(g1==undefined) g1=v;return g1;});
 }
 
+// Check old version of Opera
+(function(v){
+	v=parseInt(v);
+	if(v<12) opera.extension.tabs.create({url:'oldversion.html'});
+	null[0];	// to stop running
+})(opera.version());
+
 /* ===============Data format 0.4==================
  * ids	List [id]
  * vm:id	Item	{
