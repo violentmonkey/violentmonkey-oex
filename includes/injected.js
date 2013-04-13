@@ -155,7 +155,7 @@ function loadScript(data){
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
 	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
-	if(!t&&!n) ckey+=n.id;ckey+=':';t=this;
+	if(!t&&!n) ckey+=c.id;ckey+=':';t=this;
 
 	// functions and properties
 	function wrapFunction(o,i,c){

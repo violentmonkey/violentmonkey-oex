@@ -180,12 +180,12 @@ function impo(b){
 	var z=new JSZip();
 	try{z.load(b);}catch(e){alert(_('Error loading zip file.'));return;}
 	var vm=z.file('ViolentMonkey'),count=0;
-	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){opera.postError('Error parsing ViolentMonkey configuration.');}
+	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){vm={};opera.postError('Error parsing ViolentMonkey configuration.');}
 	z.file(/\.user\.js$/).forEach(function(o){
 		if(o.dir) return;
 		var c=null,v,i;
 		try{
-			if(vm&&(v=vm[o.name])) {
+			if(v=vm[o.name]) {
 				c=bg.map[v.id];
 				if(c) for(i in v) c[i]=v[i];
 				else c=v;
@@ -194,14 +194,18 @@ function impo(b){
 			count++;
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
+	if(vm.values) try{
+		for(z in vm.values) for(b in vm.values[z]) widget.preferences.setItem('val:'+z+':'+b,vm.values[z][b]);
+	}catch(e){opera.postError('Error parsing script data: '+e);}
 	alert(bg.format(_('$1 item(s) are imported.'),count));
 }
 
 // Export
-var X=$('export'),xL=$('xList'),xE=$('bExport'),xC=$('cCompress');
+var X=$('export'),xL=$('xList'),xE=$('bExport'),xC=$('cCompress'),xD=$('cWithData');
 function xLoad() {
 	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
 	xC.checked=bg.getItem('compress',true);
+	xD.checked=bg.getItem('withData',true);
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
 		d.className='ellipsis';
@@ -210,6 +214,7 @@ function xLoad() {
 	}
 }
 xC.onchange=function(){bg.setItem('compress',this.checked);};
+xD.onchange=function(){bg.setItem('withData',this.checked);};
 xL.onclick=function(e){
 	var t=e.target;
 	if(t.parentNode!=this) return;
@@ -221,9 +226,13 @@ $('bSelect').onclick=function(){
 	v=i<c.length;
 	for(i=0;i<c.length;i++) if(v) c[i].classList.add('selected'); else c[i].classList.remove('selected');
 };
+function getNameURI(c){
+	var t=c.meta.namespace||'',n=c.meta.name||'',ckey=escape(t)+':'+escape(n)+':';
+	if(!t&&!n) ckey+=c.id;return ckey;
+}
 xE.onclick=function(){
 	this.disabled=true;this.innerHTML=_('Exporting...');
-	var z=new JSZip(),n,_n,names={},c,i,j,vm={};
+	var z=new JSZip(),n,_n,names={},c,i,j,vm={},values={},ns={};
 	for(i=0;i<bg.ids.length;i++)
 		if(xL.childNodes[i].classList.contains('selected')) {
 			c=bg.map[bg.ids[i]];
@@ -231,7 +240,16 @@ xE.onclick=function(){
 			while(names[n]) n=_n+(++j);names[n]=1;n+='.user.js';
 			z.file(n,c.code);
 			vm[n]={id:bg.ids[i],custom:c.custom,enabled:c.enabled,update:c.update};
+			if(xD.checked) ns[getNameURI(c)]=1;
 		}
+	if(xD.checked) {
+		for(i=0;_n=widget.preferences.key(i);i++)
+			if((n=_n.match(/^val:([^:]*:[^:]*:[^:]*):(.*)/))&&ns[n[1]]) {
+				if(!values[n[1]]) values[n[1]]={};
+				values[n[1]][n[2]]=widget.preferences.getItem(_n);
+			}
+		vm.values=values;
+	}
 	z.file('ViolentMonkey',JSON.stringify(vm));
 	c={};if(xC.checked) c.compression='DEFLATE';
 	n=z.generate(c);
