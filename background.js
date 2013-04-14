@@ -40,8 +40,10 @@ function format(){
 // Check old version of Opera
 (function(v){
 	v=parseInt(v);
-	if(v<12) opera.extension.tabs.create({url:'oldversion.html'});
-	null[0];	// to stop running
+	if(v<12) {
+		opera.extension.tabs.create({url:'oldversion.html'});
+		null[0];	// to stop running
+	}
 })(opera.version());
 
 /* ===============Data format 0.4==================
