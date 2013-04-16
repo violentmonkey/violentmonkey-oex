@@ -234,6 +234,7 @@ function parseScript(e,d,c){
 		if(i<0){r.status=1;r.message=_('Script installed.');i=ids.length;}
 		c.meta=meta;c.code=d.code;r.item=i;
 		if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
+		if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
 		saveScript(c);
 		meta.require.forEach(fetchCache);	// @require
 		for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
@@ -246,7 +247,7 @@ function installScript(e,url){
 	if(!url) {
 		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
 	} else fetchURL(url,function(){
-		parseScript(e,{status:this.status,code:this.responseText});
+		parseScript(e,{status:this.status,code:this.responseText,url:url});
 	});
 }
 function canUpdate(o,n){
@@ -266,28 +267,34 @@ function canUpdate(o,n){
 	}
 	return n.length;
 }
-function allowUpdate(n){return n.update&&n.meta.updateURL&&n.meta.downloadURL;}
 function checkUpdate(i){
 	var o=map[ids[i]],r={item:i,hideUpdate:1,status:2};
-	if(!allowUpdate(o)) return;
+	if(!o.update) return;
 	function update(){
-		r.message=_('Updating...');optionsUpdate(r);
-		fetchURL(o.meta.downloadURL,function(){
-			parseScript(null,{status:this.status,code:this.responseText},o);
+		var u=o.custom.downloadURL||o.meta.downloadURL;
+		if(u) {
+			r.message=_('Updating...');
+			fetchURL(u,function(){
+				parseScript(null,{status:this.status,code:this.responseText},o);
+			});
+		} else r.message='<span class=new>'+_('New version found.')+'</span>';
+		optionsUpdate(r);
+	}
+	var u=o.custom.updateURL||o.meta.updateURL;
+	if(u) {
+		r.message=_('Checking for updates...');optionsUpdate(r);
+		fetchURL(u,function(){
+			try{
+				var m=parseMeta(this.responseText);
+				if(canUpdate(o.meta.version,m.version)) return update();
+				r.message=_('No update found.');
+			}catch(e){
+				r.message=_('Failed fetching update information.');
+			}
+			delete r.hideUpdate;
+			optionsUpdate(r);
 		});
 	}
-	r.message=_('Checking for updates...');optionsUpdate(r);
-	fetchURL(o.meta.updateURL,function(){
-		try{
-			var m=parseMeta(this.responseText);
-			if(canUpdate(o.meta.version,m.version)) return update();
-			r.message=_('No update found.');
-		}catch(e){
-			r.message=_('Failed fetching update information.');
-		}
-		delete r.hideUpdate;
-		optionsUpdate(r);
-	});
 }
 function checkUpdateAll(){for(var i=0;i<ids.length;i++) checkUpdate(i);}
 
