@@ -269,9 +269,10 @@ CodeMirror.keyMap.vm={
 };
 function editor(e,i){
 	var t=this;
-	e.onchange=t.markDirty;
+	e.data=e.value;
 	e.isClean=function(){return t.clean;};
-	e.markClean=function(){t.clean=true;};
+	e.markClean=function(){t.clean=true;e.data=e.value;};
+	e.onkeyup=e.onmouseup=function(){if(e.data!=e.value) t.markDirty();};
 	e.getValue=function(){return this.value;};
 	e.setValue=function(v){this.value=v;};
 	t.editor=t.textarea=e;
@@ -298,6 +299,7 @@ editor.prototype={
 			} else {
 				t.clean&=t.editor.isClean();
 				t.editor.toTextArea();t.editor=t.textarea;
+				t.editor.data=t.editor.value;
 			}
 			t.type=i;
 		}
@@ -310,7 +312,7 @@ editor.prototype={
 	getValue:function(){return this.editor.getValue();},
 	setValue:function(t){this.editor.setValue(t);this.editor.getDoc&&this.editor.getDoc().clearHistory();},
 };
-var T=new editor($('eCode'),bg.getItem('editorType',0));
+var T=new editor($('eCode'),bg.getItem('editorType',1));
 (function(b){
 	function switchCommand(){
 		b.innerHTML=T.type?_('Switch to normal editor'):_('Switch to advanced editor');
@@ -325,7 +327,7 @@ function edit(i){
 	U.checked=E.scr.update;T.setValue(E.scr.code);T.markClean();T.focus();
 }
 function eSave(){
-	E.scr.update=U.checked;E.scr.custom.homepage=H.value;
+	E.scr.update=U.checked;
 	bg.parseScript(null,{code:T.getValue(),message:''},E.scr);
 	T.markClean();eS.disabled=eSC.disabled=true;
 }
