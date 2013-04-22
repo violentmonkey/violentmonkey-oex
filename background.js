@@ -296,7 +296,10 @@ function checkUpdate(i){
 		});
 	}
 }
-function checkUpdateAll(){for(var i=0;i<ids.length;i++) checkUpdate(i);}
+function checkUpdateAll(){
+	setItem('lastUpdate',lastUpdate=Date.now());
+	for(var i=0;i<ids.length;i++) checkUpdate(i);
+}
 
 // Requests
 var requests={};
@@ -385,12 +388,14 @@ opera.extension.tabs.oncreate=function(e){
 	}
 };
 opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
-function autoCheck(){	// check for updates automatically in 20 seconds
-	var n=Date.now();
-	if(n-lastUpdate>864e5) {
-		setItem('lastUpdate',lastUpdate=n);
-		checkUpdateAll();
+function autoCheck(o){	// check for updates automatically in 20 seconds
+	function check(){
+		if(autoUpdate) {
+			if(Date.now()-lastUpdate>864e5) checkUpdateAll();
+			setTimeout(check,36e5);
+		} else checking=false;
 	}
-	setTimeout(autoCheck,36e5);
+	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-if(autoUpdate) setTimeout(autoCheck,20000);
+var checking=false;
+if(autoUpdate) autoCheck(2e4);

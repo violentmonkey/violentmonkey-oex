@@ -99,10 +99,11 @@ if((function(){
 		if(document.readyState!='complete') window.addEventListener('load',install,false);
 		else install();
 	}else return true;
-})()&&window.location.host=='userscripts.org') window.addEventListener('click',function(e){
-	if(/\.user\.js$/.test(e.target.href)) {
+})()&&['userscripts.org','j.mozest.com'].indexOf(window.location.host)>=0) window.addEventListener('click',function(e){
+	var o=e.target;while(o&&o.tagName!='A') o=o.parentNode;
+	if(o&&/\.user\.js$/.test(o.href)) {
 		e.preventDefault();
-		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:e.target.href});};
+		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:o.href});};
 		opera.extension.postMessage({topic:'InstallScript'});
 	}
 },false);
@@ -120,7 +121,12 @@ function run_code(c){
 	code.push(c.code);
 	code.push('}).apply(window,[]);');
 	this.code=code.join('\n');
-	try{with(w) eval(this.code);}catch(e){opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e+'\n'+e.stacktrace);}
+	try{with(w) eval(this.code);}catch(e){
+		e=e.toString()+'\n'+e.stacktrace;
+		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
+		if(i>0) e=e.substr(0,i);
+		opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e);
+	}
 }
 function runStart(){while(start.length) new run_code(start.shift());}
 function runBody(){

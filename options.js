@@ -154,7 +154,7 @@ $('cShow').onchange=function(){bg.showButton(bg.setItem('showButton',this.checke
 $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
 $('cUpdate').checked=bg.autoUpdate;
-$('cUpdate').onchange=function(){bg.setItem('autoUpdate',bg.autoUpdate=this.checked);};
+$('cUpdate').onchange=function(){if(bg.setItem('autoUpdate',bg.autoUpdate=this.checked)) bg.autoCheck();};
 $('tSearch').value=bg.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
