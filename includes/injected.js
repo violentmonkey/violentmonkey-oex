@@ -151,7 +151,7 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
-	if(window!==window.top) window.top.postMessage({topic:'VM_Scripts',data:scr},'*');
+	if(window!==window.top) window.Window.prototype.postMessage.call(window.top,{topic:'VM_Scripts',data:scr},'*');
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
