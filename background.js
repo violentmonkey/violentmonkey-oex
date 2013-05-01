@@ -107,7 +107,7 @@ function newScript(save){
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
 	};
-	r.id=Date.now()+Math.random().toString().substr(1);
+	r.id=Date.now()+Math.random().toString().slice(1);
 	if(save) saveScript(r);
 	return r;
 }
@@ -135,33 +135,41 @@ function removeScript(i){
 }
 
 function str2RE(s){return s.replace(/(\.|\?|\/)/g,'\\$1').replace(/\*/g,'.*?');}
+function autoReg(s,w){	// w: forced wildcard mode
+	if(!w&&s[0]=='/'&&s.slice(-1)=='/') return RegExp(s.slice(1,-1));	// Regular-expression
+	return RegExp('^'+str2RE(s)+'$');	// String with wildcards
+}
+var match_reg=/(.*?):\/\/([^\/]*)\/(.*)/;
+function matchTest(s,u){
+	var m=s.match(match_reg);
+	if(!m) return false;
+	if(!autoReg(m[0],1).test(u[0])) return false;		// scheme
+	if(m[1]!='*') {	// host
+		if(m[1].slice(0,2)=='*.') {
+			if(u[1]!=m[1].slice(2)&&u[1].slice(1-m[1].length)!=m[1].slice(1)) return false;
+		} else if(m[1]!=u[1]) return false;
+	}
+	if(!autoReg(m[2],1).test(u[2])) return false;		// pathname
+	return true;
+}
 function testURL(url,e){
-	function reg(s,w){	// w: forced wildcard mode
-		if(!w&&/^\/.*\/$/.test(s)) return RegExp(s.slice(1,-1));	// Regular-expression
-		return RegExp('^'+str2RE(s)+'$');	// String with wildcards
-	}
-	function match_test(s){
-		var m=s.match(r);
-		if(m&&u) for(var i=0;i<3;i++) if(!reg(m[i],1).test(u[i])) {m=0;break;}
-		return !!m;
-	}
-	var f=true,i,inc=[],exc=[],mat=[],r=/(.*?):\/\/([^\/]*)\/(.*)/,u=url.match(r);
-	if(e.custom._include!=false&&e.meta.include) inc=inc.concat(e.meta.include);
-	if(e.custom.include) inc=inc.concat(e.custom.include);
+	var f=true,i,inc=[],exc=[],mat=[],u=url.match(match_reg);
 	if(e.custom._match!=false&&e.meta.match) mat=mat.concat(e.meta.match);
 	if(e.custom.match) mat=mat.concat(e.custom.match);
+	if(e.custom._include!=false&&e.meta.include) inc=inc.concat(e.meta.include);
+	if(e.custom.include) inc=inc.concat(e.custom.include);
 	if(e.custom._exclude!=false&&e.meta.exclude) exc=exc.concat(e.meta.exclude);
 	if(e.custom.exclude) exc=exc.concat(e.custom.exclude);
-	if(mat.length) {for(i=0;i<mat.length;i++) if(f=match_test(mat[i])) break;}	// @match
-	else for(i=0;i<inc.length;i++) if(f=reg(inc[i]).test(url)) break;	// @include
-	if(f) for(i=0;i<exc.length;i++) if(!(f=!reg(exc[i]).test(url))) break;	// @exclude
+	if(mat.length) {for(i=0;i<mat.length;i++) if(f=matchTest(mat[i],u)) break;}	// @match
+	else for(i=0;i<inc.length;i++) if(f=autoReg(inc[i]).test(url)) break;	// @include
+	if(f) for(i=0;i<exc.length;i++) if(!(f=!autoReg(exc[i]).test(url))) break;	// @exclude
 	return f;
 }
 function findScript(e,url){
 	var i,j,c=[],cache={};
 	url=url||e.origin;	// to recognize URLs like data:...
 	function getCache(i){cache[i]=getString('cache:'+i);}
-	if(url.substr(0,5)!='data:') ids.forEach(function(i){
+	if(url.slice(0,5)!='data:') ids.forEach(function(i){
 		if(!testURL(url,map[i])) return;
 		c.push(i=map[i]);
 		if(i.meta.require) i.meta.require.forEach(getCache);
@@ -239,7 +247,7 @@ function installScript(e,url){
 // Requests
 var requests={};
 function getRequestId(e){
-	var id=Date.now()+'.'+Math.random().toString().substr(1);
+	var id=Date.now()+'.'+Math.random().toString().slice(1);
 	requests[id]=new XMLHttpRequest();
 	e.source.postMessage({topic:'GotRequestId',data:id});
 }
