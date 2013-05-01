@@ -37,15 +37,6 @@ function format(){
 	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){g1=a[g1||g2];if(g1==undefined) g1=v;return g1;});
 }
 
-// Check old version of Opera
-(function(v){
-	v=parseInt(v);
-	if(v<12) {
-		opera.extension.tabs.create({url:'oldversion.html'});
-		null[0];	// to stop running
-	}
-})(opera.version());
-
 /* ===============Data format 0.4==================
  * ids	List [id]
  * vm:id	Item	{
@@ -209,17 +200,14 @@ function fetchURL(url,cb,type){
 	var req=new XMLHttpRequest();
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
-	if(cb) req.onloadend=cb;
+	if(cb) req.onload=req.onerror=cb;
 	req.send();
 }
 function fetchCache(url){
 	setTimeout(function(){
 		fetchURL(url,function(){
-			if(this.status!=200) return;
-			var r=new FileReader();
-			r.onload=function(e){setString('cache:'+url,e.target.result);};
-			r.readAsBinaryString(this.response);
-		},'blob');
+			if(this.status==200) setString('cache:'+url,String.fromCharCode.apply(this,this.response));
+		},'arraybuffer');
 	},0);
 }
 
@@ -341,7 +329,7 @@ function httpRequest(e,details){
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
-		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=callback;});
+		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=function(){callback({type:i});};});
 		req.send(details.data);
 		if(!details.id) callback({type:'load'});
 	}catch(e){opera.postError(e);}
@@ -376,7 +364,7 @@ function showButton(show){
 function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
 function optionsUpdate(r){	// update loaded options pages
 	if(options&&options.window)
-		try{options.window.updateItem(r);}catch(e){opera.postError(e);options={};}
+		try{options.window.updateItem(r);}catch(e){options={};}
 }
 opera.extension.onmessage = onMessage;
 var button = opera.contexts.toolbar.createItem({
@@ -389,13 +377,6 @@ var button = opera.contexts.toolbar.createItem({
 }),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
 updateIcon();
 showButton(getItem('showButton',true));
-opera.extension.tabs.oncreate=function(e){
-	if(optionsURL.test(e.tab.url)) {
-		if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
-		else options={tab:e.tab};
-	}
-};
-opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
 function autoCheck(o){	// check for updates automatically in 20 seconds
 	function check(){
 		if(autoUpdate) {
