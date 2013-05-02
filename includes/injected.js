@@ -124,7 +124,7 @@ function run_code(c){
 	try{with(w) eval(this.code);}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
-		if(i>0) e=e.substr(0,i);
+		if(i>0) e=e.slice(0,i);
 		opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e);
 	}
 }
@@ -199,23 +199,24 @@ function wrapper(c){
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
 	addProperty('GM_deleteValue',function(key){widget.preferences.removeItem(ckey+key);});
-	addProperty('GM_getValue',function(key,def){
-		var v=widget.preferences.getItem(ckey+key);
-		if(v==null) return def;
-		var t=v[0];
-		v=v.substr(1);
-		switch(t){
-			case 'n': return Number(v);
-			case 'b': return v=='true';
-			case 'o': try{return JSON.parse(v);}catch(e){opera.postError(e);return def;}
-			default: return v;
+	addProperty('GM_getValue',function(k,d){
+		var v=widget.preferences.getItem(ckey+k);
+		if(v) {
+			k=v[0];v=v.slice(1);
+			switch(k){
+				case 'n': d=Number(v);break;
+				case 'b': d=v=='true';break;
+				case 'o': try{d=JSON.parse(v);}catch(e){opera.postError(e);}break;
+				default: d=v;
+			}
 		}
+		return d;
 	});
 	addProperty('GM_listValues',function(){
 		var v=[],i,l=ckey.length,k;
 		for(i=0;i<widget.preferences.length;i++) {
 			k=widget.preferences.key(i);
-			if(k.substr(0,l)==ckey) v.push(k.substr(l));
+			if(k.slice(0,l)==ckey) v.push(k.slice(l));
 		}
 		return v;
 	});
