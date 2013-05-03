@@ -198,6 +198,27 @@ function wrapper(c){
 	addProperty('unsafeWindow',window);
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
+	addProperty('GM_info',function(){
+		var m=c.code.match(/\/\/\s+==UserScript==\s+([\s\S]*?)\/\/\s+==\/UserScript==\s/);
+		m=m?m[1]:'';
+		return {
+			script:{
+				description:c.meta.description||'',
+				excludes:c.meta.exclude,
+				includes:c.meta.include,
+				matches:c.meta.match,
+				name:c.meta.name||'',
+				namespace:c.meta.namespace||'',
+				resources:c.meta.resources,
+				'run-at':c.meta['run-at']||'document-end',
+				unwrap:false,
+				version:c.meta.version||'',
+			},
+			scriptMetaStr:m,
+			scriptWillUpdate:c.update,
+			version:widget.version,
+		};
+	});
 	addProperty('GM_deleteValue',function(key){widget.preferences.removeItem(ckey+key);});
 	addProperty('GM_getValue',function(k,d){
 		var v=widget.preferences.getItem(ckey+k);
@@ -236,7 +257,7 @@ function wrapper(c){
 	});
 	addProperty('GM_getResourceURL',function(name){
 		var b=getCache(name);
-		if(b) b='data:;base64,'+btoa(b);
+		if(b) b='data:;base64,'+window.btoa(b);
 		return b;
 	});
 	addProperty('GM_addStyle',function(css){
@@ -253,6 +274,5 @@ function wrapper(c){
 		var r=new Request(details);
 		return r.req;
 	});
-	addProperty('VM_info',{version:widget.version});
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
