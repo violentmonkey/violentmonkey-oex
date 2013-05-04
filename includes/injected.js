@@ -189,16 +189,19 @@ function wrapper(c){
 	itemWrapper=wrapFunction;
 	for(n=Object.getPrototypeOf(window);n;n=Object.getPrototypeOf(n)) Object.getOwnPropertyNames(n).forEach(wrapItem);
 
+	function getCache(name){for(var i in resources) if(name==i) return cache[resources[i]];}
 	function addProperty(name,prop){
-		t[name]=prop;
-		t[name].toString=propertyToString;
+		if('value' in prop) prop.writable=false;
+		prop.configurable=false;
+		Object.defineProperty(t,name,prop);
+		if(typeof t[name]=='function') t[name].toString=propertyToString;
 		elements.push(name);
 	}
 	var resources=c.meta.resources||{};elements=[];
-	addProperty('unsafeWindow',window);
+	addProperty('unsafeWindow',{value:window});
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
-	addProperty('GM_info',function(){
+	addProperty('GM_info',{get:function(){
 		var m=c.code.match(/\/\/\s+==UserScript==\s+([\s\S]*?)\/\/\s+==\/UserScript==\s/);
 		m=m?m[1]:'';
 		return {
@@ -218,9 +221,9 @@ function wrapper(c){
 			scriptWillUpdate:c.update,
 			version:widget.version,
 		};
-	});
-	addProperty('GM_deleteValue',function(key){widget.preferences.removeItem(ckey+key);});
-	addProperty('GM_getValue',function(k,d){
+	}});
+	addProperty('GM_deleteValue',{value:function(key){widget.preferences.removeItem(ckey+key);}});
+	addProperty('GM_getValue',{value:function(k,d){
 		var v=widget.preferences.getItem(ckey+k);
 		if(v) {
 			k=v[0];v=v.slice(1);
@@ -232,47 +235,46 @@ function wrapper(c){
 			}
 		}
 		return d;
-	});
-	addProperty('GM_listValues',function(){
+	}});
+	addProperty('GM_listValues',{value:function(){
 		var v=[],i,l=ckey.length,k;
 		for(i=0;i<widget.preferences.length;i++) {
 			k=widget.preferences.key(i);
 			if(k.slice(0,l)==ckey) v.push(k.slice(l));
 		}
 		return v;
-	});
-	addProperty('GM_setValue',function(key,val){
+	}});
+	addProperty('GM_setValue',{value:function(key,val){
 		var t=(typeof val)[0];
 		switch(t){
 			case 'o':val=t+JSON.stringify(val);break;
 			default:val=t+val;
 		}
 		widget.preferences.setItem(ckey+key,val);
-	});
-	function getCache(name){for(var i in resources) if(name==i) return cache[resources[i]];}
-	addProperty('GM_getResourceText',function(name){
+	}});
+	addProperty('GM_getResourceText',{value:function(name){
 		var b=getCache(name);
 		if(b) b=utf8decode(b);
 		return b;
-	});
-	addProperty('GM_getResourceURL',function(name){
+	}});
+	addProperty('GM_getResourceURL',{value:function(name){
 		var b=getCache(name);
 		if(b) b='data:;base64,'+window.btoa(b);
 		return b;
-	});
-	addProperty('GM_addStyle',function(css){
+	}});
+	addProperty('GM_addStyle',{value:function(css){
 		var v=document.createElement('style');
 		v.innerHTML=css;
 		(document.head||document.documentElement).appendChild(v);
 		return v;
-	});
-	addProperty('GM_log',console.log);
-	addProperty('GM_openInTab',function(url){window.open(url);});
-	addProperty('GM_registerMenuCommand',function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;});
-	addProperty('GM_xmlhttpRequest',function(details){
+	}});
+	addProperty('GM_log',{value:console.log});
+	addProperty('GM_openInTab',{value:function(url){window.open(url);}});
+	addProperty('GM_registerMenuCommand',{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}});
+	addProperty('GM_xmlhttpRequest',{value:function(details){
 		// synchronous mode not supported
 		var r=new Request(details);
 		return r.req;
-	});
+	}});
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
