@@ -155,7 +155,7 @@ $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
 $('cUpdate').checked=bg.autoUpdate;
 $('cUpdate').onchange=function(){if(bg.setItem('autoUpdate',bg.autoUpdate=this.checked)) bg.autoCheck();};
-$('tSearch').value=bg.search;
+$('tSearch').value=bg.getString('search');
 $('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aImport').onchange=function(e){
@@ -168,7 +168,7 @@ $('aImport').onchange=function(e){
 };
 $('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');});};
 A.close=$('aClose').onclick=function(){
-	bg.setString('search',bg.search=$('tSearch').value);
+	bg.setString('search',$('tSearch').value);
 	closeDialog();
 };
 
@@ -182,7 +182,7 @@ function impo(b){
 		if(o.dir) return;
 		var c=null,v,i;
 		try{
-			if(v=vm[o.name]) {
+			if(vm.scripts&&(v=vm.scripts[o.name.slice(0,-8)])) {
 				c=bg.map[v.id];
 				if(c) for(i in v) c[i]=v[i];
 				else c=v;
@@ -194,7 +194,12 @@ function impo(b){
 	if(vm.values) try{
 		for(z in vm.values) for(b in vm.values[z]) widget.preferences.setItem('val:'+z+':'+b,vm.values[z][b]);
 	}catch(e){opera.postError('Error parsing script data: '+e);}
+	if(vm.settings) {
+		for(z in vm.settings) bg.setString(z,vm.settings[z]);
+		bg.init();
+	}
 	alert(bg.format(_('$1 item(s) are imported.'),count));
+	location.reload();
 }
 
 // Export
@@ -229,24 +234,36 @@ function getNameURI(c){
 }
 xE.onclick=function(){
 	this.disabled=true;this.innerHTML=_('Exporting...');
-	var z=new JSZip(),n,_n,names={},c,i,j,vm={},values={},ns={};
+	var z=new JSZip(),n,_n,names={},c,i,j,vm={scripts:{}},ns={};
 	for(i=0;i<bg.ids.length;i++)
 		if(xL.childNodes[i].classList.contains('selected')) {
 			c=bg.map[bg.ids[i]];
 			n=_n=c.custom.name||c.meta.name||'Noname';j=0;
-			while(names[n]) n=_n+(++j);names[n]=1;n+='.user.js';
-			z.file(n,c.code);
-			vm[n]={id:bg.ids[i],custom:c.custom,enabled:c.enabled,update:c.update};
+			while(names[n]) n=_n+(++j);names[n]=1;
+			z.file(n+'.user.js',c.code);
+			vm.scripts[n]={id:bg.ids[i],custom:c.custom,enabled:c.enabled,update:c.update};
 			if(xD.checked) ns[getNameURI(c)]=1;
 		}
 	if(xD.checked) {
+		vm.values={};
 		for(i=0;_n=widget.preferences.key(i);i++)
 			if((n=_n.match(/^val:([^:]*:[^:]*:[^:]*):(.*)/))&&ns[n[1]]) {
-				if(!values[n[1]]) values[n[1]]={};
-				values[n[1]][n[2]]=widget.preferences.getItem(_n);
+				if(!vm.values[n[1]]) vm.values[n[1]]={};
+				vm.values[n[1]][n[2]]=widget.preferences.getItem(_n);
 			}
-		vm.values=values;
 	}
+	vm.settings={
+		isApplied:0,
+		installFile:0,
+		autoUpdate:0,
+		search:0,
+		showDetails:0,
+		showButton:0,
+		editorType:0,
+		compress:0,
+		withData:0,
+	};
+	for(c in vm.settings) vm.settings[c]=bg.getString(c);
 	z.file('ViolentMonkey',JSON.stringify(vm));
 	c={};if(xC.checked) c.compression='DEFLATE';
 	n=z.generate(c);

@@ -356,19 +356,22 @@ function abortRequest(e,id){
 	delete requests[id];
 }
 
-var isApplied=getItem('isApplied',true),
-		installFile=getItem('installFile',true),
-		autoUpdate=getItem('autoUpdate',true),
-		lastUpdate=getItem('lastUpdate',0),
-    search=getString('search',_('Search$1')),
-		messages={
-	'FindScript':findScript,
-	'InstallScript':installScript,
-	'ParseScript':parseScript,
-	'GetRequestId':getRequestId,
-	'HttpRequest':httpRequest,
-	'AbortRequest':abortRequest,
-};
+function init(){
+	isApplied=getItem('isApplied',true);
+	installFile=getItem('installFile',true);
+	autoUpdate=getItem('autoUpdate',true);
+	lastUpdate=getItem('lastUpdate',0);
+	getString('search',_('Search$1'));
+}
+var messages={
+	FindScript:findScript,
+	InstallScript:installScript,
+	ParseScript:parseScript,
+	GetRequestId:getRequestId,
+	HttpRequest:httpRequest,
+	AbortRequest:abortRequest,
+},isApplied,installFile,autoUpdate,lastUpdate;
+init();
 function onMessage(e) {
 	var message=e.data,c=messages[message.topic];
 	if(c) try{c(e,message.data);}catch(e){opera.postError(e);}

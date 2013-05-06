@@ -42,7 +42,7 @@ function load(e,data){
 	if(data) addItem(_('Find scripts for this site'),{holder:pT,symbol:'➤',title:true,onclick:function(){
 		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-		}),url=bg.format(bg.search,q);
+		}),url=bg.format(bg.getString('search'),q);
 		bg.opera.extension.tabs.create({url:url}).focus();
 	}});
 	if(data&&data[0]&&data[0].length) {
