@@ -3,16 +3,22 @@ function getString(key,def){
 	if(v==null) (v=def)&&widget.preferences.setItem(key,v);
 	return v;
 }
-function setString(key,val){widget.preferences.setItem(key,val||'');}
+function setString(key,val){
+	val=val||'';
+	try{
+		widget.preferences.setItem(key,val);
+	}catch(e){
+		opera.postError(e);
+		val=null;
+	}
+	return val;
+}
 function getItem(key,def){
 	var v=widget.preferences.getItem(key);
 	if(v==null&&def) return setItem(key,def);
 	try{return JSON.parse(v);}catch(e){return def;}
 }
-function setItem(key,val){
-	widget.preferences.setItem(key,JSON.stringify(val));
-	return val;
-}
+function setItem(key,val){return setString(key,JSON.stringify(val));}
 function getNameURI(i){
 	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
 	if(!ns&&!n) k+=i.id;return k;
@@ -83,8 +89,11 @@ function format(){
 		setItem('version_storage',0.4);
 	}
 })();
-var ids=getItem('ids',[]),map={};
-ids.forEach(function(i){map[i]=getItem('vm:'+i);});
+var ids=[],map={};
+getItem('ids',[]).forEach(function(i){
+	var o=getItem('vm:'+i);
+	if(o){ids.push(i);map[i]=o;}
+});
 function vacuum(callback){
 	setTimeout(function(){
 		var k,s,i,ns={},cc={};
@@ -357,10 +366,10 @@ function abortRequest(e,id){
 }
 
 function init(){
-	isApplied=getItem('isApplied',true);
-	installFile=getItem('installFile',true);
-	autoUpdate=getItem('autoUpdate',true);
-	lastUpdate=getItem('lastUpdate',0);
+	isApplied=getItem('isApplied');
+	installFile=getItem('installFile');
+	autoUpdate=getItem('autoUpdate');
+	lastUpdate=getItem('lastUpdate');
 	getString('search',_('Search$1'));
 }
 var messages={

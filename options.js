@@ -107,7 +107,7 @@ $('bNew').onclick=function(){
 	updateMove(d);updateMove(d.previousSibling);
 };
 $('bUpdate').onclick=bg.checkUpdateAll;
-if(!($('cDetail').checked=bg.getItem('showDetails',false))) L.classList.add('simple');
+if(!($('cDetail').checked=bg.getItem('showDetails'))) L.classList.add('simple');
 $('cDetail').onchange=function(){L.classList.toggle('simple');bg.setItem('showDetails',this.checked);};
 var panel=N;
 function switchTo(D){
@@ -149,7 +149,7 @@ window.addEventListener('DOMContentLoaded',function(){
 // Advanced
 var A=$('advanced');
 $('bAdvanced').onclick=function(){showDialog(A);};
-$('cShow').checked=bg.getItem('showButton',true);
+$('cShow').checked=bg.getItem('showButton');
 $('cShow').onchange=function(){bg.showButton(bg.setItem('showButton',this.checked));};
 $('cInstall').checked=bg.installFile;
 $('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
@@ -206,8 +206,8 @@ function impo(b){
 var X=$('export'),xL=$('xList'),xE=$('bExport'),xC=$('cCompress'),xD=$('cWithData');
 function xLoad() {
 	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
-	xC.checked=bg.getItem('compress',true);
-	xD.checked=bg.getItem('withData',true);
+	xC.checked=bg.getItem('compress');
+	xD.checked=bg.getItem('withData');
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
 		d.className='ellipsis';
@@ -329,7 +329,7 @@ editor.prototype={
 	getValue:function(){return this.editor.getValue();},
 	setValue:function(t){this.editor.setValue(t);this.editor.getDoc&&this.editor.getDoc().clearHistory();},
 };
-var T=new editor($('eCode'),bg.getItem('editorType',1));
+var T=new editor($('eCode'),bg.getItem('editorType'));
 (function(b){
 	function switchCommand(){
 		b.innerHTML=T.type?_('Switch to normal editor'):_('Switch to advanced editor');

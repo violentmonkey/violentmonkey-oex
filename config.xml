@@ -7,6 +7,17 @@
   <feature name="opera:share-cookies" required="false"/>
   <access origin="*"/>
   <update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
+
+	<preference name="isApplied" value="true"/>
+	<preference name="installFile" value="true"/>
+	<preference name="autoUpdate" value="true"/>
+	<preference name="lastUpdate" value="0"/>
+	<preference name="showDetails" value="false"/>
+	<preference name="showButton" value="true"/>
+	<preference name="editorType" value="1"/>
+	<preference name="compress" value="true"/>
+	<preference name="withData" value="true"/>
+
   <description xml:lang="en">UserScript support for Opera.</description>
   <description xml:lang="zh">为Opera提供UserScript支持。</description>
   <description xml:lang="fr">UserScript support for Opera.</description>
