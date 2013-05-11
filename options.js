@@ -252,18 +252,9 @@ xE.onclick=function(){
 				vm.values[n[1]][n[2]]=widget.preferences.getItem(_n);
 			}
 	}
-	vm.settings={
-		isApplied:0,
-		installFile:0,
-		autoUpdate:0,
-		search:0,
-		showDetails:0,
-		showButton:0,
-		editorType:0,
-		compress:0,
-		withData:0,
-	};
-	for(c in vm.settings) vm.settings[c]=bg.getString(c);
+	vm.settings={};
+	['showDetails','showButton','installFile','compress','withData',
+		'editorType','autoUpdate','isApplied','lastUpdate','search'].forEach(function(i){vm.settings[i]=bg.getString(i);});
 	z.file('ViolentMonkey',JSON.stringify(vm));
 	c={};if(xC.checked) c.compression='DEFLATE';
 	n=z.generate(c);
