@@ -116,15 +116,14 @@ function vacuum(callback){
 	},0);
 }
 
-function newMeta(){return {name:'New Script',namespace:'',version:''};}
 function newScript(save){
 	var r={
 		custom:{},
-		meta:newMeta(),
 		enabled:1,
 		update:1,
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
 	};
+	r.meta=parseMeta(r.code);
 	r.id=Date.now()+Math.random().toString().slice(1);
 	if(save) saveScript(r);
 	return r;
@@ -238,7 +237,7 @@ function fetchCache(url){
 
 function parseScript(e,d,c){
 	var r={status:0,message:'message' in d?d.message:_('Script updated.')},i;
-	if(d.status&&d.status!=200) {r.status=-1;r.message=_('Error fetching script!');}
+	if(d.status&&d.status!=200||!d.code) {r.status=-1;r.message=_('Error fetching script!');}
 	else {
 		var meta=parseMeta(d.code);
 		if(!c) {

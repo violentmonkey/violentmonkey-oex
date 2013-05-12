@@ -28,7 +28,7 @@ function modifyItem(d,r){
 function allowUpdate(n){return n.update&&(n.custom.updateURL||n.meta.updateURL);}
 function loadItem(d,n,r){
 	d.innerHTML='<img class=icon src="'+getIcon(n)+'">'
-	+'<a class="name ellipsis"></a>'
+	+'<a class="name ellipsis" target=_blank></a>'
 	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
 	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
@@ -42,13 +42,13 @@ function loadItem(d,n,r){
 		+'<button data=down class=move>'+_('&darr;')+'</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
-	with(d.querySelector('.name')) {
-		var name=n.custom.name||n.meta.name,h=n.custom.homepage||n.meta.homepage;
-		title=name||'';if(h) href=h;
-		innerHTML=name?name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
-	}
+	var a=d.querySelector('.name'),b=n.custom.name||n.meta.name;
+	a.title=b||'';
+	a.innerHTML=b?b.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
+	if(b=n.custom.homepage||n.meta.homepage) a.href=b;
 	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
-	with(d.querySelector('.descrip')) innerText=title=n.meta.description||'';
+	a=d.querySelector('.descrip');
+	a.innerText=a.title=n.meta.description||'';
 	modifyItem(d,r);
 }
 function addItem(n){
