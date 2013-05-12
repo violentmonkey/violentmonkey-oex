@@ -305,13 +305,12 @@ function checkUpdate(i){
 	if(u) {
 		r.message=_('Checking for updates...');optionsUpdate(r);
 		fetchURL(u,function(){
-			try{
+			r.message=_('Failed fetching update information.');
+			if(this.status==200) try{
 				var m=parseMeta(this.responseText);
 				if(canUpdate(o.meta.version,m.version)) return update();
 				r.message=_('No update found.');
-			}catch(e){
-				r.message=_('Failed fetching update information.');
-			}
+			}catch(e){}
 			delete r.hideUpdate;
 			optionsUpdate(r);
 		});
