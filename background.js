@@ -379,10 +379,6 @@ var messages={
 	AbortRequest:abortRequest,
 },isApplied,installFile,autoUpdate,lastUpdate;
 init();
-function onMessage(e) {
-	var message=e.data,c=messages[message.topic];
-	if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
-}
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);
 	else opera.contexts.toolbar.removeItem(button);
@@ -392,7 +388,10 @@ function optionsUpdate(r){	// update loaded options pages
 	if(options&&options.window)
 		try{options.window.updateItem(r);}catch(e){opera.postError(e);options={};}
 }
-opera.extension.onmessage = onMessage;
+opera.extension.onmessage=function(e){
+	var message=e.data,c=messages[message.topic];
+	if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
+};
 var button = opera.contexts.toolbar.createItem({
 	title:_('Violentmonkey'),
 	popup:{

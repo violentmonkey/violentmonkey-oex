@@ -142,8 +142,7 @@ function confirmCancel(dirty){
 }
 window.addEventListener('DOMContentLoaded',function(){
 	var nodes=document.querySelectorAll('.i18n'),c,s,i,j;
-	for(i=0;i<nodes.length;i++)
-		nodes[i].innerHTML=bg.getI18nString(nodes[i].innerHTML);
+	for(i=0;i<nodes.length;i++) nodes[i].innerHTML=_(nodes[i].innerHTML);
 },true);
 
 // Advanced
