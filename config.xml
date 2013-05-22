@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget xmlns="http://www.w3.org/ns/widgets" version="1.3.21" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
-  <name>Violent monkey</name>
-  <author href="http://my.opera.com/gera2ld" email="gera2ld@163.net">Gerald</author>
-  <icon src="images/icon64.png"/>
-  <icon src="images/icon18.png"/>
-  <feature name="opera:share-cookies" required="false"/>
-  <access origin="*"/>
-  <update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
+	<name>Violent monkey</name>
+	<author href="http://my.opera.com/gera2ld" email="gera2ld@163.net">Gerald</author>
+	<icon src="images/icon64.png"/>
+	<icon src="images/icon18.png"/>
+	<feature name="opera:share-cookies" required="false"/>
+	<access origin="*"/>
+	<update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
 
 	<preference name="isApplied" value="true"/>
 	<preference name="installFile" value="true"/>
@@ -18,9 +18,10 @@
 	<preference name="compress" value="true"/>
 	<preference name="withData" value="true"/>
 
-  <description xml:lang="en">UserScript support for Opera.</description>
-  <description xml:lang="zh">为Opera提供UserScript支持。</description>
-  <description xml:lang="fr">UserScript support for Opera.</description>
-  <description xml:lang="cs">UserScript support for Opera.</description>
-  <description xml:lang="pl">Wsparcie dla UserScriptów w Operze.</description>
+	<description xml:lang="en">UserScript support for Opera.</description>
+	<description xml:lang="zh">为Opera提供UserScript支持。</description>
+	<description xml:lang="fr">UserScript support for Opera.</description>
+	<description xml:lang="cs">UserScript support for Opera.</description>
+	<description xml:lang="pl">Wsparcie dla UserScriptów w Operze.</description>
+	<description xml:lang="ru">UserScript support for Opera.</description>
 </widget>

@@ -412,7 +412,7 @@ opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
 function autoCheck(o){	// check for updates automatically in 20 seconds
 	function check(){
 		if(autoUpdate) {
-			if(Date.now()-lastUpdate>864e5) checkUpdateAll();
+			if(Date.now()-lastUpdate>=864e5) checkUpdateAll();
 			setTimeout(check,36e5);
 		} else checking=false;
 	}

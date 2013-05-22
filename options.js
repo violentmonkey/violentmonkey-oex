@@ -1,5 +1,5 @@
-function $(i){return document.getElementById(i);}
-var bg=opera.extension.bgProcess,N=$('main'),L=$('sList'),O=$('overlay'),_=bg.getI18nString;
+var $=document.getElementById.bind(document),
+		bg=opera.extension.bgProcess,N=$('main'),L=$('sList'),O=$('overlay'),_=bg.getI18nString;
 
 // Main options
 function updateMove(d){
