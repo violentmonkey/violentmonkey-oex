@@ -274,6 +274,11 @@ function wrapper(c){
 	addProperty('GM_openInTab',{value:function(url){window.open(url);}});
 	addProperty('GM_registerMenuCommand',{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}});
 	addProperty('GM_xmlhttpRequest',{value:function(details){
+		// convert url to absolute path
+		var a=document.createElement('a');
+		a.href=details.url;
+		details.url=a.href;
+		delete a;
 		// synchronous mode not supported
 		var r=new Request(details);
 		return r.req;
