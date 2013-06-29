@@ -198,17 +198,16 @@ function findScript(e,url){
 	});
 	e.source.postMessage({topic:'FoundScript',data:{isApplied:isApplied,data:c,cache:cache}});
 }
-function parseMeta(d,meta){
-	var o=-1;
-	if(!meta) meta={include:[],exclude:[],match:[],require:[],resources:{}};
+function parseMeta(d){
+	var o=-1,meta={include:[],exclude:[],match:[],require:[],resources:{}};
 	meta.resource=[];
 	d.replace(/(?:^|\n)\/\/\s*([@=]\S+)(.*)/g,function(m,k,v){
 		if(o<0&&k=='==UserScript==') o=1;
 		else if(k=='==/UserScript==') o=0;
 		if(o==1&&k[0]=='@') k=k.slice(1); else return;
 		v=v.replace(/^\s+|\s+$/g,'');
-		if(meta[k]&&meta[k].push) meta[k].push(v);
-		else if(!meta[k]||typeof meta[k]=='string') meta[k]=v;
+		if(meta[k]&&meta[k].push) meta[k].push(v);	// multiple values allowed
+		else if(!(k in meta)) meta[k]=v;	// only first value will be stored
 	});
 	meta.resource.forEach(function(i){
 		o=i.match(/^(\w+)\s+(.*)/);
