@@ -202,10 +202,10 @@ function impo(b){
 }
 
 // Export
-var X=$('export'),xL=$('xList'),xE=$('bExport'),xC=$('cCompress'),xD=$('cWithData');
+var X=$('export'),xL=$('xList'),xE=$('bExport'),/*xC=$('cCompress'),*/xD=$('cWithData');
 function xLoad() {
 	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
-	xC.checked=bg.getItem('compress');
+	//xC.checked=bg.getItem('compress');
 	xD.checked=bg.getItem('withData');
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
@@ -214,7 +214,7 @@ function xLoad() {
 		xL.appendChild(d);
 	}
 }
-xC.onchange=function(){bg.setItem('compress',this.checked);};
+//xC.onchange=function(){bg.setItem('compress',this.checked);};
 xD.onchange=function(){bg.setItem('withData',this.checked);};
 xL.onclick=function(e){
 	var t=e.target;
@@ -255,7 +255,7 @@ xE.onclick=function(){
 	['showDetails','showButton','installFile','compress','withData',
 		'editorType','autoUpdate','isApplied','lastUpdate','search'].forEach(function(i){vm.settings[i]=bg.getString(i);});
 	z.file('ViolentMonkey',JSON.stringify(vm));
-	c={};if(xC.checked) c.compression='DEFLATE';
+	c={compression:'DEFLATE'};//if(xC.checked) c.compression='DEFLATE';
 	n=z.generate(c);
 	window.open('data:application/zip;base64,'+n);
 	X.close();
