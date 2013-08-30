@@ -15,7 +15,6 @@
 	<preference name="showDetails" value="false"/>
 	<preference name="showButton" value="true"/>
 	<preference name="editorType" value="1"/>
-	<preference name="compress" value="true"/>
 	<preference name="withData" value="true"/>
 
 	<description xml:lang="en">UserScript support for Opera.</description>

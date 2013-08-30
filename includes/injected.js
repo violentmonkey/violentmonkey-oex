@@ -78,12 +78,6 @@ function Request(details){
 	qrequests.push(this);
 	opera.extension.postMessage({topic:'GetRequestId'});
 };
-if(window===window.top) {
-	window.addEventListener('message',function(e){
-		e=e.data;
-		if(e&&e.topic=='VM_Scripts') e.data.forEach(function(i){if(!_scr[i]){_scr[i]=1;scr.push(i);}});
-	},false);
-}
 
 // For UserScripts installation
 var installCallback=null;
@@ -109,19 +103,19 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache={},scr=[],_scr={},menu=[],command={},elements;
+var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
 function run_code(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=this.'+i);});
-	code=['(function(){var '+code.join(',')+';'];
+	code=['var '+code.join(',')+';'];
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
-	code.push('}).apply(window,[]);');
-	this.code=code.join('\n');
-	try{with(w) eval(this.code);}catch(e){
+	code=code.join('\n');
+	f=new Function('w','with(w) eval('+JSON.stringify(code)+');');
+	try{f.call(w,w);}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
 		if(i>0) e=e.slice(0,i);
@@ -139,7 +133,6 @@ function runEnd(){while(end.length) new run_code(end.shift());}
 function loadScript(data){
 	var l;
 	data.data.forEach(function(i){
-		_scr[i.id]=1;
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
@@ -151,7 +144,6 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
-	if(window!==window.top) window.Window.prototype.postMessage.call(window.top,{topic:'VM_Scripts',data:scr},'*');
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
