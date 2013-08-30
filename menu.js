@@ -1,8 +1,8 @@
-function $(i){return document.getElementById(i);}
-var bg=opera.extension.bgProcess,P=$('popup'),C=$('commands'),
+var $=document.getElementById.bind(document),P=$('popup'),C=$('commands'),
 		pT=P.querySelector('.top'),pB=P.querySelector('.bot'),
 		cT=C.querySelector('.top'),cB=C.querySelector('.bot'),
-		_=bg.getI18nString,tab=bg.opera.extension.tabs.getFocused();
+		bg=opera.extension.bgProcess,_=bg.getI18nString,
+		tab=bg.opera.extension.tabs.getFocused(),ia=null;
 function loadItem(d,c){
 	if(c) {
 		d.firstChild.innerText=d.symbol;
@@ -12,7 +12,7 @@ function loadItem(d,c){
 		d.classList.add('disabled');
 	}
 }
-function addItem(h,c){
+function addItem(h,c,b){
 	var d=document.createElement('div');
 	d.innerHTML='<span></span>'+h;
 	if('title' in c) {
@@ -20,11 +20,12 @@ function addItem(h,c){
 		delete c.title;
 	}
 	d.className='ellipsis';
-	c.holder.appendChild(d);
+	c.holder.insertBefore(d,b);
 	if('symbol' in c) d.firstChild.innerText=c.symbol;
 	else if('data' in c) c.symbol='✓';
 	for(h in c) d[h]=c[h];
 	if('data' in c) loadItem(d,c.data);
+	return d;
 }
 function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
 function menuScript(i) {
@@ -35,16 +36,22 @@ function menuScript(i) {
 		bg.saveScript(s);bg.optionsUpdate({item:bg.ids.indexOf(s.id),status:0});
 	}});
 }
-function load(e,data){
+function initMenu(){
 	addItem(_('Manage scripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
-	if(data) addItem(_('Find scripts for this site'),{holder:pT,symbol:'➤',title:true,onclick:function(){
-		var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
-			return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-		}),url=bg.format(bg.getString('search'),q);
-		bg.opera.extension.tabs.create({url:url}).focus();
+  if(/^https?:\/\//i.test(tab.url))
+		addItem(_('Find scripts for this site'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+			var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
+				return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
+			}),url=bg.format(bg.getString('search'),q);
+			bg.opera.extension.tabs.create({url:url}).focus();
+		}});
+	ia=addItem(_('Scripts enabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
+		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
+}
+function load(e,data){
 	if(data&&data[0]&&data[0].length) {
 		addItem(_('Back'),{holder:cT,symbol:'◄',title:true,onclick:function(){
 			C.classList.add('hide');P.classList.remove('hide');
@@ -56,11 +63,8 @@ function load(e,data){
 			P.classList.add('hide');C.classList.remove('hide');
 			bg.button.popup.height=C.offsetHeight;
 			setTimeout(function(){cB.style.pixelHeight=innerHeight-cB.offsetTop;},0);
-		}});
+		}},ia);
 	}
-	addItem(_('Scripts enabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
-		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
-	}});
 	if(data&&data[1]&&data[1].length) {
 		pT.appendChild(document.createElement('hr'));
 		data[1].forEach(menuScript);
@@ -68,5 +72,5 @@ function load(e,data){
 	bg.button.popup.height=P.offsetHeight;
 	setTimeout(function(){pB.style.pixelHeight=innerHeight-pB.offsetTop;},0);
 }
-bg.messages['GotPopup']=load;
+initMenu();bg.messages['GotPopup']=load;
 try{tab.postMessage({topic:'GetPopup'});}catch(e){load();}

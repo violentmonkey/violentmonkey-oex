@@ -104,7 +104,7 @@ if((function(){
 
 // For injected scripts
 var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
-function run_code(c){
+function runCode(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=this.'+i);});
 	code=['var '+code.join(',')+';'];
@@ -122,14 +122,14 @@ function run_code(c){
 		opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e);
 	}
 }
-function runStart(){while(start.length) new run_code(start.shift());}
+function runStart(){while(start.length) runCode(start.shift());}
 function runBody(){
 	if(document.body) {
 		window.removeEventListener('DOMNodeInserted',runBody,true);
-		while(body.length) new run_code(body.shift());
+		while(body.length) runCode(body.shift());
 	}
 }
-function runEnd(){while(end.length) new run_code(end.shift());}
+function runEnd(){while(end.length) runCode(end.shift());}
 function loadScript(data){
 	var l;
 	data.data.forEach(function(i){
