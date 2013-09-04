@@ -50,6 +50,7 @@ function initMenu(){
 	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
 		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
+	bg.button.popup.height=P.offsetHeight;
 }
 function load(e,data){
 	if(data&&data[0]&&data[0].length) {
@@ -73,4 +74,4 @@ function load(e,data){
 	setTimeout(function(){pB.style.pixelHeight=innerHeight-pB.offsetTop;},0);
 }
 initMenu();bg.messages['GotPopup']=load;
-try{tab.postMessage({topic:'GetPopup'});}catch(e){load();}
+try{tab.postMessage({topic:'GetPopup'});}catch(e){}

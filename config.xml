@@ -9,7 +9,6 @@
 	<update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
 
 	<preference name="isApplied" value="true"/>
-	<preference name="installFile" value="true"/>
 	<preference name="autoUpdate" value="true"/>
 	<preference name="lastUpdate" value="0"/>
 	<preference name="showDetails" value="false"/>
@@ -17,8 +16,8 @@
 	<preference name="editorType" value="1"/>
 	<preference name="withData" value="true"/>
 
-	<description xml:lang="en">UserScript support for Opera.</description>
-	<description xml:lang="zh">为Opera提供UserScript支持。</description>
+	<description xml:lang="en">Userscript support for Opera.</description>
+	<description xml:lang="zh">为Opera提供用户脚本支持。</description>
 	<description xml:lang="pl">Wsparcie dla UserScriptów w Operze.</description>
-	<description xml:lang="ru">Поддержка пользовательских скриптов (UserScript) для Opera.</description>
+	<description xml:lang="ru">Поддержка пользовательских скриптов (Userscript) для Opera.</description>
 </widget>
