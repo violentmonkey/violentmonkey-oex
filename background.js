@@ -25,22 +25,25 @@ function getNameURI(i){
 }
 
 // Multilingual
-var i18nMessages={};
-function loadMessages(locale){
-	var filename='messages.json';
-	if(locale) filename='locales/'+locale+'/'+filename;
+function loadMessages(data,callback){
 	var req=new XMLHttpRequest();
-	req.open('GET',filename,false);
+	req.open('GET','messages.json',true);
+	req.onload=function(){
+		var i,j=JSON.parse(this.responseText);
+		for(i in j) data[i]=j[i];
+		if(callback) callback();
+	};
 	req.send();
-	var j=JSON.parse(req.responseText);
-	for(var i in j) i18nMessages[i]=j[i];
 }
-function getI18nString(s) {return i18nMessages[s]||s;}
-var _=getI18nString;
-try{loadMessages();}catch(e){opera.postError(e);}
-function format(){
-	var a=arguments;
-	if(a[0]) return a[0].replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){g1=a[g1||g2];if(g1==undefined) g1=v;return g1;});
+function initMessages(callback){
+	var data={};
+	loadMessages(data,callback);
+	return function(){
+		var args=arguments,k=args[0],r;
+		r=data[k];if(r) r=r.message;
+		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return args[g1||g2]||'';});
+		else return '';
+	};
 }
 
 // Check old version of Opera
@@ -235,8 +238,8 @@ function fetchCache(url){
 }
 
 function parseScript(e,d,c){
-	var r={status:0,message:'message' in d?d.message:_('Script updated.')},i;
-	if(d.status&&d.status!=200||!d.code) {r.status=-1;r.message=_('Error fetching script!');}
+	var r={status:0,message:'message' in d?d.message:_('msgUpdated')},i;
+	if(d.status&&d.status!=200||!d.code) {r.status=-1;r.message=_('msgErrorFetchingScript');}
 	else {
 		var meta=parseMeta(d.code);
 		if(!c) {
@@ -250,7 +253,7 @@ function parseScript(e,d,c){
 			} else i=-1;
 			if(i<0) c=newScript(); else c=map[ids[i]];
 		} else i=ids.indexOf(c.id);
-		if(i<0){r.status=1;r.message=_('Script installed.');i=ids.length;}
+		if(i<0){r.status=1;r.message=_('msgInstalled');i=ids.length;}
 		c.meta=meta;c.code=d.code;r.item=i;
 		if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 		if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
@@ -263,9 +266,9 @@ function parseScript(e,d,c){
 	optionsUpdate(r);
 }
 function installScript(e,url){
-	if(!url) {
-		if(installFile) e.source.postMessage({topic:'ConfirmInstall',data:_('Do you want to install this UserScript?')});
-	} else fetchURL(url,function(){
+	if(!url)
+		e.source.postMessage({topic:'ConfirmInstall',data:_('msgConfirm')});
+	else fetchURL(url,function(){
 		parseScript(e,{status:this.status,code:this.responseText,url:url});
 	});
 }
@@ -292,22 +295,22 @@ function checkUpdate(i){
 	function update(){
 		var u=o.custom.downloadURL||o.meta.downloadURL;
 		if(u) {
-			r.message=_('Updating...');
+			r.message=_('msgUpdating');
 			fetchURL(u,function(){
 				parseScript(null,{status:this.status,code:this.responseText},o);
 			});
-		} else r.message='<span class=new>'+_('New version found.')+'</span>';
+		} else r.message='<span class=new>'+_('msgNewVersion')+'</span>';
 		optionsUpdate(r);
 	}
 	var u=o.custom.updateURL||o.meta.updateURL;
 	if(u) {
-		r.message=_('Checking for updates...');optionsUpdate(r);
+		r.message=_('msgCheckingForUpdate');optionsUpdate(r);
 		fetchURL(u,function(){
-			r.message=_('Failed fetching update information.');
+			r.message=_('msgErrorFetchingUpdateInfo');
 			if(this.status==200) try{
 				var m=parseMeta(this.responseText);
 				if(canUpdate(o.meta.version,m.version)) return update();
-				r.message=_('No update found.');
+				r.message=_('msgNoUpdate');
 			}catch(e){}
 			delete r.hideUpdate;
 			optionsUpdate(r);
@@ -362,12 +365,11 @@ function abortRequest(e,id){
 	delete requests[id];
 }
 
-function init(){
+function initSettings(){
 	isApplied=getItem('isApplied');
-	installFile=getItem('installFile');
 	autoUpdate=getItem('autoUpdate');
 	lastUpdate=getItem('lastUpdate');
-	getString('search',_('Search$1'));
+	getString('search',_('defaultSearch'));
 }
 var messages={
 	FindScript:findScript,
@@ -376,8 +378,7 @@ var messages={
 	GetRequestId:getRequestId,
 	HttpRequest:httpRequest,
 	AbortRequest:abortRequest,
-},isApplied,installFile,autoUpdate,lastUpdate;
-init();
+},isApplied,autoUpdate,lastUpdate;
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);
 	else opera.contexts.toolbar.removeItem(button);
@@ -387,27 +388,18 @@ function optionsUpdate(r){	// update loaded options pages
 	if(options&&options.window)
 		try{options.window.updateItem(r);}catch(e){opera.postError(e);options={};}
 }
-opera.extension.onmessage=function(e){
-	var message=e.data,c=messages[message.topic];
-	if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
-};
-var button = opera.contexts.toolbar.createItem({
-	title:_('Violentmonkey'),
-	popup:{
-		href:"popup.html",
-		width:222,
-		height:100
-	}
-}),options={},optionsURL=new RegExp('^'+(location.protocol+'//'+location.host+'/options.html').replace(/\./g,'\\.'));
-updateIcon();
-showButton(getItem('showButton',true));
-opera.extension.tabs.oncreate=function(e){
-	if(optionsURL.test(e.tab.url)) {
-		if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
-		else options={tab:e.tab};
-	}
-};
-opera.extension.tabs.onclose=function(e){if(options.tab===e.tab) options={};};
+function initIcon(){
+	button=opera.contexts.toolbar.createItem({
+		title:_('extName'),
+		popup:{
+			href:"popup.html",
+			width:222,
+			height:100
+		}
+	});
+	updateIcon();
+	showButton(getItem('showButton',true));
+}
 function autoCheck(o){	// check for updates automatically in 20 seconds
 	function check(){
 		if(autoUpdate) {
@@ -417,5 +409,22 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-var checking=false;
-if(autoUpdate) autoCheck(2e4);
+var _,button,checking=false,options={},optionsURL=location.protocol+'//'+location.host+'/options.html';
+_=initMessages(function(){
+	initSettings();
+	initIcon();
+	opera.extension.onmessage=function(e){
+		var message=e.data,c=messages[message.topic];
+		if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
+	};
+	opera.extension.tabs.oncreate=function(e){
+		if(e.tab.url.slice(0,optionsURL.length)==optionsURL) {
+			if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
+			else options={tab:e.tab};
+		}
+	};
+	opera.extension.tabs.onclose=function(e){
+		if(options.tab===e.tab) options={};
+	};
+	if(autoUpdate) autoCheck(2e4);
+});

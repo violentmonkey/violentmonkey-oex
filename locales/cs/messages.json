@@ -1,1 +1,318 @@
-{"__translator":"ahoj1234","__lang":"cs","Script updated.":"Skript aktualizov\u00e1n.","Error fetching script!":"Chyba p\u0159i na\u010d\u00edt\u00e1n\u00ed skritpu!","Script installed.":"Skript nainstalov\u00e1n.","Do you want to install this UserScript?":"Chcete nainstalovat tento UserScript?","Updating...":"Aktualizuji...","New version found.":"New version found.","Checking for updates...":"Kontroluji aktualizace...","No update found.":"Aktualizace nenalezena.","Failed fetching update information.":"Na\u010dten\u00ed informac\u00ed o aktualizaci se nezda\u0159ilo.","Search$1":"http:\/\/www.google.com\/search?q=$1","Violentmonkey":"Violentmonkey","Options":"Mo\u017enosti","New":"Nov\u00fd","Get more scripts from userscripts.org":"Z\u00edskej v\u00edce skritp\u016f z userscripts.org","Check all for updates":"Zkontrolovat aktualizace","Advanced":"Pokro\u010dil\u00e9","Installed Scripts":"Nainstalovan\u00e9 skripty","Show details":"Zobrazit detaily","Violentmonkey link":"<a href=https:\/\/github.com\/gera2ld\/Violentmonkey\/wiki>Violentmonkey<\/a>","Designed by Gerald":"Design od <a href=mailto:gera2ld@163.com>Gerald<\/a>, P\u0159elo\u017eil: <a href=http:\/\/my.opera.com\/ahoj1234>ahoj1234<\/a>","Script Editor":"Editor skript\u016f","Custom meta data":"Vlastn\u00ed meta data","Allow update":"Povolit aktualizace","Save":"Ulo\u017eit","Save and Close":"Ulo\u017eit a Zav\u0159\u00edt","Close":"Zav\u0159\u00edt","Name:":"Jm\u00e9no:","Run at:":"Spustit na: ","default":"(standardn\u00ed)","Homepage:":"Domovsk\u00e1 str\u00e1nka:","Update URL:":"Update URL:","Download URL:":"Download URL:","Includes":"Zahrnout","Keep original include rules":"Dodr\u017eovat origin\u00e1ln\u00ed zahrnut\u00ed","Custom include rules:":"Vlastn\u00ed pravidla pro zahrnov\u00e1n\u00ed: <em>(Jedno na \u0159\u00e1dek)<\/em>","Matches":"P\u0159i\u0159azen\u00ed","Keep original match rules":"Dodr\u017eovat origin\u00e1ln\u00ed p\u0159i\u0159azen\u00ed","Custom match rules:":"Vlastn\u00ed pravidla pro p\u0159i\u0159azen\u00ed: <em>(Jedno na \u0159\u00e1dek)<\/em>","Excludes":"V\u00fdjimky","Keep original exclude rules":"Dodr\u017eovat origin\u00e1ln\u00ed v\u00fdjimky","Custom exclude rules:":"Vlastn\u00ed pravidla pro v\u00fdjimky: <em>(Jedno na \u0159\u00e1dek)<\/em>","OK":"OK","Cancel":"Zru\u0161it","Data Export":"Export dat","Export Options":"Mo\u017enosti","Compress":"Compress","Export script data":"Export script data","All\/None":"V\u0161e\/\u017d\u00e1dn\u00fd","Show button on toolbar":"Zobrazovat tla\u010d\u00edtko na li\u0161t\u011b","Allow installing .user.js files":"Povolit instalov\u00e1n\u00ed .user.js soubor\u016f na\u010dten\u00e9 Operou","Automatically check scripts for updates every day":"Automatically check scripts for updates every day","Search URL: ":"hledat URL: ","Search hint":"<a title='Hledat URL mus\u00ed b\u00fdt URL obsahuj\u00edc\u00ed $1. $1 m\u00e1 uplatn\u011bn\u00ed pro kl\u00ed\u010dov\u00e1 slova generov\u00e1na Violentmonkey.'>(?)<\/a>","Default":"V\u00fdchoz\u00ed","Data":"Data","Export to zip file":"Exportovat do souboru zip","Import from zip file":"Import from zip file","Vacuum data":"Vypr\u00e1zdnit data","Vacuum hint":"<a title=\"Zbavit se nadbyte\u010dn\u00e9ho a zkusit znovu na\u010d\u00edst chyb\u011bj\u00edc\u00ed zdroje v cache.\">(?)<\/a>","Check for updates":"Zkontrolovat aktualizace","Edit":"Editovat","Remove":"Odstranit","&uarr;":"&uarr;","&darr;":"&darr;","Null name":"Jm\u00e9no nebylo definov\u00e1no","Author: ":"Autor: ","Disable":"Vypnout","Enable":"Zapnout","Modifications are not saved!":"Modifikace nen\u00ed ulo\u017eena! Klikni na OK pro zbaven\u00ed se j\u00ed, nebo na zru\u0161it pro z\u016fst\u00e1n\u00ed zde.","Data vacuumed":"Data vypr\u00e1zdn\u011bna","Error loading zip file.":"Error loading zip file.","$1 item(s) are imported.":"$1 item(s) are imported.","Export":"Exportovat","Exporting...":"Exportuji...","Switch to normal editor":"P\u0159epnout do norm\u00e1ln\u00edho editoru","Switch to advanced editor":"P\u0159epnout do pokro\u010dil\u00e9ho editoru","Manage scripts":"\u0158\u00edzen\u00ed skript\u016f","Find scripts for this site":"Najdi skripty pro tuto str\u00e1nku","Back":"Zp\u011bt","Script commands...":"Skriptov\u00e9 p\u0159\u00edkazy...","Scripts enabled":"Skripty zapnuty"}
+{
+	"extName": {
+		"message": "Violentmonkey", 
+		"description": "Name of this extension."
+	}, 
+	"extDescription": {
+		"message": "Userscript support for Opera.", 
+		"description": "Description for this extension."
+	}, 
+	"extTranslator": {
+		"message": "ahoj1234", 
+		"description": "Information of the translator."
+	}, 
+	"msgUpdated": {
+		"message": "Skript aktualizován.", 
+		"description": "Message shown when a script is updated/reinstalled."
+	}, 
+	"msgErrorFetchingScript": {
+		"message": "Chyba při načítání skritpu!", 
+		"description": "Message shown when Violentmonkey failed fetching a new version of the script."
+	}, 
+	"msgInstalled": {
+		"message": "Skript nainstalován.", 
+		"description": "Message shown when a script is installed."
+	}, 
+	"msgConfirm": {
+		"message": "Chcete nainstalovat tento UserScript?", 
+		"description": "Message shown before installing a script."
+	}, 
+	"msgUpdating": {
+		"message": "Aktualizuji...", 
+		"description": "Message shown when a new version of script is being fetched."
+	}, 
+	"msgNewVersion": {
+		"message": "New version found.", 
+		"description": "Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided."
+	}, 
+	"msgCheckingForUpdate": {
+		"message": "Kontroluji aktualizace...", 
+		"description": "Message shown when a script is being checked for updates by version numbers."
+	}, 
+	"msgErrorFetchingUpdateInfo": {
+		"message": "Načtení informací o aktualizaci se nezdařilo.", 
+		"description": "Message shown when Violentmonkey failed fetching version data of the script."
+	}, 
+	"msgNoUpdate": {
+		"message": "Aktualizace nenalezena.", 
+		"description": "Message shown when there is no new version of a script."
+	}, 
+	"defaultSearch": {
+		"message": "http://www.google.com/search?q=*", 
+		"description": "URL for searching scripts, * stands for the keywords."
+	}, 
+	"labelNoName": {
+		"message": "Jméno nebylo definováno", 
+		"description": "Text as the name of a script when no @name is assigned."
+	}, 
+	"menuManageScripts": {
+		"message": "Řízení skriptů", 
+		"description": "Menu item to manage scripts, or to open the options page of the extension."
+	}, 
+	"menuFindScripts": {
+		"message": "Najdi skripty pro tuto stránku", 
+		"description": "Menu item to find scripts for a site."
+	}, 
+	"menuScriptEnabled": {
+		"message": "Skripty zapnuty", 
+		"description": "Menu item showing the status of Violentmonkey, whether enabled."
+	}, 
+	"menuBack": {
+		"message": "Zpět", 
+		"description": "Menu item to go back to main menu from script commands."
+	}, 
+	"menuCommands": {
+		"message": "Skriptové příkazy...", 
+		"description": "Menu item to list script commands."
+	}, 
+	"labelOptions": {
+		"message": "Možnosti", 
+		"description": "Options of this extension."
+	}, 
+	"buttonNew": {
+		"message": "Nový", 
+		"description": "Button to create a new script."
+	}, 
+	"anchorGetMoreScripts": {
+		"message": "<a href=http://userscripts.org target=_blank>Získej více skritpů z userscripts.org</a>", 
+		"description": "Link to get more scripts."
+	}, 
+	"anchorUpdateAll": {
+		"message": "Zkontrolovat aktualizace", 
+		"description": "Check all scripts for updates."
+	}, 
+	"buttonAdvanced": {
+		"message": "Pokročilé", 
+		"description": "Button to show the advanced options."
+	}, 
+	"labelInstalledScripts": {
+		"message": "Nainstalované skripty", 
+		"description": "Label of the list of installed scripts."
+	}, 
+	"labelShowDetails": {
+		"message": "Zobrazit detaily", 
+		"description": "An option to show the details of scripts, such as author, description, etc."
+	}, 
+	"anchorSupportPage": {
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey/wiki>Violentmonkey</a>", 
+		"description": "Link to the support page of Violentmonkey."
+	}, 
+	"anchorAuthor": {
+		"message": "Design od <a href=mailto:gera2ld@163.com>Gerald</a>, Přeložil: <a href=http://my.opera.com/ahoj1234>ahoj1234</a>", 
+		"description": "Author shown in the footer of options page, translator information may be added."
+	}, 
+	"labelScriptEditor": {
+		"message": "Editor skriptů", 
+		"description": "Shown in the title of the script editing page."
+	}, 
+	"buttonCustomMeta": {
+		"message": "Vlastní meta data", 
+		"description": "Button to edit the custom meta data of a script."
+	}, 
+	"labelAllowUpdate": {
+		"message": "Povolit aktualizace", 
+		"description": "An option to allow checking updates for a script."
+	}, 
+	"buttonSave": {
+		"message": "Uložit", 
+		"description": "Button to save modifications of a script."
+	}, 
+	"buttonSaveClose": {
+		"message": "Uložit a Zavřít", 
+		"description": "Button to save modifications of a script and then close the editing page."
+	}, 
+	"buttonClose": {
+		"message": "Zavřít", 
+		"description": "Button to close window."
+	}, 
+	"labelName": {
+		"message": "Jméno:", 
+		"description": "Label of script name."
+	}, 
+	"labelRunAt": {
+		"message": "Spustit na: ", 
+		"description": "Label of script @run-at properties in custom meta data."
+	}, 
+	"labelRunAtDefault": {
+		"message": "(standardní)", 
+		"description": "Shown when custom @run-at is not assigned."
+	}, 
+	"labelHomepage": {
+		"message": "Domovská stránka:", 
+		"description": "Label of script @homepage in custom meta data."
+	}, 
+	"labelUpdateURL": {
+		"message": "Update URL:", 
+		"description": "Label of script @updateURL in custom meta data."
+	}, 
+	"labelDownloadURL": {
+		"message": "Download URL:", 
+		"description": "Label of script @downloadURL in custom meta data."
+	}, 
+	"labelInclude": {
+		"message": "Zahrnout", 
+		"description": "Label of @include rules."
+	}, 
+	"labelKeepInclude": {
+		"message": "Dodržovat originální zahrnutí", 
+		"description": "An option to keep the original @include rules."
+	}, 
+	"labelCustomInclude": {
+		"message": "Vlastní pravidla pro zahrnování: <em>(Jedno na řádek)</em>", 
+		"description": "Label of custom @include rules."
+	}, 
+	"labelMatch": {
+		"message": "Přiřazení", 
+		"description": "Label of @match rules."
+	}, 
+	"labelKeepMatch": {
+		"message": "Dodržovat originální přiřazení", 
+		"description": "An option to keep the original @match rules."
+	}, 
+	"labelCustomMatch": {
+		"message": "Vlastní pravidla pro přiřazení: <em>(Jedno na řádek)</em>", 
+		"description": "Label of custom @match rules."
+	}, 
+	"labelExclude": {
+		"message": "Výjimky", 
+		"description": "Label of @exclude rules."
+	}, 
+	"labelKeepExclude": {
+		"message": "Dodržovat originální výjimky", 
+		"description": "An option to keep the original @exclude rules."
+	}, 
+	"labelCustomExclude": {
+		"message": "Vlastní pravidla pro výjimky: <em>(Jedno na řádek)</em>", 
+		"description": "Label of custom @exclude rules."
+	}, 
+	"buttonOK": {
+		"message": "OK", 
+		"description": "Button to confirm modifications."
+	}, 
+	"buttonCancel": {
+		"message": "Zrušit", 
+		"description": "Button to cancel modifications."
+	}, 
+	"labelExport": {
+		"message": "Export dat", 
+		"description": "Label shown in the title of export dialog."
+	}, 
+	"anchorExportOptions": {
+		"message": "Možnosti", 
+		"description": "Options of export."
+	}, 
+	"labelExportScriptData": {
+		"message": "Export script data", 
+		"description": "An option to export script data along with scripts."
+	}, 
+	"buttonAllNone": {
+		"message": "Vše/Žádný", 
+		"description": "Button to select all scripts or none."
+	}, 
+	"labelAdvanced": {
+		"message": "Advanced", 
+		"description": "Label shown in the title of advanced dialog."
+	}, 
+	"labelShowButton": {
+		"message": "Zobrazovat tlačítko na liště", 
+		"description": "An option to show an icon of this extension in the toolbar."
+	}, 
+	"labelAutoUpdate": {
+		"message": "Automatically check scripts for updates every day", 
+		"description": "An option to allow automatically checking scripts for updates every 24 hours."
+	}, 
+	"labelSearchLink": {
+		"message": "hledat URL: ", 
+		"description": "Label of URL for searching scripts for a site."
+	}, 
+	"labelSearchHint": {
+		"message": "<a title='Hledat URL musí být URL obsahující *. * má uplatnění pro klíčová slova generována Violentmonkey.'>(?)</a>", 
+		"description": "Hint for the search URL."
+	}, 
+	"buttonDefault": {
+		"message": "Výchozí", 
+		"description": "Button to replace search URL with the default one."
+	}, 
+	"labelData": {
+		"message": "Data", 
+		"description": "Label of extension data management."
+	}, 
+	"buttonExportData": {
+		"message": "Exportovat do souboru zip", 
+		"description": "Button to open the data export dialog."
+	}, 
+	"buttonImportData": {
+		"message": "Import from zip file", 
+		"description": "Button to choose a file for data import."
+	}, 
+	"buttonVacuumData": {
+		"message": "Vyprázdnit data", 
+		"description": "Button to vacuum extension data."
+	}, 
+	"labelVacuumHint": {
+		"message": "<a title='Zbavit se nadbytečného a zkusit znovu načíst chybějící zdroje v cache.'>(?)</a>", 
+		"description": "Hint for vacuuming data."
+	}, 
+	"anchorUpdate": {
+		"message": "Zkontrolovat aktualizace", 
+		"description": "Check a script for updates."
+	}, 
+	"buttonEdit": {
+		"message": "Editovat", 
+		"description": "Button to edit a script."
+	}, 
+	"buttonRemove": {
+		"message": "Odstranit", 
+		"description": "Button to remove a script."
+	}, 
+	"labelAuthor": {
+		"message": "Autor: ", 
+		"description": "Label of author shown in the details of a script."
+	}, 
+	"buttonDisable": {
+		"message": "Vypnout", 
+		"description": "Button to disable a script."
+	}, 
+	"buttonEnable": {
+		"message": "Zapnout", 
+		"description": "Button to enable a script."
+	}, 
+	"confirmNotSaved": {
+		"message": "Modifikace není uložena! Klikni na OK pro zbavení se jí, nebo na zrušit pro zůstání zde.", 
+		"description": "Confirm message shown when there are unsaved script modifications."
+	}, 
+	"buttonVacuumed": {
+		"message": "Data vyprázdněna", 
+		"description": "Message shown when data is vacuumed."
+	}, 
+	"msgImported": {
+		"message": "$1 item(s) are imported.", 
+		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
+	}, 
+	"buttonExport": {
+		"message": "Exportovat", 
+		"description": "Button to confirm export."
+	}, 
+	"buttonExporting": {
+		"message": "Exporting data...", 
+		"description": "Message shown when data export is in progress."
+	}, 
+	"buttonNormalEditor": {
+		"message": "Přepnout do normálního editoru", 
+		"description": "Button to use a textarea as the script editor."
+	}, 
+	"buttonAdvancedEditor": {
+		"message": "Přepnout do pokročilého editoru", 
+		"description": "Button to use a syntax-highlighted script editor."
+	}
+}

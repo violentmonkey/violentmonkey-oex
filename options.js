@@ -1,5 +1,6 @@
 var $=document.getElementById.bind(document),
-		bg=opera.extension.bgProcess,N=$('main'),L=$('sList'),O=$('overlay'),_=bg.getI18nString;
+		N=$('main'),L=$('sList'),O=$('overlay'),
+		bg=opera.extension.bgProcess,_=bg._;
 
 // Main options
 function updateMove(d){
@@ -31,22 +32,22 @@ function loadItem(d,n,r){
 	+'<a class="name ellipsis" target=_blank></a>'
 	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
-	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('Check for updates')+'</a> ':'')
+	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('anchorUpdate')+'</a> ':'')
 	+'<div class="descrip ellipsis"></div>'
 	+'<span class=message></span>'
 	+'<div class=panel>'
-		+'<button data=edit>'+_('Edit')+'</button> '
-		+'<button data=enable>'+_(n.enabled?'Disable':'Enable')+'</button> '
-		+'<button data=remove>'+_('Remove')+'</button>'
-		+'<button data=up class=move>'+_('&uarr;')+'</button>'
-		+'<button data=down class=move>'+_('&darr;')+'</button>'
+		+'<button data=edit>'+_('buttonEdit')+'</button> '
+		+'<button data=enable>'+_(n.enabled?'buttonDisable':'buttonEnable')+'</button> '
+		+'<button data=remove>'+_('buttonRemove')+'</button>'
+		+'<button data=up class=move>&uarr;</button>'
+		+'<button data=down class=move>&darr;</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
 	var a=d.querySelector('.name'),b=n.custom.name||n.meta.name;
 	a.title=b||'';
-	a.innerHTML=b?b.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
+	a.innerHTML=b?b.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
 	if(b=n.custom.homepage||n.meta.homepage) a.href=b;
-	if(n.meta.author) d.querySelector('.author').innerText=_('Author: ')+n.meta.author;
+	if(n.meta.author) d.querySelector('.author').innerText=_('labelAuthor')+n.meta.author;
 	a=d.querySelector('.descrip');
 	a.innerText=a.title=n.meta.description||'';
 	modifyItem(d,r);
@@ -79,10 +80,10 @@ L.onclick=function(e){
 			e=bg.map[bg.ids[i]];
 			if(e.enabled=!e.enabled) {
 				p.classList.remove('disabled');
-				o.innerText=_('Disable');
+				o.innerText=_('buttonDisable');
 			} else {
 				p.classList.add('disabled');
-				o.innerText=_('Enable');
+				o.innerText=_('buttonEnable');
 			}
 			bg.saveScript(e);
 			break;
@@ -138,7 +139,7 @@ O.onclick=function(){
 	if(dialogs.length) (dialogs[dialogs.length-1].close||closeDialog)();
 };
 function confirmCancel(dirty){
-	return !dirty||confirm(_('Modifications are not saved!'));
+	return !dirty||confirm(_('confirmNotSaved'));
 }
 window.addEventListener('DOMContentLoaded',function(){
 	var nodes=document.querySelectorAll('.i18n'),c,s,i,j;
@@ -150,12 +151,10 @@ var A=$('advanced');
 $('bAdvanced').onclick=function(){showDialog(A);};
 $('cShow').checked=bg.getItem('showButton');
 $('cShow').onchange=function(){bg.showButton(bg.setItem('showButton',this.checked));};
-$('cInstall').checked=bg.installFile;
-$('cInstall').onchange=function(){bg.setItem('installFile',bg.installFile=this.checked);};
 $('cUpdate').checked=bg.autoUpdate;
 $('cUpdate').onchange=function(){if(bg.setItem('autoUpdate',bg.autoUpdate=this.checked)) bg.autoCheck();};
 $('tSearch').value=bg.getString('search');
-$('bDefSearch').onclick=function(){$('tSearch').value=_('Search$1');};
+$('bDefSearch').onclick=function(){$('tSearch').value=_('defaultSearch');};
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aImport').onchange=function(e){
 	var i,f,files=e.target.files;
@@ -165,7 +164,7 @@ $('aImport').onchange=function(e){
 		r.readAsBinaryString(f);
 	}
 };
-$('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('Data vacuumed');});};
+$('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('buttonVacuumed');});};
 A.close=$('aClose').onclick=function(){
 	bg.setString('search',$('tSearch').value);
 	closeDialog();
@@ -174,7 +173,7 @@ A.close=$('aClose').onclick=function(){
 // Import
 function impo(b){
 	var z=new JSZip();
-	try{z.load(b);}catch(e){alert(_('Error loading zip file.'));return;}
+	try{z.load(b);}catch(e){alert('Error loading zip file.');return;}
 	var vm=z.file('ViolentMonkey'),count=0;
 	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){vm={};opera.postError('Error parsing ViolentMonkey configuration.');}
 	z.file(/\.user\.js$/).forEach(function(o){
@@ -197,15 +196,14 @@ function impo(b){
 		for(z in vm.settings) bg.setString(z,vm.settings[z]);
 		bg.init();
 	}
-	alert(bg.format(_('$1 item(s) are imported.'),count));
+	alert(_('msgImported',count));
 	location.reload();
 }
 
 // Export
-var X=$('export'),xL=$('xList'),xE=$('bExport'),/*xC=$('cCompress'),*/xD=$('cWithData');
+var X=$('export'),xL=$('xList'),xE=$('bExport'),xD=$('cWithData');
 function xLoad() {
-	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('Export');
-	//xC.checked=bg.getItem('compress');
+	xL.innerHTML='';xE.disabled=false;xE.innerHTML=_('buttonExport');
 	xD.checked=bg.getItem('withData');
 	for(var i=0;i<bg.ids.length;i++) {
 		var d=document.createElement('div');
@@ -214,7 +212,6 @@ function xLoad() {
 		xL.appendChild(d);
 	}
 }
-//xC.onchange=function(){bg.setItem('compress',this.checked);};
 xD.onchange=function(){bg.setItem('withData',this.checked);};
 xL.onclick=function(e){
 	var t=e.target;
@@ -232,7 +229,7 @@ function getNameURI(c){
 	if(!t&&!n) ckey+=c.id;return ckey;
 }
 xE.onclick=function(){
-	this.disabled=true;this.innerHTML=_('Exporting...');
+	this.disabled=true;this.innerHTML=_('buttonExporting');
 	var z=new JSZip(),n,_n,names={},c,i,j,vm={scripts:{}},ns={};
 	for(i=0;i<bg.ids.length;i++)
 		if(xL.childNodes[i].classList.contains('selected')) {
@@ -255,7 +252,7 @@ xE.onclick=function(){
 	['showDetails','showButton','installFile','compress','withData',
 		'editorType','autoUpdate','isApplied','lastUpdate','search'].forEach(function(i){vm.settings[i]=bg.getString(i);});
 	z.file('ViolentMonkey',JSON.stringify(vm));
-	c={compression:'DEFLATE'};//if(xC.checked) c.compression='DEFLATE';
+	c={compression:'DEFLATE'};
 	n=z.generate(c);
 	window.open('data:application/zip;base64,'+n);
 	X.close();
@@ -322,7 +319,7 @@ editor.prototype={
 var T=new editor($('eCode'),bg.getItem('editorType'));
 (function(b){
 	function switchCommand(){
-		b.innerHTML=T.type?_('Switch to normal editor'):_('Switch to advanced editor');
+		b.innerHTML=T.type?_('buttonNormalEditor'):_('buttonAdvancedEditor');
 	}
 	b.onclick=function(){
 		T.switchEditor();bg.setItem('editorType',T.type);switchCommand();

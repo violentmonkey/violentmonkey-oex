@@ -1,1 +1,318 @@
-{"__translator":"softovikk","__lang":"ru","Script updated.":"\u0421\u043a\u0440\u0438\u043f\u0442 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d.","Error fetching script!":"\u041e\u0448\u0438\u0431\u043a\u0430 \u0447\u0442\u0435\u043d\u0438\u044f \u0441\u043a\u0440\u0438\u043f\u0442\u0430!","Script installed.":"\u0421\u043a\u0440\u0438\u043f\u0442 \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d.","Do you want to install this UserScript?":"\u0412\u044b \u0445\u043e\u0442\u0438\u0442\u0435 \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u044d\u0442\u043e\u0442 UserScript?","Updating...":"\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435...","New version found.":"\u041d\u0430\u0439\u0434\u0435\u043d\u0430 \u043d\u043e\u0432\u0430\u044f \u0432\u0435\u0440\u0441\u0438\u044f.","Checking for updates...":"\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u043d\u0430\u043b\u0438\u0447\u0438\u044f \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439...","Failed fetching update information.":"\u041d\u0435 \u0443\u0434\u0430\u0435\u0442\u0441\u044f \u043d\u0430\u0439\u0442\u0438 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f.","No update found.":"\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b.","Search$1":"http:\/\/www.google.com\/search?q=$1","Violentmonkey":"Violentmonkey","Options":"Options","New":"\u0421\u043e\u0437\u0434\u0430\u0442\u044c","Get more scripts from userscripts.org":"\u0421\u043a\u0430\u0447\u0430\u0442\u044c \u0441\u043a\u0440\u0438\u043f\u0442\u044b \u0441 Userscripts.org","Check all for updates":"\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f \u0441\u043a\u0440\u0438\u043f\u0442\u043e\u0432","Advanced":"\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043e\u043f\u0446\u0438\u0438","Installed Scripts":"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043d\u044b\u0435 \u0441\u043a\u0440\u0438\u043f\u0442\u044b","Show details":"\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u0434\u0435\u0442\u0430\u043b\u0438","Violentmonkey link":"<a href=https:\/\/github.com\/gera2ld\/Violentmonkey\/wiki>Violentmonkey<\/a>","Designed by Gerald":"\u0420\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0430\u043d\u043e <a href=mailto:gera2ld@163.com>Gerald<\/a>","Script Editor":"\u0420\u0435\u0434\u0430\u043a\u0442\u043e\u0440 \u0441\u043a\u0440\u0438\u043f\u0442\u043e\u0432","Custom meta data":"\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u0441\u043a\u0438\u0435 meta-\u0434\u0430\u043d\u043d\u044b\u0435","Allow update":"\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435","Save":"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c","Save and Close":"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0438 \u0437\u0430\u043a\u0440\u044b\u0442\u044c","Close":"\u0417\u0430\u043a\u0440\u044b\u0442\u044c","Name:":"Name:","Run at:":"Run at (@run-at):","default":"(default)","Homepage:":"Homepage:","Update URL:":"Update URL:","Download URL:":"Download URL:","Includes":"Includes","Keep original include rules":"\u0421\u043e\u0445\u0440\u0430\u043d\u044f\u0442\u044c \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 include","Custom include rules:":"\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u0441\u043a\u0438\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 include: <em>(\u041f\u043e \u043e\u0434\u043d\u043e\u043c\u0443 \u043d\u0430 \u0441\u0442\u0440\u043e\u043a\u0443)<\/em>","Matches":"Matches","Keep original match rules":"\u0421\u043e\u0445\u0440\u0430\u043d\u044f\u0442\u044c \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 match","Custom match rules:":"\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u0441\u043a\u0438\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 match: <em>(\u041f\u043e \u043e\u0434\u043d\u043e\u043c\u0443 \u043d\u0430 \u0441\u0442\u0440\u043e\u043a\u0443)<\/em>","Excludes":"Excludes","Keep original exclude rules":"\u0421\u043e\u0445\u0440\u0430\u043d\u044f\u0442\u044c \u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 exclude","Custom exclude rules:":"\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u0441\u043a\u0438\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 exclude: <em>(\u041f\u043e \u043e\u0434\u043d\u043e\u043c\u0443 \u043d\u0430 \u0441\u0442\u0440\u043e\u043a\u0443)<\/em>","OK":"OK","Cancel":"\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c","Data Export":"\u042d\u043a\u0441\u043f\u043e\u0440\u0442 \u0434\u0430\u043d\u043d\u044b\u0445","Export Options":"\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u044d\u043a\u0441\u043f\u043e\u0440\u0442\u0430","Compress":"\u0421\u0436\u0430\u0442\u044c","Export script data":"\u042d\u043a\u0441\u043f\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0435","All\/None":"\u0412\u0441\u0451\/\u041d\u0438\u0447\u0435\u0433\u043e","Show button on toolbar":"\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u043a\u043d\u043e\u043f\u043a\u0443 \u043d\u0430 \u043f\u0430\u043d\u0435\u043b\u0438","Allow installing .user.js files":"\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044c \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0443 .user.js \u0444\u0430\u0439\u043b\u043e\u0432","Automatically check scripts for updates every day":"\u0415\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u043e \u043f\u0440\u043e\u0432\u0435\u0440\u044f\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f \u0441\u043a\u0440\u0438\u043f\u0442\u043e\u0432","Search URL: ":"\u041f\u043e\u0438\u0441\u043a\u043e\u0432\u044b\u0439 URL: ","Search hint":"<a title='\u041f\u043e\u0438\u0441\u043a\u043e\u0432\u044b\u0439 URL \u0434\u043e\u043b\u0436\u0435\u043d \u0432\u043a\u043b\u044e\u0447\u0430\u0442\u044c $1, \u0433\u0434\u0435 $1 - \u043a\u043b\u044e\u0447\u0435\u0432\u044b\u0435 \u0441\u043b\u043e\u0432\u0430 \u0433\u0435\u043d\u0435\u0440\u0438\u0440\u0443\u0435\u043c\u044b\u0435 Violentmonkey'>(?)<\/a>","Default":"\u041f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e","Data":"\u0414\u0430\u043d\u043d\u044b\u0435","Export to zip file":"\u042d\u043a\u0441\u043f\u043e\u0440\u0442 \u0432 zip-\u0444\u0430\u0439\u043b","Import from zip file":"\u0418\u043c\u043f\u043e\u0440\u0442 \u0438\u0437 zip-\u0444\u0430\u0439\u043b\u0430","Vacuum data":"\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u043a\u044d\u0448","Vacuum hint":"<a title=\"\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u0438\u0437\u0431\u044b\u0442\u043e\u0447\u043d\u043e\u0441\u0442\u044c \u0438 \u043f\u043e\u043f\u0440\u043e\u0431\u043e\u0432\u0430\u0442\u044c \u043f\u0435\u0440\u0435\u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u043d\u0435\u0434\u043e\u0441\u0442\u0430\u044e\u0449\u0438\u0435 \u0440\u0435\u0441\u0443\u0440\u0441\u044b \u0432 \u043a\u044d\u0448\u0435\">(?)<\/a>","Check for updates":"\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f","Edit":"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c","Remove":"\u0423\u0434\u0430\u043b\u0438\u0442\u044c","&uarr;":"&uarr;","&darr;":"&darr;","Null name":"Null name","Author: ":"\u0410\u0432\u0442\u043e\u0440: ","Disable":"\u0412\u044b\u043a\u043b\u044e\u0447\u0438\u0442\u044c","Enable":"\u0412\u043a\u043b\u044e\u0447\u0438\u0442\u044c","Modifications are not saved!":"\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u043d\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u044b!\n\u041d\u0430\u0436\u043c\u0438\u0442\u0435 OK, \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c \u0438\u043b\u0438 \u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c, \u0447\u0442\u043e\u0431\u044b \u0432\u0435\u0440\u043d\u0443\u0442\u044c\u0441\u044f.","Data vacuumed":"\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u043a\u044d\u0448","Error loading zip file.":"\u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438 zip-\u0444\u0430\u0439\u043b\u0430.","$1 item(s) are imported.":"$1 \u043f\u0443\u043d\u043a\u0442(\u043e\u0432) \u0438\u043c\u043f\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u043e.","Export":"\u042d\u043a\u0441\u043f\u043e\u0440\u0442","Exporting...":"\u042d\u043a\u0441\u043f\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435...","Switch to normal editor":"\u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438\u0442\u044c \u043d\u0430 \u043e\u0431\u044b\u0447\u043d\u044b\u0439 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440","Switch to advanced editor":"\u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438\u0442\u044c \u043d\u0430 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043d\u043d\u044b\u0439 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440","Manage scripts":"\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0441\u043a\u0440\u0438\u043f\u0442\u0430\u043c\u0438","Find scripts for this site":"\u041d\u0430\u0439\u0442\u0438 \u0441\u043a\u0440\u0438\u043f\u0442\u044b \u0434\u043b\u044f \u0441\u0430\u0439\u0442\u0430","Back":"\u041d\u0430\u0437\u0430\u0434","Script commands...":"\u041a\u043e\u043c\u0430\u043d\u0434\u044b \u0441\u0446\u0435\u043d\u0430\u0440\u0438\u044f...","Scripts enabled":"\u0412\u043a\u043b\u044e\u0447\u0438\u0442\u044c \u0441\u043a\u0440\u0438\u043f\u0442\u044b"}
+{
+	"extName": {
+		"message": "Violentmonkey", 
+		"description": "Name of this extension."
+	}, 
+	"extDescription": {
+		"message": "Userscript support for Opera.", 
+		"description": "Description for this extension."
+	}, 
+	"extTranslator": {
+		"message": "softovikk", 
+		"description": "Information of the translator."
+	}, 
+	"msgUpdated": {
+		"message": "Скрипт обновлен.", 
+		"description": "Message shown when a script is updated/reinstalled."
+	}, 
+	"msgErrorFetchingScript": {
+		"message": "Ошибка чтения скрипта!", 
+		"description": "Message shown when Violentmonkey failed fetching a new version of the script."
+	}, 
+	"msgInstalled": {
+		"message": "Скрипт установлен.", 
+		"description": "Message shown when a script is installed."
+	}, 
+	"msgConfirm": {
+		"message": "Вы хотите установить этот UserScript?", 
+		"description": "Message shown before installing a script."
+	}, 
+	"msgUpdating": {
+		"message": "Обновление...", 
+		"description": "Message shown when a new version of script is being fetched."
+	}, 
+	"msgNewVersion": {
+		"message": "Найдена новая версия.", 
+		"description": "Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided."
+	}, 
+	"msgCheckingForUpdate": {
+		"message": "Проверка наличия обновлений...", 
+		"description": "Message shown when a script is being checked for updates by version numbers."
+	}, 
+	"msgErrorFetchingUpdateInfo": {
+		"message": "Не удается найти обновления.", 
+		"description": "Message shown when Violentmonkey failed fetching version data of the script."
+	}, 
+	"msgNoUpdate": {
+		"message": "Обновления не найдены.", 
+		"description": "Message shown when there is no new version of a script."
+	}, 
+	"defaultSearch": {
+		"message": "http://www.google.com/search?q=*", 
+		"description": "URL for searching scripts, * stands for the keywords."
+	}, 
+	"labelNoName": {
+		"message": "Null name", 
+		"description": "Text as the name of a script when no @name is assigned."
+	}, 
+	"menuManageScripts": {
+		"message": "Управление скриптами", 
+		"description": "Menu item to manage scripts, or to open the options page of the extension."
+	}, 
+	"menuFindScripts": {
+		"message": "Найти скрипты для сайта", 
+		"description": "Menu item to find scripts for a site."
+	}, 
+	"menuScriptEnabled": {
+		"message": "Включить скрипты", 
+		"description": "Menu item showing the status of Violentmonkey, whether enabled."
+	}, 
+	"menuBack": {
+		"message": "Назад", 
+		"description": "Menu item to go back to main menu from script commands."
+	}, 
+	"menuCommands": {
+		"message": "Команды сценария...", 
+		"description": "Menu item to list script commands."
+	}, 
+	"labelOptions": {
+		"message": "Options", 
+		"description": "Options of this extension."
+	}, 
+	"buttonNew": {
+		"message": "Создать", 
+		"description": "Button to create a new script."
+	}, 
+	"anchorGetMoreScripts": {
+		"message": "<a href=http://userscripts.org target=_blank>Скачать скрипты с userscripts.org</a>", 
+		"description": "Link to get more scripts."
+	}, 
+	"anchorUpdateAll": {
+		"message": "Проверить обновления скриптов", 
+		"description": "Check all scripts for updates."
+	}, 
+	"buttonAdvanced": {
+		"message": "Дополнительные опции", 
+		"description": "Button to show the advanced options."
+	}, 
+	"labelInstalledScripts": {
+		"message": "Установленные скрипты", 
+		"description": "Label of the list of installed scripts."
+	}, 
+	"labelShowDetails": {
+		"message": "Показать детали", 
+		"description": "An option to show the details of scripts, such as author, description, etc."
+	}, 
+	"anchorSupportPage": {
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey/wiki>Violentmonkey</a>", 
+		"description": "Link to the support page of Violentmonkey."
+	}, 
+	"anchorAuthor": {
+		"message": "Разработано <a href=mailto:gera2ld@163.com>Gerald</a>", 
+		"description": "Author shown in the footer of options page, translator information may be added."
+	}, 
+	"labelScriptEditor": {
+		"message": "Редактор скриптов", 
+		"description": "Shown in the title of the script editing page."
+	}, 
+	"buttonCustomMeta": {
+		"message": "Пользовательские meta-данные", 
+		"description": "Button to edit the custom meta data of a script."
+	}, 
+	"labelAllowUpdate": {
+		"message": "Разрешить обновление", 
+		"description": "An option to allow checking updates for a script."
+	}, 
+	"buttonSave": {
+		"message": "Сохранить", 
+		"description": "Button to save modifications of a script."
+	}, 
+	"buttonSaveClose": {
+		"message": "Сохранить и закрыть", 
+		"description": "Button to save modifications of a script and then close the editing page."
+	}, 
+	"buttonClose": {
+		"message": "Закрыть", 
+		"description": "Button to close window."
+	}, 
+	"labelName": {
+		"message": "Name:", 
+		"description": "Label of script name."
+	}, 
+	"labelRunAt": {
+		"message": "Run at (@run-at):", 
+		"description": "Label of script @run-at properties in custom meta data."
+	}, 
+	"labelRunAtDefault": {
+		"message": "(default)", 
+		"description": "Shown when custom @run-at is not assigned."
+	}, 
+	"labelHomepage": {
+		"message": "Homepage:", 
+		"description": "Label of script @homepage in custom meta data."
+	}, 
+	"labelUpdateURL": {
+		"message": "Update URL:", 
+		"description": "Label of script @updateURL in custom meta data."
+	}, 
+	"labelDownloadURL": {
+		"message": "Download URL:", 
+		"description": "Label of script @downloadURL in custom meta data."
+	}, 
+	"labelInclude": {
+		"message": "Includes", 
+		"description": "Label of @include rules."
+	}, 
+	"labelKeepInclude": {
+		"message": "Сохранять оригинальные правила include", 
+		"description": "An option to keep the original @include rules."
+	}, 
+	"labelCustomInclude": {
+		"message": "Пользовательские правила include: <em>(По одному на строку)</em>", 
+		"description": "Label of custom @include rules."
+	}, 
+	"labelMatch": {
+		"message": "Matches", 
+		"description": "Label of @match rules."
+	}, 
+	"labelKeepMatch": {
+		"message": "Сохранять оригинальные правила match", 
+		"description": "An option to keep the original @match rules."
+	}, 
+	"labelCustomMatch": {
+		"message": "Пользовательские правила match: <em>(По одному на строку)</em>", 
+		"description": "Label of custom @match rules."
+	}, 
+	"labelExclude": {
+		"message": "Excludes", 
+		"description": "Label of @exclude rules."
+	}, 
+	"labelKeepExclude": {
+		"message": "Сохранять оригинальные правила exclude", 
+		"description": "An option to keep the original @exclude rules."
+	}, 
+	"labelCustomExclude": {
+		"message": "Пользовательские правила exclude: <em>(По одному на строку)</em>", 
+		"description": "Label of custom @exclude rules."
+	}, 
+	"buttonOK": {
+		"message": "OK", 
+		"description": "Button to confirm modifications."
+	}, 
+	"buttonCancel": {
+		"message": "Отменить", 
+		"description": "Button to cancel modifications."
+	}, 
+	"labelExport": {
+		"message": "Экспорт данных", 
+		"description": "Label shown in the title of export dialog."
+	}, 
+	"anchorExportOptions": {
+		"message": "Параметры экспорта", 
+		"description": "Options of export."
+	}, 
+	"labelExportScriptData": {
+		"message": "Экспортировать данные", 
+		"description": "An option to export script data along with scripts."
+	}, 
+	"buttonAllNone": {
+		"message": "Всё/Ничего", 
+		"description": "Button to select all scripts or none."
+	}, 
+	"labelAdvanced": {
+		"message": "Advanced", 
+		"description": "Label shown in the title of advanced dialog."
+	}, 
+	"labelShowButton": {
+		"message": "Показать кнопку на панели", 
+		"description": "An option to show an icon of this extension in the toolbar."
+	}, 
+	"labelAutoUpdate": {
+		"message": "Ежедневно проверять обновления скриптов", 
+		"description": "An option to allow automatically checking scripts for updates every 24 hours."
+	}, 
+	"labelSearchLink": {
+		"message": "Поисковый URL: ", 
+		"description": "Label of URL for searching scripts for a site."
+	}, 
+	"labelSearchHint": {
+		"message": "<a title='Поисковый URL должен включать *, где * - ключевые слова генерируемые Violentmonkey'>(?)</a>", 
+		"description": "Hint for the search URL."
+	}, 
+	"buttonDefault": {
+		"message": "По умолчанию", 
+		"description": "Button to replace search URL with the default one."
+	}, 
+	"labelData": {
+		"message": "Данные", 
+		"description": "Label of extension data management."
+	}, 
+	"buttonExportData": {
+		"message": "Экспорт в zip-файл", 
+		"description": "Button to open the data export dialog."
+	}, 
+	"buttonImportData": {
+		"message": "Импорт из zip-файла", 
+		"description": "Button to choose a file for data import."
+	}, 
+	"buttonVacuumData": {
+		"message": "Сбросить кэш", 
+		"description": "Button to vacuum extension data."
+	}, 
+	"labelVacuumHint": {
+		"message": "<a title=\"Сбросить избыточность и попробовать перезагрузить недостающие ресурсы в кэше\">(?)</a>", 
+		"description": "Hint for vacuuming data."
+	}, 
+	"anchorUpdate": {
+		"message": "Проверить обновления", 
+		"description": "Check a script for updates."
+	}, 
+	"buttonEdit": {
+		"message": "Изменить", 
+		"description": "Button to edit a script."
+	}, 
+	"buttonRemove": {
+		"message": "Удалить", 
+		"description": "Button to remove a script."
+	}, 
+	"labelAuthor": {
+		"message": "Автор: ", 
+		"description": "Label of author shown in the details of a script."
+	}, 
+	"buttonDisable": {
+		"message": "Выключить", 
+		"description": "Button to disable a script."
+	}, 
+	"buttonEnable": {
+		"message": "Включить", 
+		"description": "Button to enable a script."
+	}, 
+	"confirmNotSaved": {
+		"message": "Изменения не сохранены!\nНажмите OK, чтобы продолжить или Отменить, чтобы вернуться.", 
+		"description": "Confirm message shown when there are unsaved script modifications."
+	}, 
+	"buttonVacuumed": {
+		"message": "Сбросить кэш", 
+		"description": "Message shown when data is vacuumed."
+	}, 
+	"msgImported": {
+		"message": "$1 пункт(ов) импортировано.", 
+		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
+	}, 
+	"buttonExport": {
+		"message": "Экспорт", 
+		"description": "Button to confirm export."
+	}, 
+	"buttonExporting": {
+		"message": "Exporting data...", 
+		"description": "Message shown when data export is in progress."
+	}, 
+	"buttonNormalEditor": {
+		"message": "Переключить на обычный редактор", 
+		"description": "Button to use a textarea as the script editor."
+	}, 
+	"buttonAdvancedEditor": {
+		"message": "Переключить на расширенный редактор", 
+		"description": "Button to use a syntax-highlighted script editor."
+	}
+}

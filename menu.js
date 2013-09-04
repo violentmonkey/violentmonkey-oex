@@ -1,7 +1,7 @@
 var $=document.getElementById.bind(document),P=$('popup'),C=$('commands'),
 		pT=P.querySelector('.top'),pB=P.querySelector('.bot'),
 		cT=C.querySelector('.top'),cB=C.querySelector('.bot'),
-		bg=opera.extension.bgProcess,_=bg.getI18nString,
+		bg=opera.extension.bgProcess,_=bg._,
 		tab=bg.opera.extension.tabs.getFocused(),ia=null;
 function loadItem(d,c){
 	if(c) {
@@ -30,36 +30,36 @@ function addItem(h,c,b){
 function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
 function menuScript(i) {
 	var s=bg.map[i];if(!s) return;
-	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('Null name')+'</em>';
+	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
 	addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
 		loadItem(this,s.enabled=!s.enabled);
 		bg.saveScript(s);bg.optionsUpdate({item:bg.ids.indexOf(s.id),status:0});
 	}});
 }
 function initMenu(){
-	addItem(_('Manage scripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
   if(/^https?:\/\//i.test(tab.url))
-		addItem(_('Find scripts for this site'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+		addItem(_('menuFindScripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
 			var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 				return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-			}),url=bg.format(bg.getString('search'),q);
+			}),url=bg.getString('search').replace('*',q);
 			bg.opera.extension.tabs.create({url:url}).focus();
 		}});
-	ia=addItem(_('Scripts enabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
+	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
 		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
 	}});
 }
 function load(e,data){
 	if(data&&data[0]&&data[0].length) {
-		addItem(_('Back'),{holder:cT,symbol:'◄',title:true,onclick:function(){
+		addItem(_('menuBack'),{holder:cT,symbol:'◄',title:true,onclick:function(){
 			C.classList.add('hide');P.classList.remove('hide');
 			bg.button.popup.height=P.offsetHeight;
 		}});
 		cT.appendChild(document.createElement('hr'));
 		data[0].forEach(function(i){addItem(i[0],{holder:cB,symbol:'➤',title:true,onclick:menuCommand,cmd:i[0]});});
-		addItem(_('Script commands...'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+		addItem(_('menuCommands'),{holder:pT,symbol:'➤',title:true,onclick:function(){
 			P.classList.add('hide');C.classList.remove('hide');
 			bg.button.popup.height=C.offsetHeight;
 			setTimeout(function(){cB.style.pixelHeight=innerHeight-cB.offsetTop;},0);
