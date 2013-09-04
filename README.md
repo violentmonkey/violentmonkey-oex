@@ -5,7 +5,7 @@ Violentmonkey, userscripts support for Opera \(Presto\).
 
 Multiple language
 ---
-If you'd like to help with a new translation, please download `_locales/en/messages.json` and translate it into your own language. Then you may either send the new translation to me or make a pull request. Thanks in advance.
+If you'd like to help with a new translation, please download `locales/en/messages.json` and translate it into your own language. Then you may either send the new translation to me or make a pull request. Thanks in advance.
 
 Donate
 ---
