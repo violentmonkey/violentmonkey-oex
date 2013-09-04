@@ -18,15 +18,17 @@ function getItem(key,def){
 	if(v==null&&def) return setItem(key,def);
 	try{return JSON.parse(v);}catch(e){return def;}
 }
-function setItem(key,val){return setString(key,JSON.stringify(val));}
+function setItem(key,val){
+	setString(key,JSON.stringify(val));return val;
+}
 function getNameURI(i){
 	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
 	if(!ns&&!n) k+=i.id;return k;
 }
 
 // Multilingual
-function loadMessages(data,callback){
-	var req=new XMLHttpRequest();
+function initMessages(callback){
+	var data={},req=new XMLHttpRequest();
 	req.open('GET','messages.json',true);
 	req.onload=function(){
 		var i,j=JSON.parse(this.responseText);
@@ -34,10 +36,6 @@ function loadMessages(data,callback){
 		if(callback) callback();
 	};
 	req.send();
-}
-function initMessages(callback){
-	var data={};
-	loadMessages(data,callback);
 	return function(){
 		var args=arguments,k=args[0],r;
 		r=data[k];if(r) r=r.message;
