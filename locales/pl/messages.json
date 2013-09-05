@@ -104,7 +104,7 @@
 		"description": "An option to show the details of scripts, such as author, description, etc."
 	}, 
 	"anchorSupportPage": {
-		"message": "<a href=https://github.com/gera2ld/Violentmonkey/wiki>Violentmonkey</a>", 
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>", 
 		"description": "Link to the support page of Violentmonkey."
 	}, 
 	"anchorAuthor": {
@@ -220,7 +220,7 @@
 		"description": "Button to select all scripts or none."
 	}, 
 	"labelAdvanced": {
-		"message": "Advanced", 
+		"message": "Zaawansowane", 
 		"description": "Label shown in the title of advanced dialog."
 	}, 
 	"labelShowButton": {
@@ -304,7 +304,7 @@
 		"description": "Button to confirm export."
 	}, 
 	"buttonExporting": {
-		"message": "Exporting data...", 
+		"message": "Eksportowanie danych...", 
 		"description": "Message shown when data export is in progress."
 	}, 
 	"buttonNormalEditor": {
