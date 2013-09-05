@@ -10,8 +10,8 @@ a{color:dodgerblue;cursor:pointer;}
 .new{color:red;}
 .menu,.ellipsis{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 .menu{overflow-y:auto;}
-.left{float:left;}
-.right{float:right;}
+div.left{float:left;}
+div.right{float:right;}
 .buttons{text-align:right;vertical-align:bottom;}
 .menu,.x{clear:both;margin:0;padding:0;}
 .hide{display:none;}
@@ -34,18 +34,20 @@ fieldset{border-radius:5px;}
 #sList{overflow-x:hidden;overflow-y:auto;position:absolute;top:22px;left:0;right:0;bottom:10px;}
 #sList>div{display:block;padding:10px;border-top:1px dashed gray;overflow:hidden;height:80px;position:relative;}
 #sList>div:last-child{border-bottom:1px dashed gray;}
+#sList>div.moving{background:#bb6;border:1px outset gray;}
 #sList.simple>div{height:50px;}
 #sList .version,#sList .author{margin-left:20px;color:gray;font-style:italic;}
 #sList.simple .author{display:none;}
 #sList.simple .descrip{display:none;}
-#sList .update{position:absolute;right:10px;top:10px;}
 #sList .message{color:gray;position:absolute;bottom:10px;left:50px;}
 #sList .icon{width:32px;height:32px;margin:2px;position:absolute;}
 #sList .name{font-weight:bold;line-height:150%;display:inline-block;max-width:400px;margin-left:40px;}
 #sList .descrip{margin-left:40px;}
-#sList .panel{position:absolute;bottom:10px;right:10px;}
-#sList .panel>button{width:80px;}
-#sList .panel .move{width:40px;padding:1px 2px;}
+#sList .move{cursor:move;margin-left:20px;color:gray;}
+#sList .panelB,#sList .panelT{position:absolute;right:10px;}
+#sList .panelB{bottom:10px;}
+#sList .panelT{top:10px;}
+#sList .panelB>button{width:80px;}
 #sList .disabled{color:gray;background:silver;}
 #sList .disabled a{color:gray;}
 #sList .disabled img{opacity:0.3;}

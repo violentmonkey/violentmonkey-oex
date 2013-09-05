@@ -3,12 +3,6 @@ var $=document.getElementById.bind(document),
 		bg=opera.extension.bgProcess,_=bg._;
 
 // Main options
-function updateMove(d){
-	if(!d) return;
-	var b=d.querySelectorAll('.move');
-	b[0].disabled=!d.previousSibling;
-	b[1].disabled=!d.nextSibling;
-}
 var icons={};
 function getIcon(n){
 	if(n.meta.icon) {
@@ -32,15 +26,16 @@ function loadItem(d,n,r){
 	+'<a class="name ellipsis" target=_blank></a>'
 	+'<span class=author></span>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
-	+(allowUpdate(n)?'<a data=update class=update href=#>'+_('anchorUpdate')+'</a> ':'')
+	+'<div class=panelT>'
+		+(allowUpdate(n)?'<a data=update class=update href=#>'+_('anchorUpdate')+'</a> ':'')
+		+'<span class=move data=move>&equiv;</span>'
+	+'</div>'
 	+'<div class="descrip ellipsis"></div>'
 	+'<span class=message></span>'
-	+'<div class=panel>'
+	+'<div class=panelB>'
 		+'<button data=edit>'+_('buttonEdit')+'</button> '
 		+'<button data=enable>'+_(n.enabled?'buttonDisable':'buttonEnable')+'</button> '
 		+'<button data=remove>'+_('buttonRemove')+'</button>'
-		+'<button data=up class=move>&uarr;</button>'
-		+'<button data=down class=move>&darr;</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
 	var a=d.querySelector('.name'),b=n.custom.name||n.meta.name;
@@ -56,28 +51,50 @@ function addItem(n){
 	var d=document.createElement('div');
 	loadItem(d,n);
 	L.appendChild(d);
-	return d;
 }
-function moveUp(i,p){
-	var x=bg.ids[i];
-	bg.ids[i]=bg.ids[i-1];
-	bg.ids[i-1]=x;
-	L.insertBefore(p,p.previousSibling);
-	bg.saveIDs();
-	updateMove(p);updateMove(p.nextSibling);
-}
-L.onclick=function(e){
-	var o=e.target,d=o.getAttribute('data'),p;
-	if(!d) return;
-	e.preventDefault();
-	for(p=o;p&&p.parentNode!=L;p=p.parentNode);
-	var i=Array.prototype.indexOf.call(L.childNodes,p);
-	switch(d){
-		case 'edit':
-			edit(i);
-			break;
-		case 'enable':
-			e=bg.map[bg.ids[i]];
+(function(){
+	function getSource(e){
+		var o=e.target,p,i;
+		for(p=o;p&&p.parentNode!=L;p=p.parentNode);
+		i=Array.prototype.indexOf.call(L.childNodes,p);
+		return [i,p,o];
+	}
+	function moveItem(e){
+		var m=getSource(e);if(m[0]<0) return;
+		if(m[0]>=0&&m[0]!=t) {
+			e=m;m=e[1];if(e[0]>t) m=m.nextSibling;
+			L.insertBefore(o[1],m);
+			t=e[0];
+		}
+	}
+	function movedItem(e){
+		if(!moving) return;moving=false;
+		o[1].classList.remove('moving');
+		L.onmousemove=L.onmouseup=null;L.onmousedown=startMove;
+		if(o[0]!=t) {
+			var s=t>o[0]?1:-1,i=o[0],x=bg.ids[i];
+			for(;i!=t;i+=s) bg.ids[i]=bg.ids[i+s];
+			bg.ids[t]=x;bg.saveIDs();
+		}
+	}
+	function startMove(e){
+		o=getSource(e);t=o[0];
+		if(o[2].getAttribute('data')=='move') {
+			if(moving) return;moving=true;
+			e.preventDefault();
+			o[1].classList.add('moving');
+			L.onmousedown=null;
+			L.onmousemove=moveItem;
+			L.onmouseup=movedItem;
+		}
+	}
+	var maps={
+		edit:function(i){
+			switchTo(E);E.scr=bg.map[bg.ids[i]];E.cur=L.childNodes[i];
+			U.checked=E.scr.update;T.setValue(E.scr.code);T.markClean();T.focus();
+		},
+		enable:function(i,p,o){
+			var e=bg.map[bg.ids[i]];
 			if(e.enabled=!e.enabled) {
 				p.classList.remove('disabled');
 				o.innerText=_('buttonDisable');
@@ -86,26 +103,26 @@ L.onclick=function(e){
 				o.innerText=_('buttonEnable');
 			}
 			bg.saveScript(e);
-			break;
-		case 'remove':
+		},
+		remove:function(i,p){
 			bg.removeScript(i--);
 			L.removeChild(p);
-			updateMove(L.childNodes[i<0?0:i]);
-			break;
-		case 'update':
+		},
+		update:function(i){
 			bg.checkUpdate(i);
-			break;
-		case 'up':
-			if(p.previousSibling) moveUp(i,p);
-			break;
-		case 'down':
-			if(p.nextSibling) moveUp(i+1,p.nextSibling);
-			break;
-	}
-};
+		}
+	},o,t,moving=false;
+	L.onmousedown=startMove;
+	L.onclick=function(e){
+		var o=getSource(e),d=o[2].getAttribute('data'),f=maps[d];
+		if(f) {
+			e.preventDefault();
+			f.apply(this,o);
+		}
+	};
+})();
 $('bNew').onclick=function(){
-	var d=bg.newScript(true);d=addItem(d);
-	updateMove(d);updateMove(d.previousSibling);
+	var d=bg.newScript(true);addItem(d);
 };
 $('bUpdate').onclick=bg.checkUpdateAll;
 if(!($('cDetail').checked=bg.getItem('showDetails'))) L.classList.add('simple');
@@ -326,10 +343,6 @@ var T=new editor($('eCode'),bg.getItem('editorType'));
 	};
 	switchCommand();
 })($('beditor'));
-function edit(i){
-	switchTo(E);E.scr=bg.map[bg.ids[i]];E.cur=L.childNodes[i];
-	U.checked=E.scr.update;T.setValue(E.scr.code);T.markClean();T.focus();
-}
 function eSave(){
 	E.scr.update=U.checked;
 	bg.parseScript(null,{code:T.getValue(),message:''},E.scr);
@@ -382,7 +395,6 @@ $('mOK').onclick=function(){
 		c._exclude=cE.checked;
 		c.exclude=split(mE.value);
 		loadItem(E.cur,E.scr);
-		updateMove(E.cur);
 		bg.saveScript(E.scr);
 	}
 	closeDialog();
@@ -395,14 +407,12 @@ CodeMirror.commands.close=E.close=$('eClose').onclick=function(){if(confirmCance
 // Load at last
 L.innerHTML='';
 bg.ids.forEach(function(i){addItem(bg.map[i]);});
-updateMove(L.firstChild);updateMove(L.lastChild);
 function updateItem(r){
 	var n=bg.map[bg.ids[r.item]];
 	switch(r.status){
-		case 1:addItem(n);updateMove(L.childNodes[r.item-1]);break;
+		case 1:addItem(n);break;
 		case 2:modifyItem(L.childNodes[r.item],r);break;
 		default:loadItem(L.childNodes[r.item],n,r);
 	}
-	updateMove(L.childNodes[r.item]);
 }
 if(!bg.options.window) bg.options.window=window;
