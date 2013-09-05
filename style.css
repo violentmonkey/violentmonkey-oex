@@ -1,12 +1,11 @@
 @import url(font.css);
-html,body{background:#eee;}
+html,body{height:100%;margin:0;padding:0;background:#eee;}
 h1,h2{text-shadow:#999 3px 3px 5px;}
 a{color:dodgerblue;cursor:pointer;}
 .center{text-align:center;}
 .float,.frame{position:fixed;background:lightgray;}
 .frame{left:0;right:0;top:0;bottom:0;table-layout:fixed;width:100%;height:100%;}
 .float{margin:0 auto;padding:10px;border-radius:10px;border-spacing:10px;}
-.fill{height:100%;margin:0;padding:0;}
 .em{font-style:italic;}
 .new{color:red;}
 .menu,.ellipsis{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
@@ -16,7 +15,6 @@ a{color:dodgerblue;cursor:pointer;}
 .buttons{text-align:right;vertical-align:bottom;}
 .menu,.x{clear:both;margin:0;padding:0;}
 .hide{display:none;}
-tr.fill>td{height:100%;}
 tr{vertical-align:top;padding:0;height:1px;}
 tr.expand{height:auto;}
 .expandr{position:relative;}

@@ -104,7 +104,7 @@
 		"description": "An option to show the details of scripts, such as author, description, etc."
 	}, 
 	"anchorSupportPage": {
-		"message": "<a href=https://github.com/gera2ld/Violentmonkey/wiki>Violentmonkey</a>", 
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki>Violentmonkey</a>", 
 		"description": "Link to the support page of Violentmonkey."
 	}, 
 	"anchorAuthor": {
