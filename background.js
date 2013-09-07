@@ -63,6 +63,43 @@ function initDatabase(callback){
 		executeSql();
 	});
 }
+function upgradeData(){
+	function upgradeDB(n,d){
+		db.transaction(function(t){
+			function loop(){
+				var i=d.pop();
+				if(i) t.executeSql('REPLACE INTO "'+n+'"(uri,data) VALUES(?,?)',i,loop,dbError);
+			}
+			loop();
+		});
+	}
+	var i,j,k,l,o,cache=[],val={},values=[];
+	if(getOption('version_storage',0)<0.5) {
+		for(i=0;k=widget.preferences.key(i);) {
+			v=widget.preferences.getItem(k);
+			if(/^cache:/.test(k)) cache.push([k.slice(6),v]);
+			else if(/^val:/.test(k)) {
+				l=k.slice(4);j=0;
+				j=l.slice(j+1).indexOf(':');
+				j=l.slice(j+1).indexOf(':');
+				j=l.slice(j+1).indexOf(':');
+				o=l.slice(j);l=l.slice(0,j);j=o;
+				o=val[l];if(!o) val[l]=o={};
+				o[j]=v;
+			} else if(/^vm:/.test(k)) {
+				o=JSON.parse(v);
+				if(!o.uri) o.uri=getNameURI(o);
+				saveScript(o);
+			}
+			else if(k in settings) {i++;continue;}
+			widget.preferences.removeItem(k);
+		}
+		for(i in val) values.push([i,JSON.stringify(val[i])]);
+		upgradeDB('cache',cache);
+		upgradeDB('values',values);
+		setOption('version_storage',0.5);
+	}
+}
 
 function getNameURI(i){
 	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
@@ -431,11 +468,16 @@ function vacuum(callback){
 				for(i=0;i<r.rows.length;i++) {
 					o=r.rows.item(i);
 					if(!d[o.uri]) s.push([o.uri]);
+					else d[o.uri]++;	// stored
 				}
 				del(s);
-				if(!--count&&callback) callback();
+				if(!--count) finish();
 			},dbError);
 		});
+	}
+	function finish(){
+		for(var i in cache) if(cache[i]==1) fetchCache(i);
+		if(callback) callback();
 	}
 	vacuumPosition();
 }
@@ -626,6 +668,7 @@ initMessages(function(){
 	initSettings();
 	initIcon();
 	initDatabase(function(){
+		upgradeData();
 		opera.extension.onmessage=function(e){
 			var m=e.data,c=maps[m.topic];
 			if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
