@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget xmlns="http://www.w3.org/ns/widgets" version="1.4" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
+<widget xmlns="http://www.w3.org/ns/widgets" version="2.0" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
 	<name>Violent monkey</name>
 	<author href="http://my.opera.com/gera2ld" email="gera2ld@163.net">Gerald</author>
 	<icon src="images/icon64.png"/>
@@ -7,14 +7,6 @@
 	<feature name="opera:share-cookies" required="false"/>
 	<access origin="*"/>
 	<update-description href="https://extension-updates.opera.com/api/w3c-wd1/update/4c1d641e-357a-411a-9d01-4664646eb92c/"/>
-
-	<preference name="isApplied" value="true"/>
-	<preference name="autoUpdate" value="true"/>
-	<preference name="lastUpdate" value="0"/>
-	<preference name="showDetails" value="false"/>
-	<preference name="showButton" value="true"/>
-	<preference name="editorType" value="1"/>
-	<preference name="withData" value="true"/>
 
 	<description xml:lang="en">Userscript support for Opera.</description>
 	<description xml:lang="zh">为Opera提供用户脚本支持。</description>

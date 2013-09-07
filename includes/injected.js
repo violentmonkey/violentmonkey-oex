@@ -103,7 +103,7 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache={},scr=[],menu=[],command={},elements;
+var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements;
 function runCode(c){
 	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
 	elements.forEach(function(i){code.push(i+'=this.'+i);});
@@ -132,7 +132,7 @@ function runBody(){
 function runEnd(){while(end.length) runCode(end.shift());}
 function loadScript(data){
 	var l;
-	data.data.forEach(function(i){
+	data.scripts.forEach(function(i){
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
@@ -144,6 +144,7 @@ function loadScript(data){
 		}
 	});
 	cache=data.cache;
+	values=data.values;
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
@@ -152,8 +153,7 @@ function loadScript(data){
 }
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
-	var t=c.meta.namespace||'',n=c.meta.name||'',ckey='val:'+escape(t)+':'+escape(n)+':';
-	if(!t&&!n) ckey+=c.id;ckey+=':';t=this;
+	var value=values[c.uri]||{},t=this;
 
 	// functions and properties
 	function wrapFunction(o,i,c){
@@ -218,7 +218,7 @@ function wrapper(c){
 	}});
 	addProperty('GM_deleteValue',{value:function(key){widget.preferences.removeItem(ckey+key);}});
 	addProperty('GM_getValue',{value:function(k,d){
-		var v=widget.preferences.getItem(ckey+k);
+		var v=value[k];
 		if(v) {
 			k=v[0];v=v.slice(1);
 			switch(k){
@@ -230,21 +230,15 @@ function wrapper(c){
 		}
 		return d;
 	}});
-	addProperty('GM_listValues',{value:function(){
-		var v=[],i,l=ckey.length,k;
-		for(i=0;i<widget.preferences.length;i++) {
-			k=widget.preferences.key(i);
-			if(k.slice(0,l)==ckey) v.push(k.slice(l));
-		}
-		return v;
-	}});
+	addProperty('GM_listValues',{value:function(){return Object.getOwnPropertyNames(value);}});
 	addProperty('GM_setValue',{value:function(key,val){
 		var t=(typeof val)[0];
 		switch(t){
 			case 'o':val=t+JSON.stringify(val);break;
 			default:val=t+val;
 		}
-		widget.preferences.setItem(ckey+key,val);
+		value[key]=val;
+		opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,data:value}});
 	}});
 	addProperty('GM_getResourceText',{value:function(name){
 		var b=getCache(name);

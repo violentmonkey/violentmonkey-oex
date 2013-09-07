@@ -1,31 +1,3 @@
-function getString(key,def){
-	var v=widget.preferences.getItem(key);
-	if(v==null) (v=def)&&widget.preferences.setItem(key,v);
-	return v;
-}
-function setString(key,val){
-	val=val||'';
-	try{
-		widget.preferences.setItem(key,val);
-	}catch(e){
-		opera.postError(e);
-		val=null;
-	}
-	return val;
-}
-function getItem(key,def){
-	var v=widget.preferences.getItem(key);
-	if(v==null&&def) return setItem(key,def);
-	try{return JSON.parse(v);}catch(e){return def;}
-}
-function setItem(key,val){
-	setString(key,JSON.stringify(val));return val;
-}
-function getNameURI(i){
-	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
-	if(!ns&&!n) k+=i.id;return k;
-}
-
 // Multilingual
 function initMessages(callback){
 	var data={},req=new XMLHttpRequest();
@@ -36,7 +8,7 @@ function initMessages(callback){
 		if(callback) callback();
 	};
 	req.send();
-	return function(){
+	_=function(){
 		var args=arguments,k=args[0],r;
 		r=data[k];if(r) r=r.message;
 		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return args[g1||g2]||'';});
@@ -44,80 +16,63 @@ function initMessages(callback){
 	};
 }
 
-// Check old version of Opera
-(function(v){
-	v=parseInt(v);
-	if(v<12) {
-		opera.extension.tabs.create({url:'oldversion.html'});
-		null[0];	// to stop running
-	}
-})(opera.version());
-
-/* ===============Data format 0.4==================
- * ids	List [id]
- * vm:id	Item	{
- * 			id:	Random
- * 			custom:	List-Dict	// Custom meta data
- * 			meta:	List-Dict
- *			enabled:	Boolean
- *			update:	Boolean
- *			code:	String
- *	 	}
- * val:nameURI:key	TypeString
- * cache:url	BinaryString
+// Database
+/* ===============Data format 0.5==================
+ * Database: Violentmonkey
+ * scripts {
+ * 		id: Random
+ * 		uri: String
+ * 		meta: {
+ * 			custom: List-Dict	// Custom meta data
+ * 			meta: List-Dict
+ * 			enabled: 0|1
+ * 		}
+ * 		update: 0|1
+ * 		position: Integer
+ * 		code: String
+ * }
+ * require {
+ * 		uri: String
+ * 		code: String
+ * }
+ * cache {
+ * 		uri: String
+ * 		data: BLOB
+ * }
+ * values {
+ * 		uri: String
+ * 		values: String
+ * }
  */
-
-(function(){	// upgrade data
-	var version=getItem('version_storage',0),scripts=getItem('scripts');
-	if(version<0.4) {
-		var i,cache=getItem('cache');
-		for(i=0;i<widget.preferences.length;i++) {
-			var k=widget.preferences.key(i),m=k.match(/^scriptVals:([^:]*):([^:]*):(.*)/);
-			if(!m) continue;
-			var v=JSON.parse(widget.preferences.getItem(k));
-			if(typeof v=='boolean') v='b'+v;
-			else if(typeof v=='number') v='n'+v;
-			else v='s'+v;
-			widget.preferences.removeItem(k);
-			widget.preferences.setItem('val:'+m[2]+':'+m[1]+':'+m[3],v);
+function dbError(t,e){
+	opera.postError('Database error: '+e.message);
+}
+function initDatabase(callback){
+	db=openDatabase('Violentmonkey','0.5','Violentmonkey data',10*1024*1024);
+	db.transaction(function(t){
+		function executeSql(_t,r){
+			var s=sql.shift();
+			if(s) t.executeSql(s,[],executeSql,dbError);
+			else if(callback) callback();
 		}
-		var s=getItem('search'),_s=[];if(s) setString('search',s);
-		widget.preferences.removeItem('scripts');
-		scripts&&scripts.forEach(function(i){_s.push(i.id);setItem('vm:'+i.id,i);});
-		setItem('ids',_s);
-		widget.preferences.removeItem('cache');
-		if(cache) for(i in cache) setString('cache:'+i,cache[i]);
-		setItem('version_storage',0.4);
-	}
-})();
-var ids=[],map={};
-getItem('ids',[]).forEach(function(i){
-	var o=getItem('vm:'+i);
-	if(o){ids.push(i);map[i]=o;}
-});
-function vacuum(callback){
-	setTimeout(function(){
-		var k,s,i,ns={},cc={};
-		ids.forEach(function(i){
-			k=map[i];if(!k) return;
-			ns[getNameURI(k)]=1;
-			if(k.meta.icon) cc[k.meta.icon]=1;
-			if(k.meta.require) k.meta.require.forEach(function(i){cc[i]=1;});
-			if(k.meta.resources) for(i in k.meta.resources) cc[i]=1;
-		});
-		for(i in cc) if(widget.preferences.getItem('cache:'+i)==null) fetchCache(i);
-		for(i=0;i<widget.preferences.length;) {
-			k=widget.preferences.key(i);
-			if((s=k.match(/^val:([^:]*:[^:]*:[^:]*)/))&&!ns[s[1]]) widget.preferences.removeItem(k);
-			else if((s=k.match(/^cache:(.*)/))&&!cc[s[1]]) widget.preferences.removeItem(k);
-			else i++;
-		}
-		generateIDs();
-		if(callback) callback();
-	},0);
+		var count=0,sql=[
+			'CREATE TABLE IF NOT EXISTS scripts(id INTEGER PRIMARY KEY,uri VARCHAR,meta TEXT,custom TEXT,enabled INTEGER,"update" INTEGER,position INTEGER,code TEXT)',
+			'CREATE TABLE IF NOT EXISTS cache(uri VARCHAR UNIQUE,data BLOB)',
+			'CREATE TABLE IF NOT EXISTS "values"(uri VARCHAR UNIQUE,data TEXT)',
+		];
+		executeSql();
+	});
 }
 
-function newScript(save){
+function getNameURI(i){
+	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
+	if(!ns&&!n) k+=i.id;return k;
+}
+
+function newPosition(){
+	return setOption('maxPosition',settings.maxPosition+1);
+}
+function newScript(){
 	var r={
 		custom:{},
 		enabled:1,
@@ -125,31 +80,30 @@ function newScript(save){
 		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
 	};
 	r.meta=parseMeta(r.code);
-	r.id=Date.now()+Math.random().toString().slice(1);
-	if(save) saveScript(r);
 	return r;
 }
-function generateIDs(){
-	var _ids=[],_map={};
-	ids.forEach(function(i){if(map[i]) {_ids.push(i);_map[i]=map[i];}});
-	for(var i=0;i<widget.preferences.length;i++) {
-		k=widget.preferences.key(i);
-		s=k.match(/^vm:(.*)/);
-		if(!s) continue; s=s[1];
-		if(!_map[s]) _ids.push((_map[s]=getItem(k)).id);
-	}
-	ids=_ids;map=_map;saveIDs();
-}
-function saveIDs(){setItem('ids',ids);}
-function saveScript(i){
-	if(!map[i.id]) {ids.push(i.id);saveIDs();}
-	setItem('vm:'+i.id,map[i.id]=i);
+function saveScript(o,callback){
+	if(!o.position) o.position=newPosition();
+	db.transaction(function(t){
+		var d=[];
+		d.push(parseInt(o.id)||null);
+		d.push(o.uri);
+		d.push(JSON.stringify(o.meta));
+		d.push(JSON.stringify(o.custom));
+		d.push(o.enabled);
+		d.push(o.update);
+		d.push(o.position);
+		d.push(o.code);
+		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)',d,function(t,r){
+			if(!o.id) o.id=r.insertId;
+			if(callback) callback();
+		},dbError);
+	});
 }
 function removeScript(i){
-	i=ids.splice(i,1)[0];saveIDs();
-	var o=map[i];delete map[i];
-	widget.preferences.removeItem('vm:'+i);
-	return o;
+	db.transaction(function(t){
+		t.executeSql('DELETE FROM scripts WHERE id=?',[i]);
+	});
 }
 
 function str2RE(s){return s.replace(/(\.|\?|\/)/g,'\\$1').replace(/\*/g,'.*?');}
@@ -187,17 +141,124 @@ function testURL(url,e){
 	if(f) for(i=0;i<exc.length;i++) if(!(f=!autoReg(exc[i]).test(url))) break;	// @exclude
 	return f;
 }
-function findScript(e,url){
-	var i,j,c=[],cache={};
-	url=url||e.origin;	// to recognize URLs like data:...
-	function getCache(i){cache[i]=getString('cache:'+i);}
-	if(url.slice(0,5)!='data:') ids.forEach(function(i){
-		if(!testURL(url,map[i])) return;
-		c.push(i=map[i]);
-		if(i.meta.require) i.meta.require.forEach(getCache);
-		for(j in i.meta.resources) getCache(i.meta.resources[j]);
+function getScript(v,metaonly){
+	var o={
+		id:v.id,
+		uri:v.uri,
+		meta:JSON.parse(v.meta),
+		custom:JSON.parse(v.custom),
+		enabled:v.enabled?1:0,
+		update:v.update?1:0,
+		position:v.position
+	};
+	if(!metaonly) o.code=v.code;
+	return o;
+}
+function getScripts(ids,metaonly,callback){
+	var data=[];
+	db.readTransaction(function(t){
+		function getItem(){
+			var i=ids.shift();
+			if(i) t.executeSql('SELECT * FROM scripts WHERE id=?',[i],function(t,r){
+				if(r.rows.length) data.push(getScript(r.rows.item(0),metaonly));
+				getItem();
+			},dbError); else if(callback) callback(data);
+		}
+		getItem();
 	});
-	e.source.postMessage({topic:'FoundScript',data:{isApplied:isApplied,data:c,cache:cache}});
+}
+function getData(callback){
+	var data={scripts:[]},cache={};
+	db.readTransaction(function(t){
+		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
+			var i,v,o;
+			for(i=0;i<r.rows.length;i++) {
+				v=r.rows.item(i);
+				o=getScript(v,true);
+				data.scripts.push(o);
+				if(o.meta.icon) cache[o.meta.icon]=1;
+			}
+			getCache(Object.getOwnPropertyNames(cache),function(o){
+				data.cache=o;if(callback) callback(data);
+			},t);
+		});
+	});
+}
+function editScript(id,callback){
+	db.readTransaction(function(t){
+		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
+			if(r.rows.length) callback(getScript(r.rows.item(0)));
+		});
+	});
+}
+function enableScript(s,callback){
+	db.transaction(function(t){
+		t.executeSql('UPDATE scripts SET enabled=? WHERE id=?',[s.enabled?1:0,s.id],function(t,r){
+			if(r.rowsAffected) {
+				updateItem({id:s.id,obj:s,status:0});
+				if(callback) callback();
+			}
+		},dbError);
+	});
+}
+function getValues(uris,callback,t){
+	var data={};
+	function query(t){
+		function loop(){
+			var i=uris.pop();
+			if(i) t.executeSql('SELECT data FROM "values" WHERE uri=?',[i],function(t,r){
+				if(r.rows.length) data[i]=JSON.parse(r.rows.item(0).data);
+				loop();
+			}); else if(callback) callback(data);
+		}
+		loop();
+	}
+	if(t) query(t); else db.readTransaction(query);
+}
+function getCache(uris,callback,t){
+	var data={};
+	function query(t){
+		function loop(){
+			var i=uris.pop();
+			if(i) t.executeSql('SELECT data FROM cache WHERE uri=?',[i],function(t,r){
+				if(r.rows.length) data[i]=r.rows.item(0).data;
+				loop();
+			}); else if(callback) callback(data);
+		}
+		loop();
+	}
+	if(t) query(t); else db.readTransaction(query);
+}
+function findScript(e,url){
+	var i,j,data={scripts:[],isApplied:settings.isApplied},cache={},values={};
+	url=url||e.origin;	// to recognize URLs like data:...
+	function finish(v){
+		if(v) data.values=v;
+		e.source.postMessage({topic:'FoundScript',data:data});
+	}
+	if(url.slice(0,5)!='data:') db.readTransaction(function(t){
+		function addCache(i){cache[i]=1;}
+		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
+			var i,j,v,o;
+			for(i=0;i<r.rows.length;i++) {
+				v=r.rows.item(i);
+				o=getScript(v);
+				if(testURL(url,o)) {
+					data.scripts.push(o);values[o.uri]=1;
+					if(o.meta.require) o.meta.require.forEach(addCache);
+					for(j in o.meta.resources) addCache(o.meta.resources[j]);
+				}
+			}
+			getCache(Object.getOwnPropertyNames(cache),function(o){
+				data.cache=o;getValues(Object.getOwnPropertyNames(values),finish,t);
+			},t);
+		});
+	}); else finish();
+}
+function setValue(e,d){
+	db.transaction(function(t){
+		t.executeSql('REPLACE INTO "values"(uri,data) VALUES(?,?)',[d.uri,JSON.stringify(d.data)],null,dbError);
+	});
 }
 function parseMeta(d){
 	var o=-1,meta={include:[],exclude:[],match:[],require:[],resources:{}};
@@ -224,44 +285,67 @@ function fetchURL(url,cb,type){
 	if(cb) req.onloadend=cb;
 	req.send();
 }
+var _cache={};
 function fetchCache(url){
-	setTimeout(function(){
-		fetchURL(url,function(){
-			if(this.status!=200) return;
-			var r=new FileReader();
-			r.onload=function(e){setString('cache:'+url,e.target.result);};
-			r.readAsBinaryString(this.response);
-		},'blob');
-	},0);
+	if(_cache[url]) return;
+	_cache[url]=1;
+	fetchURL(url,function(){
+		if(this.status!=200) return;
+		var r=new FileReader();
+		r.onload=function(e){
+			db.transaction(function(t){
+				t.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)',[url,e.target.result],function(t,r){
+					delete _cache[url];
+				},dbError);
+			});
+		};
+		r.readAsBinaryString(this.response);
+	},'blob');
 }
 
-function parseScript(e,d,c){
-	var r={status:0,message:'message' in d?d.message:_('msgUpdated')},i;
+function queryScript(id,meta,callback){
+	db.readTransaction(function(t){
+		function queryMeta() {
+			var uri=getNameURI({id:'',meta:meta});
+			if(uri=='::') callback(newScript());
+			else t.executeSql('SELECT * FROM scripts WHERE uri=?',[uri],function(t,r){
+				if(callback) {
+					if(r.rows.length) callback(getScript(r.rows.item(0)));
+					else callback(newScript());
+				}
+			});
+		}
+		function queryId() {
+			t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
+				if(r.rows.length) {
+					if(callback) callback(getScript(r.rows.item(0)));
+				} else queryMeta();
+			});
+		}
+		queryId();
+	});
+}
+function parseScript(e,d,callback){
+	var i,r={status:0,message:'message' in d?d.message:_('msgUpdated')};
 	if(d.status&&d.status!=200||!d.code) {r.status=-1;r.message=_('msgErrorFetchingScript');}
 	else {
 		var meta=parseMeta(d.code);
-		if(!c) {
-			if(meta.name) {
-				if(!meta.namespace) meta.namespace='';
-				for(i=0;i<ids.length;i++) {
-					c=map[ids[i]];
-					if(c.meta.name==meta.name&&c.meta.namespace==meta.namespace) break;
-				}
-				if(i==ids.length) i=-1;
-			} else i=-1;
-			if(i<0) c=newScript(); else c=map[ids[i]];
-		} else i=ids.indexOf(c.id);
-		if(i<0){r.status=1;r.message=_('msgInstalled');i=ids.length;}
-		c.meta=meta;c.code=d.code;r.item=i;
-		if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
-		if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
-		saveScript(c);
+		queryScript(d.id,meta,function(c){
+			if(!c.id){r.status=1;r.message=_('msgInstalled');}
+			if(d.more) for(i in d.more) c[i]=d.more[i];	// for import and user edit
+			c.meta=meta;c.code=d.code;c.uri=getNameURI(c);
+			if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
+			if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
+			saveScript(c,function(){
+				r.id=c.id;r.obj=c;delete c.code;	// decrease memory use
+				if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
+				updateItem(r);if(callback) callback();
+			});
+		});
 		meta.require.forEach(fetchCache);	// @require
 		for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
-	if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
-	optionsUpdate(r);
 }
 function installScript(e,url){
 	if(!url)
@@ -269,6 +353,29 @@ function installScript(e,url){
 	else fetchURL(url,function(){
 		parseScript(e,{status:this.status,code:this.responseText,url:url});
 	});
+}
+function move(id,offset){
+	db.transaction(function(t){
+		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
+			var o,v=r.rows.item(0);
+			o='SELECT * FROM scripts WHERE position'+(offset>0?'>':'<')+'? ORDER BY position';
+			if(offset<0) {o+=' DESC';offset=-offset;}
+			o+=' LIMIT ?';
+			t.executeSql(o,[v.position,offset],function(t,r){
+				var i,x=v.position;
+				for(i=0;i<r.rows.length;i++) {
+					o=r.rows.item(i);
+					t.executeSql('UPDATE scripts SET position=? WHERE id=?',[x,o.id],null,dbError);
+					x=o.position;
+				}
+				t.executeSql('UPDATE scripts SET position=? WHERE id=?',[x,v.id],null,dbError);
+			});
+		});
+	});
+}
+function vacuum(callback){	// TODO
+	opera.postError('Not implemented.');
+	//if(callback) callback();
 }
 function canUpdate(o,n){
 	o=(o||'').split('.');n=(n||'').split('.');
@@ -287,22 +394,25 @@ function canUpdate(o,n){
 	}
 	return n.length;
 }
-function checkUpdate(i){
-	var o=map[ids[i]],r={item:i,hideUpdate:1,status:2};
-	if(!o.update) return;
+
+var _update={};
+function checkUpdateO(o){
+	if(_update[o.id]) return;_update[o.id]=1;
+	function finish(){delete _update[o.id];}
+	var r={id:o.id,hideUpdate:1,status:2};
 	function update(){
 		var u=o.custom.downloadURL||o.meta.downloadURL;
 		if(u) {
 			r.message=_('msgUpdating');
 			fetchURL(u,function(){
-				parseScript(null,{status:this.status,code:this.responseText},o);
+				parseScript(null,{id:o.id,status:this.status,code:this.responseText});
 			});
 		} else r.message='<span class=new>'+_('msgNewVersion')+'</span>';
-		optionsUpdate(r);
+		updateItem(r);finish();
 	}
 	var u=o.custom.updateURL||o.meta.updateURL;
 	if(u) {
-		r.message=_('msgCheckingForUpdate');optionsUpdate(r);
+		r.message=_('msgCheckingForUpdate');updateItem(r);
 		fetchURL(u,function(){
 			r.message=_('msgErrorFetchingUpdateInfo');
 			if(this.status==200) try{
@@ -311,13 +421,28 @@ function checkUpdate(i){
 				r.message=_('msgNoUpdate');
 			}catch(e){}
 			delete r.hideUpdate;
-			optionsUpdate(r);
+			updateItem(r);finish();
 		});
 	}
 }
+function checkUpdate(id){
+	db.readTransaction(function(t){
+		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
+			if(r.rows.length) checkUpdateO(getScript(r.rows.item(0)));
+		},dbError);
+	});
+}
 function checkUpdateAll(){
-	setItem('lastUpdate',lastUpdate=Date.now());
-	for(var i=0;i<ids.length;i++) checkUpdate(i);
+	setOption('lastUpdate',Date.now());
+	db.readTransaction(function(t){
+		t.executeSql('SELECT * FROM scripts WHERE "update"=1',[],function(t,r){
+			var i,o;
+			for(i=0;i<r.rows.length;i++){
+				o=getScript(r.rows.item(i));
+				checkUpdateO(o);
+			}
+		},dbError);
+	});
 }
 
 // Requests
@@ -363,28 +488,46 @@ function abortRequest(e,id){
 	delete requests[id];
 }
 
-function initSettings(){
-	isApplied=getItem('isApplied');
-	autoUpdate=getItem('autoUpdate');
-	lastUpdate=getItem('lastUpdate');
-	getString('search',_('defaultSearch'));
+function getOption(k,def){
+	var v=widget.preferences.getItem(k);
+	try{
+		v=JSON.parse(v);
+	}catch(e){
+		v=def;
+		if(v!=undefined) setOption(k,v);
+	}
+	settings[k]=v;
+	return v;
 }
-var messages={
-	FindScript:findScript,
-	InstallScript:installScript,
-	ParseScript:parseScript,
-	GetRequestId:getRequestId,
-	HttpRequest:httpRequest,
-	AbortRequest:abortRequest,
-},isApplied,autoUpdate,lastUpdate;
+function setOption(k,v){
+	widget.preferences.setItem(k,JSON.stringify(v));
+	settings[k]=v;
+	return v;
+}
+function initSettings(){
+	getOption('isApplied',true);
+	getOption('autoUpdate',true);
+	getOption('lastUpdate',0);
+	getOption('maxPosition',0);
+	getOption('showDetails',false);
+	getOption('showButton',true);
+	getOption('editorType',1);
+	getOption('withData',1);
+	getOption('search',_('defaultSearch'));
+}
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);
 	else opera.contexts.toolbar.removeItem(button);
 }
-function updateIcon() {button.icon='images/icon18'+(isApplied?'':'w')+'.png';}
-function optionsUpdate(r){	// update loaded options pages
-	if(options&&options.window)
-		try{options.window.updateItem(r);}catch(e){opera.postError(e);options={};}
+function updateIcon() {button.icon='images/icon18'+(settings.isApplied?'':'w')+'.png';}
+function updateItem(r){	// update loaded options pages
+	for(var i=0;i<_updateItem.length;)
+		try{
+			_updateItem[i](r);
+			i++;
+		}catch(e){
+			_updateItem.splice(i,1);
+		}
 }
 function initIcon(){
 	button=opera.contexts.toolbar.createItem({
@@ -396,33 +539,35 @@ function initIcon(){
 		}
 	});
 	updateIcon();
-	showButton(getItem('showButton',true));
+	showButton(settings.showButton);
 }
 function autoCheck(o){	// check for updates automatically in 20 seconds
 	function check(){
-		if(autoUpdate) {
-			if(Date.now()-lastUpdate>=864e5) checkUpdateAll();
+		if(settings.autoUpdate) {
+			if(Date.now()-settings.lastUpdate>=864e5) checkUpdateAll();
 			setTimeout(check,36e5);
 		} else checking=false;
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-var _,button,checking=false,options={},optionsURL=location.protocol+'//'+location.host+'/options.html';
-_=initMessages(function(){
+var db,_,button,checking=false,settings={},_updateItem=[],
+		maps={
+			FindScript:findScript,
+			InstallScript:installScript,
+			ParseScript:parseScript,
+			GetRequestId:getRequestId,
+			HttpRequest:httpRequest,
+			AbortRequest:abortRequest,
+			SetValue:setValue,
+		};
+initMessages(function(){
 	initSettings();
 	initIcon();
-	opera.extension.onmessage=function(e){
-		var message=e.data,c=messages[message.topic];
-		if(c) try{c(e,message.data);}catch(e){opera.postError(e);}
-	};
-	opera.extension.tabs.oncreate=function(e){
-		if(e.tab.url.slice(0,optionsURL.length)==optionsURL) {
-			if(options.tab&&!options.tab.closed) {e.tab.close();options.tab.focus();}
-			else options={tab:e.tab};
-		}
-	};
-	opera.extension.tabs.onclose=function(e){
-		if(options.tab===e.tab) options={};
-	};
-	if(autoUpdate) autoCheck(2e4);
+	initDatabase(function(){
+		opera.extension.onmessage=function(e){
+			var m=e.data,c=maps[m.topic];
+			if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
+		};
+		if(settings.autoUpdate) autoCheck(2e4);
+	});
 });

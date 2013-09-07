@@ -28,29 +28,32 @@ function addItem(h,c,b){
 	return d;
 }
 function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
-function menuScript(i) {
-	var s=bg.map[i];if(!s) return;
-	var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
-	addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
-		loadItem(this,s.enabled=!s.enabled);
-		bg.saveScript(s);bg.optionsUpdate({item:bg.ids.indexOf(s.id),status:0});
+function menuScript(s) {
+	var n,d;
+	n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
+	d=addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
+		s.enabled=!s.enabled;bg.enableScript(s,function(){loadItem(d,s.enabled);});
 	}});
 }
+function adjustSize(){
+	bg.button.popup.height=P.offsetHeight;
+	setTimeout(function(){pB.style.pixelHeight=innerHeight-pB.offsetTop;},0);
+}
 function initMenu(){
-	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
   if(/^https?:\/\//i.test(tab.url))
-		addItem(_('menuFindScripts'),{holder:pT,symbol:'➤',title:true,onclick:function(){
+		addItem(_('menuFindScripts'),{holder:pT,symbol:'➤',onclick:function(){
 			var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
 				return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-			}),url=bg.getString('search').replace('*',q);
+			}),url=bg.settings.search.replace('*',q);
 			bg.opera.extension.tabs.create({url:url}).focus();
 		}});
-	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.isApplied,title:true,onclick:function(e){
-		bg.setItem('isApplied',bg.isApplied=!bg.isApplied);bg.updateIcon();loadItem(this,bg.isApplied);
+	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.settings.isApplied,onclick:function(e){
+		loadItem(this,bg.setOption('isApplied',!bg.settings.isApplied));bg.updateIcon();
 	}});
-	bg.button.popup.height=P.offsetHeight;
+	adjustSize();
 }
 function load(e,data){
 	if(data&&data[0]&&data[0].length) {
@@ -67,11 +70,12 @@ function load(e,data){
 		}},ia);
 	}
 	if(data&&data[1]&&data[1].length) {
-		pT.appendChild(document.createElement('hr'));
-		data[1].forEach(menuScript);
-	}
-	bg.button.popup.height=P.offsetHeight;
-	setTimeout(function(){pB.style.pixelHeight=innerHeight-pB.offsetTop;},0);
+		bg.getScripts(data[1],true,function(o){
+			pT.appendChild(document.createElement('hr'));
+			o.forEach(menuScript);
+			adjustSize();
+		});
+	} else adjustSize();
 }
-initMenu();bg.messages['GotPopup']=load;
+initMenu();bg.maps['GotPopup']=load;
 try{tab.postMessage({topic:'GetPopup'});}catch(e){}
