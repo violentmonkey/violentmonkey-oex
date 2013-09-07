@@ -105,7 +105,7 @@ function addItem(n){
 			bg.saveScript(e);
 		},
 		remove:function(i,p){
-			bg.removeScript(i--);
+			bg.removeScript(i);
 			L.removeChild(p);
 		},
 		update:function(i){
