@@ -35,10 +35,6 @@ function menuScript(s) {
 		s.enabled=!s.enabled;bg.enableScript(s,function(){loadItem(d,s.enabled);});
 	}});
 }
-function adjustSize(){
-	bg.button.popup.height=P.offsetHeight;
-	setTimeout(function(){pB.style.pixelHeight=innerHeight-pB.offsetTop;},0);
-}
 function initMenu(){
 	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
@@ -53,7 +49,13 @@ function initMenu(){
 	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.settings.isApplied,onclick:function(e){
 		loadItem(this,bg.setOption('isApplied',!bg.settings.isApplied));bg.updateIcon();
 	}});
-	adjustSize();
+	bg.button.popup.height=P.offsetHeight;
+}
+function adjustSize(){
+	bg.button.popup.height=P.offsetHeight;
+	setTimeout(function(){
+		pB.style.pixelHeight=innerHeight-pB.offsetTop;
+	},0);
 }
 function load(e,data){
 	if(data&&data[0]&&data[0].length) {
