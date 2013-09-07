@@ -252,8 +252,8 @@ xE.onclick=function(){
 		z.file('ViolentMonkey',JSON.stringify(vm));
 		c={compression:'DEFLATE'};
 		n=z.generate(c);
-		window.open('data:application/zip;base64,'+n);
 		X.close();
+		bg.opera.extension.tabs.create({url:'data:application/zip;base64,'+n}).focus();
 	}
 	for(i=0;i<ids.length;i++)
 		if(xL.childNodes[i].classList.contains('selected')) _ids.push(ids[i]);
