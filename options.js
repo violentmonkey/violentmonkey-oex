@@ -211,12 +211,8 @@ function impo(b){
 			count++;
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
-	if(vm.values) try{
-		for(z in vm.values) for(b in vm.values[z]) widget.preferences.setItem('val:'+z+':'+b,vm.values[z][b]);
-	}catch(e){opera.postError('Error parsing script data: '+e);}
-	if(vm.settings) {
-		for(z in vm.settings) bg.setOption(z,vm.settings[z]);
-	}
+	if(vm.values) for(z in vm.values) bg.setValue(z,vm.values[z]);
+	if(vm.settings) for(z in vm.settings) bg.setOption(z,vm.settings[z]);
 	alert(_('msgImported',count));
 	location.reload();
 }
