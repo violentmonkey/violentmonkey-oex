@@ -291,6 +291,10 @@
 		"message": "Modifications are not saved!\nClick OK to discard them or cancel to stay.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"buttonVacuuming": {
+		"message": "Vacuuming data...", 
+		"description": "Message shown when data vacuum is in progress."
+	}, 
 	"buttonVacuumed": {
 		"message": "Data vacuumed", 
 		"description": "Message shown when data is vacuumed."

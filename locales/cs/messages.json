@@ -4,7 +4,7 @@
 		"description": "Name of this extension."
 	}, 
 	"extDescription": {
-		"message": "Userscript support for Opera.", 
+		"message": "Podpora userscriptů pro Opera.", 
 		"description": "Description for this extension."
 	}, 
 	"extTranslator": {
@@ -220,7 +220,7 @@
 		"description": "Button to select all scripts or none."
 	}, 
 	"labelAdvanced": {
-		"message": "Advanced", 
+		"message": "Pokročilé", 
 		"description": "Label shown in the title of advanced dialog."
 	}, 
 	"labelShowButton": {
@@ -228,7 +228,7 @@
 		"description": "An option to show an icon of this extension in the toolbar."
 	}, 
 	"labelAutoUpdate": {
-		"message": "Automatically check scripts for updates every day", 
+		"message": "Automaticky kontrolovat aktualizace skriptu každý den", 
 		"description": "An option to allow automatically checking scripts for updates every 24 hours."
 	}, 
 	"labelSearchLink": {
@@ -252,7 +252,7 @@
 		"description": "Button to open the data export dialog."
 	}, 
 	"buttonImportData": {
-		"message": "Import from zip file", 
+		"message": "Importovat ze souboru zip", 
 		"description": "Button to choose a file for data import."
 	}, 
 	"buttonVacuumData": {
@@ -291,12 +291,16 @@
 		"message": "Modifikace není uložena! Klikni na OK pro zbavení se jí, nebo na zrušit pro zůstání zde.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"buttonVacuuming": {
+		"message": "Čištení dat...", 
+		"description": "Message shown when data vacuum is in progress."
+	}, 
 	"buttonVacuumed": {
 		"message": "Data vyprázdněna", 
 		"description": "Message shown when data is vacuumed."
 	}, 
 	"msgImported": {
-		"message": "$1 item(s) are imported.", 
+		"message": "$1 vec(i) jsou importovány.", 
 		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
 	}, 
 	"buttonExport": {
@@ -304,7 +308,7 @@
 		"description": "Button to confirm export."
 	}, 
 	"buttonExporting": {
-		"message": "Exporting data...", 
+		"message": "Exportování dat...", 
 		"description": "Message shown when data export is in progress."
 	}, 
 	"buttonNormalEditor": {

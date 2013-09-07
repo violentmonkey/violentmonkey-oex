@@ -291,6 +291,10 @@
 		"message": "修改尚未保存！\n点击确定放弃修改或点击取消停留此页面。", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"buttonVacuuming": {
+		"message": "正在整理...", 
+		"description": "Message shown when data vacuum is in progress."
+	}, 
 	"buttonVacuumed": {
 		"message": "数据已整理", 
 		"description": "Message shown when data is vacuumed."

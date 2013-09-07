@@ -4,7 +4,7 @@
 		"description": "Name of this extension."
 	}, 
 	"extDescription": {
-		"message": "Userscript support for Opera.", 
+		"message": "Wsparcie dla UserScriptów dla Opery.", 
 		"description": "Description for this extension."
 	}, 
 	"extTranslator": {
@@ -260,7 +260,7 @@
 		"description": "Button to vacuum extension data."
 	}, 
 	"labelVacuumHint": {
-		"message": "<a title=\"Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.\">(?)</a>", 
+		"message": "<a title='Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.'>(?)</a>", 
 		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
@@ -290,6 +290,10 @@
 	"confirmNotSaved": {
 		"message": "Modyfikacje nie zostały zapisane! Kliknij OK aby wyjść lub Anuluj aby zostać.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
+	}, 
+	"buttonVacuuming": {
+		"message": "Czyszczenie danych...", 
+		"description": "Message shown when data vacuum is in progress."
 	}, 
 	"buttonVacuumed": {
 		"message": "Dane wyczyszczone", 
