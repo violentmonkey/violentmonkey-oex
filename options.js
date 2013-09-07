@@ -1,6 +1,6 @@
 var $=document.getElementById.bind(document),
 		N=$('main'),L=$('sList'),O=$('overlay'),
-		bg=opera.extension.bgProcess,_=bg._,cache,map={},ids=[];
+		bg=opera.extension.bgProcess,_=bg._,cache,map,ids;
 
 // Main options
 function getIcon(n){
@@ -182,7 +182,13 @@ $('aImport').onchange=function(e){
 		r.readAsBinaryString(f);
 	}
 };
-$('aVacuum').onclick=function(){var t=this;t.disabled=true;bg.vacuum(function(){t.innerHTML=_('buttonVacuumed');});};
+$('aVacuum').onclick=function(){
+	var t=this;t.disabled=true;t.innerHTML=_('buttonVacuuming');
+	bg.vacuum(function(){
+		for(var i=0;i<ids.length;i++) map[ids[i]].obj.position=i+1;
+		t.innerHTML=_('buttonVacuumed');
+	});
+};
 A.close=$('aClose').onclick=function(){
 	bg.setOption('search',$('tSearch').value);
 	closeDialog();
@@ -399,8 +405,8 @@ CodeMirror.commands.save=function(){if(!eS.disabled) setTimeout(eSave,0);};
 CodeMirror.commands.close=E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
 
 // Load at last
-L.innerHTML='';
 bg.getData(function(o){
+	ids=[];map={};L.innerHTML='';
 	cache=o.cache;
 	o.scripts.forEach(function(i){
 		ids.push(i.id);addItem(map[i.id]={obj:i});

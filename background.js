@@ -355,27 +355,89 @@ function installScript(e,url){
 	});
 }
 function move(id,offset){
-	db.transaction(function(t){
+	function update(o){
+		db.transaction(function(t){
+			function loop(){
+				var i=o.shift();
+				if(i) t.executeSql('UPDATE scripts SET position=? WHERE id=?',i,loop,dbError);
+			}
+			loop();
+		});
+	}
+	db.readTransaction(function(t){
 		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
 			var o,v=r.rows.item(0);
 			o='SELECT * FROM scripts WHERE position'+(offset>0?'>':'<')+'? ORDER BY position';
 			if(offset<0) {o+=' DESC';offset=-offset;}
 			o+=' LIMIT ?';
 			t.executeSql(o,[v.position,offset],function(t,r){
-				var i,x=v.position;
+				var i,x=v.position,s=[];
 				for(i=0;i<r.rows.length;i++) {
 					o=r.rows.item(i);
-					t.executeSql('UPDATE scripts SET position=? WHERE id=?',[x,o.id],null,dbError);
+					s.push([x,o.id]);
 					x=o.position;
 				}
-				t.executeSql('UPDATE scripts SET position=? WHERE id=?',[x,v.id],null,dbError);
+				s.push([x,v.id]);
+				update(s);
 			});
 		});
 	});
 }
-function vacuum(callback){	// TODO
-	opera.postError('Not implemented.');
-	//if(callback) callback();
+function vacuum(callback){
+	var cache={},values={},count=0;
+	function addCache(i){cache[i]=1;}
+	function vacuumPosition(){
+		function update(o){
+			db.transaction(function(t){
+				function loop(){
+					var i=o.shift();
+					if(i) t.executeSql('UPDATE scripts SET position=? WHERE id=?',i,loop,dbError);
+				}
+				loop();
+			});
+		}
+		db.readTransaction(function(t){
+			t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
+				var i,j,o,s=[];
+				for(i=0;i<r.rows.length;i++) {
+					o=getScript(r.rows.item(i));
+					values[o.uri]=1;
+					if(o.meta.icon) addCache(o.meta.icon);
+					if(o.meta.require) o.meta.require.forEach(addCache);
+					for(j in o.meta.resources) addCache(o.meta.resources[j]);
+					if(o.position!=i+1) s.push([i+1,o.id]);
+				}
+				update(s);
+				setOption('maxPosition',i);
+				vacuumDB('cache',cache);
+				vacuumDB('values',values);
+			},dbError);
+		});
+	}
+	function vacuumDB(n,d){
+		function del(o){
+			db.transaction(function(t){
+				function loop(){
+					var i=o.shift();
+					if(i) t.executeSql('DELETE FROM "'+n+'" WHERE uri=?',i,loop,dbError);
+				}
+				loop();
+			});
+		}
+		count++;
+		db.readTransaction(function(t){
+			t.executeSql('SELECT * FROM "'+n+'"',[],function(t,r){
+				var o,s=[];
+				for(i=0;i<r.rows.length;i++) {
+					o=r.rows.item(i);
+					if(!d[o.uri]) s.push([o.uri]);
+				}
+				del(s);
+				if(!--count&&callback) callback();
+			},dbError);
+		});
+	}
+	vacuumPosition();
 }
 function canUpdate(o,n){
 	o=(o||'').split('.');n=(n||'').split('.');
