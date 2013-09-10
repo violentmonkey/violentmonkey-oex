@@ -90,19 +90,14 @@ function addItem(o){
 		edit:function(i){
 			bg.editScript(ids[i],function(o){
 				switchTo(E);E.scr=o;E.cur=i;
-				U.checked=o.update;T.setValue(o.code);T.markClean();T.focus();
+				U.checked=o.update;T.setValue(o.code);
+				markClean();T.focus();T.gotoLine(0,0);
 			});
 		},
 		enable:function(i,p,o){
 			var e=map[ids[i]].obj;
-			if(e.enabled=!e.enabled) {
-				p.classList.remove('disabled');
-				o.innerText=_('buttonDisable');
-			} else {
-				p.classList.add('disabled');
-				o.innerText=_('buttonEnable');
-			}
-			bg.enableScript(e.id,e.enabled);
+			e.enabled=!e.enabled;
+			bg.enableScript(e);
 		},
 		remove:function(i,p){
 			bg.removeScript(ids.splice(i,1)[0]);
@@ -279,76 +274,21 @@ var E=$('editor'),U=$('eUpdate'),M=$('meta'),
 		mU=$('mUpdateURL'),mD=$('mDownloadURL'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch'),
-		eS=$('eSave'),eSC=$('eSaveClose');
-CodeMirror.keyMap.vm={
-	'Esc':'close',
-	'Ctrl-S':'save',
-	fallthrough:'default'
-};
-function editor(e,i){
-	var t=this;
-	e.data=e.value;
-	e.isClean=function(){return t.clean;};
-	e.markClean=function(){t.clean=true;e.data=e.value;};
-	e.onkeyup=e.onmouseup=function(){if(e.data!=e.value) t.markDirty();};
-	e.getValue=function(){return this.value;};
-	e.setValue=function(v){this.value=v;};
-	t.editor=t.textarea=e;
-	t.type=0;
-	t.switchEditor(i?1:0);
+		eS=$('eSave'),eSC=$('eSaveClose'),T=ace.edit('eCode');
+function markClean(){
+	T.getSession().getUndoManager().reset();
+	eS.disabled=eSC.disabled=true;
 }
-editor.prototype={
-	switchEditor:function(i){
-		var t=this;
-		if(i==undefined) i=!t.type;
-		if(i!=t.type) {
-			if(t.type=!t.type) {
-				t.editor=CodeMirror.fromTextArea(t.editor,{
-					lineNumbers:true,
-					matchBrackets:true,
-					mode:'text/typescript',
-					lineWrapping:true,
-					indentUnit:4,
-					indentWithTabs:true,
-					extraKeys:{"Enter":"newlineAndIndentContinueComment"},
-					keyMap:'vm'
-				});
-				t.editor.on('change',t.markDirty);
-			} else {
-				t.clean&=t.editor.isClean();
-				t.editor.toTextArea();t.editor=t.textarea;
-				t.editor.data=t.editor.value;
-			}
-			t.type=i;
-		}
-	},
-	clean:true,
-	focus:function(){return this.editor.focus();},
-	isClean:function(){return this.clean&&this.editor.isClean();},
-	markClean:function(){this.clean=true;this.editor.markClean();eS.disabled=eSC.disabled=true;},
-	markDirty:function(){this.clean=false;E.markDirty();},
-	getValue:function(){return this.editor.getValue();},
-	setValue:function(t){this.editor.setValue(t);this.editor.getDoc&&this.editor.getDoc().clearHistory();},
-};
-var T=new editor($('eCode'),bg.settings.editorType);
-(function(b){
-	function switchCommand(){
-		b.innerHTML=T.type?_('buttonNormalEditor'):_('buttonAdvancedEditor');
-	}
-	b.onclick=function(){
-		T.switchEditor();bg.setOption('editorType',T.type);switchCommand();
-	};
-	switchCommand();
-})($('beditor'));
 function eSave(){
+	if(eS.disabled) return;	// in case fired by Ctrl-S
 	bg.parseScript(null,{id:E.scr.id,code:T.getValue(),message:'',more:{update:U.checked}});
-	T.markClean();eS.disabled=eSC.disabled=true;
+	markClean();eS.disabled=eSC.disabled=true;
 }
 function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
-U.onchange=E.markDirty=function(){eS.disabled=eSC.disabled=false;};
 function metaChange(){M.dirty=true;}
 [mN,mH,mR,mU,mD,mI,mM,mE,cI,cM,cE].forEach(function(i){i.onchange=metaChange;});
+U.onchange=E.markDirty=function(){eS.disabled=eSC.disabled=false;}
 $('bcustom').onclick=function(){
 	var e=[],c=E.scr.custom;
 	M.dirty=false;showDialog(M,10);
@@ -397,8 +337,27 @@ $('mOK').onclick=function(){
 };
 eS.onclick=eSave;
 eSC.onclick=function(){eSave();eClose();};
-CodeMirror.commands.save=function(){if(!eS.disabled) setTimeout(eSave,0);};
-CodeMirror.commands.close=E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
+E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
+T.setTheme('ace/theme/github');
+(function(s){
+	s.setMode('ace/mode/javascript');
+	s.on('change',E.markDirty);
+	s.setUseSoftTabs(false);
+	s.setUseWrapMode(true);
+	s.setUseWorker(true);
+})(T.getSession());
+T.commands.addCommand({
+	name:'Save',
+	bindKey:{win:'Ctrl-S',mac:'Command-S'},
+	exec:eSave,
+	readOnly:false,
+});
+T.commands.addCommand({
+	name:'Exit',
+	bindKey:{win:'Esc'},
+	exec:E.close,
+	readOnly:true,
+});
 
 // Load at last
 bg.getData(function(o){
