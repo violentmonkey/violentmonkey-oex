@@ -63,17 +63,22 @@ function initDatabase(callback){
 		executeSql();
 	});
 }
-function upgradeData(){
+function upgradeData(callback){
+	function finish(){
+		if(!--count&&callback) callback();
+	}
 	function upgradeDB(n,d){
+		count++;
 		db.transaction(function(t){
 			function loop(){
 				var i=d.pop();
 				if(i) t.executeSql('REPLACE INTO "'+n+'"(uri,data) VALUES(?,?)',i,loop,dbError);
+				else finish();
 			}
 			loop();
 		});
 	}
-	var i,j,k,l,o,cache=[],val={},values=[];
+	var i,j,k,l,o,cache=[],val={},values=[],count=0;
 	if(getOption('version_storage',0)<0.5) {
 		for(i=0;k=widget.preferences.key(i);) {
 			v=widget.preferences.getItem(k);
@@ -98,7 +103,7 @@ function upgradeData(){
 		upgradeDB('cache',cache);
 		upgradeDB('values',values);
 		setOption('version_storage',0.5);
-	}
+	} else if(callback) callback();
 }
 
 function getNameURI(i){
@@ -668,11 +673,12 @@ initMessages(function(){
 	initSettings();
 	initIcon();
 	initDatabase(function(){
-		upgradeData();
-		opera.extension.onmessage=function(e){
-			var m=e.data,c=maps[m.topic];
-			if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
-		};
-		if(settings.autoUpdate) autoCheck(2e4);
+		upgradeData(function(){
+			opera.extension.onmessage=function(e){
+				var m=e.data,c=maps[m.topic];
+				if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
+			};
+			if(settings.autoUpdate) autoCheck(2e4);
+		});
 	});
 });
