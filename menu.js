@@ -32,7 +32,7 @@ function menuScript(s) {
 	var n,d;
 	n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
 	d=addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
-		s.enabled=!s.enabled;bg.enableScript(s,function(){loadItem(d,s.enabled);});
+		bg.enableScript(s.id,!s.enabled,function(){loadItem(d,s.enabled);});
 	}});
 }
 function initMenu(){
@@ -72,12 +72,10 @@ function load(e,data){
 		}},ia);
 	}
 	if(data&&data[1]&&data[1].length) {
-		bg.getScripts(data[1],true,function(o){
-			pT.appendChild(document.createElement('hr'));
-			o.forEach(menuScript);
-			adjustSize();
-		});
-	} else adjustSize();
+		pT.appendChild(document.createElement('hr'));
+		data[1].forEach(function(i){menuScript(bg.metas[i]);});
+	}
+	adjustSize();
 }
 initMenu();bg.maps['GotPopup']=load;
 try{tab.postMessage({topic:'GetPopup'});}catch(e){}

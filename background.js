@@ -138,13 +138,17 @@ function saveScript(o,callback){
 		d.push(o.code);
 		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)',d,function(t,r){
 			if(!o.id) o.id=r.insertId;
-			if(callback) callback();
+			if(!(o.id in metas)) ids.push(o.id);
+			metas[o.id]=o;
+			if(callback) callback(o);
 		},dbError);
 	});
 }
 function removeScript(i){
 	db.transaction(function(t){
-		t.executeSql('DELETE FROM scripts WHERE id=?',[i]);
+		t.executeSql('DELETE FROM scripts WHERE id=?',[i],function(t,r){
+			delete metas[i];i=ids.indexOf(i);if(i>=0) ids.splice(i,1);
+		},dbError);
 	});
 }
 
@@ -209,21 +213,25 @@ function getScripts(ids,metaonly,callback){
 		getItem();
 	});
 }
-function getData(callback){
-	var data={scripts:[]},cache={};
+function initScripts(callback){
+	ids=[];metas={};
 	db.readTransaction(function(t){
 		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
 			var i,v,o;
 			for(i=0;i<r.rows.length;i++) {
 				v=r.rows.item(i);
 				o=getScript(v,true);
-				data.scripts.push(o);
-				if(o.meta.icon) cache[o.meta.icon]=1;
+				ids.push(o.id);metas[o.id]=o;
 			}
-			getCache(Object.getOwnPropertyNames(cache),function(o){
-				data.cache=o;if(callback) callback(data);
-			},t);
+			if(callback) callback();
 		});
+	});
+}
+function getData(callback){
+	var cache={};
+	for(i in metas) if(metas[i].meta.icon) cache[metas[i].meta.icon]=1;
+	getCache(Object.getOwnPropertyNames(cache),function(o){
+		if(callback) callback(o);
 	});
 }
 function editScript(id,callback){
@@ -233,11 +241,13 @@ function editScript(id,callback){
 		});
 	});
 }
-function enableScript(s,callback){
+function enableScript(id,v,callback){
+	var s=metas[id];if(!s) return;
+	s.enabled=v?1:0;
 	db.transaction(function(t){
-		t.executeSql('UPDATE scripts SET enabled=? WHERE id=?',[s.enabled?1:0,s.id],function(t,r){
+		t.executeSql('UPDATE scripts SET enabled=? WHERE id=?',[s.enabled,id],function(t,r){
 			if(r.rowsAffected) {
-				updateItem({id:s.id,obj:s,status:0});
+				updateItem({id:id,status:0});
 				if(callback) callback();
 			}
 		},dbError);
@@ -272,30 +282,31 @@ function getCache(uris,callback,t){
 	if(t) query(t); else db.readTransaction(query);
 }
 function findScript(e,url){
-	var i,j,data={scripts:[],isApplied:settings.isApplied},cache={},values={};
+	var i,j,data={isApplied:settings.isApplied},cache={},values={};
 	url=url||e.origin;	// to recognize URLs like data:...
 	function finish(v){
 		if(v) data.values=v;
 		e.source.postMessage({topic:'FoundScript',data:data});
 	}
-	if(url.slice(0,5)!='data:') db.readTransaction(function(t){
+	if(url.slice(0,5)!='data:') {
 		function addCache(i){cache[i]=1;}
-		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
-			var i,j,v,o;
-			for(i=0;i<r.rows.length;i++) {
-				v=r.rows.item(i);
-				o=getScript(v);
-				if(testURL(url,o)) {
-					data.scripts.push(o);values[o.uri]=1;
-					if(o.meta.require) o.meta.require.forEach(addCache);
-					for(j in o.meta.resources) addCache(o.meta.resources[j]);
-				}
+		var scripts=[];
+		ids.forEach(function(i){
+			var j,s=metas[i];if(!s) return;
+			if(testURL(url,s)) {
+				scripts.push(i);values[s.uri]=1;
+				if(s.meta.require) s.meta.require.forEach(addCache);
+				for(j in s.meta.resources) addCache(s.meta.resources[j]);
 			}
-			getCache(Object.getOwnPropertyNames(cache),function(o){
-				data.cache=o;getValues(Object.getOwnPropertyNames(values),finish,t);
-			},t);
 		});
-	}); else finish();
+		getScripts(scripts,false,function(o){
+			data.scripts=o;
+			getCache(Object.getOwnPropertyNames(cache),function(o){
+				data.cache=o;
+				getValues(Object.getOwnPropertyNames(values),finish);
+			});
+		});
+	} else finish();
 }
 function setValue(e,d){
 	db.transaction(function(t){
@@ -379,7 +390,7 @@ function parseScript(e,d,callback){
 			if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 			if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
 			saveScript(c,function(){
-				r.id=c.id;r.obj=c;delete c.code;	// decrease memory use
+				r.id=c.id;delete c.code;	// decrease memory use
 				if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
 				updateItem(r);if(callback) callback();
 			});
@@ -396,7 +407,7 @@ function installScript(e,url){
 		parseScript(e,{status:this.status,code:this.responseText,url:url});
 	});
 }
-function move(id,offset){
+function move(s,d){
 	function update(o){
 		db.transaction(function(t){
 			function loop(){
@@ -406,24 +417,19 @@ function move(id,offset){
 			loop();
 		});
 	}
-	db.readTransaction(function(t){
-		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
-			var o,v=r.rows.item(0);
-			o='SELECT * FROM scripts WHERE position'+(offset>0?'>':'<')+'? ORDER BY position';
-			if(offset<0) {o+=' DESC';offset=-offset;}
-			o+=' LIMIT ?';
-			t.executeSql(o,[v.position,offset],function(t,r){
-				var i,x=v.position,s=[];
-				for(i=0;i<r.rows.length;i++) {
-					o=r.rows.item(i);
-					s.push([x,o.id]);
-					x=o.position;
-				}
-				s.push([x,v.id]);
-				update(s);
-			});
-		});
-	});
+	// update ids
+	var g=d>s?1:-1,x=ids[s],i,u=[],o1,o2;
+	for(i=s;i!=d;i+=g) ids[i]=ids[i+g];ids[d]=x;
+	x=metas[x].position;o1=metas[ids[d]];
+	for(i=d;i!=s;i-=g) {
+		o2=metas[ids[i-g]];
+		o1.position=o2.position;
+		u.push([o1.position,o1.id]);
+		o1=o2;
+	}
+	o1.position=x;
+	u.push([o1.position,o1.id]);
+	update(u);
 }
 function vacuum(callback){
 	var cache={},values={},count=0;
@@ -438,23 +444,19 @@ function vacuum(callback){
 				loop();
 			});
 		}
-		db.readTransaction(function(t){
-			t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
-				var i,j,o,s=[];
-				for(i=0;i<r.rows.length;i++) {
-					o=getScript(r.rows.item(i));
-					values[o.uri]=1;
-					if(o.meta.icon) addCache(o.meta.icon);
-					if(o.meta.require) o.meta.require.forEach(addCache);
-					for(j in o.meta.resources) addCache(o.meta.resources[j]);
-					if(o.position!=i+1) s.push([i+1,o.id]);
-				}
-				update(s);
-				setOption('maxPosition',i);
-				vacuumDB('cache',cache);
-				vacuumDB('values',values);
-			},dbError);
-		});
+		var i,j,o,s=[];
+		for(i=0;i<ids.length;i++) {
+			o=metas[ids[i]];
+			values[o.uri]=1;
+			if(o.meta.icon) addCache(o.meta.icon);
+			if(o.meta.require) o.meta.require.forEach(addCache);
+			for(j in o.meta.resources) addCache(o.meta.resources[j]);
+			if(o.position!=i+1) s.push([i+1,o.id]);
+		}
+		update(s);
+		setOption('maxPosition',i);
+		vacuumDB('cache',cache);
+		vacuumDB('values',values);
 	}
 	function vacuumDB(n,d){
 		function del(o){
@@ -535,22 +537,13 @@ function checkUpdateO(o){
 	}
 }
 function checkUpdate(id){
-	db.readTransaction(function(t){
-		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
-			if(r.rows.length) checkUpdateO(getScript(r.rows.item(0)));
-		},dbError);
-	});
+	checkUpdateO(metas[id]);
 }
 function checkUpdateAll(){
 	setOption('lastUpdate',Date.now());
-	db.readTransaction(function(t){
-		t.executeSql('SELECT * FROM scripts WHERE "update"=1',[],function(t,r){
-			var i,o;
-			for(i=0;i<r.rows.length;i++){
-				o=getScript(r.rows.item(i));
-				checkUpdateO(o);
-			}
-		},dbError);
+	ids.forEach(function(i){
+		var o=metas[i];
+		if(o.update) checkUpdateO(o);
 	});
 }
 
@@ -659,7 +652,7 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-var db,_,button,checking=false,settings={},_updateItem=[],
+var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,
 		maps={
 			FindScript:findScript,
 			InstallScript:installScript,
@@ -674,11 +667,13 @@ initMessages(function(){
 	initIcon();
 	initDatabase(function(){
 		upgradeData(function(){
-			opera.extension.onmessage=function(e){
-				var m=e.data,c=maps[m.topic];
-				if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
-			};
-			if(settings.autoUpdate) autoCheck(2e4);
+			initScripts(function(){
+				opera.extension.onmessage=function(e){
+					var m=e.data,c=maps[m.topic];
+					if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
+				};
+				if(settings.autoUpdate) autoCheck(2e4);
+			});
 		});
 	});
 });
