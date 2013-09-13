@@ -103,19 +103,22 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements;
+var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements=[];
 function runCode(c){
-	var w=new wrapper(c),require=c.meta.require||[],i,r,f,code=[];
-	elements.forEach(function(i){code.push(i+'=this.'+i);});
-	code=['var '+code.join(',')+';'];
+	var require=c.meta.require||[],i,r=[],code=[];
+	elements.forEach(function(i){r.push(i+'=window.'+i);});
+	code=['(function(){'];
+	if(r.length) code.push('var '+r.join(',')+';');
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
-	code.push(c.code);
+	code.push(c.code);code.push('}).call(window);');
 	code=code.join('\n');
-	f=new Function('w','with(w) eval('+JSON.stringify(code)+');');
-	try{f.call(w,w);}catch(e){
+	try{
+		r=new Function('w','with(w) '+code);
+		r(new wrapper(c));
+	}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
 		if(i>0) e=e.slice(0,i);
@@ -189,7 +192,7 @@ function wrapper(c){
 		Object.defineProperty(obj,name,prop);
 		if(typeof obj[name]=='function') obj[name].toString=propertyToString;
 	}
-	var resources=c.meta.resources||{};elements=[];
+	var resources=c.meta.resources||{};
 	addProperty('unsafeWindow',{value:window});
 	// GM functions
 	// Reference: http://wiki.greasespot.net/Greasemonkey_Manual:API
