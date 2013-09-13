@@ -591,7 +591,7 @@ function abortRequest(e,id){
 }
 
 function getOption(k,def){
-	var v=widget.preferences.getItem(k);
+	var v=widget.preferences.getItem(k)||'';
 	try{
 		v=JSON.parse(v);
 	}catch(e){

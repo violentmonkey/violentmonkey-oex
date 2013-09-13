@@ -85,8 +85,9 @@ function addItem(o){
 		edit:function(i){
 			bg.editScript(bg.ids[i],function(o){
 				switchTo(E);E.scr=o;E.cur=o.id;
-				U.checked=o.update;T.setValue(o.code);
-				markClean();T.focus();T.gotoLine(0,0);
+				U.checked=o.update;
+				T.setValueAndFocus(o.code);
+				markClean();
 			});
 		},
 		enable:function(i,p,o){
@@ -148,10 +149,6 @@ O.onclick=function(){
 function confirmCancel(dirty){
 	return !dirty||confirm(_('confirmNotSaved'));
 }
-window.addEventListener('DOMContentLoaded',function(){
-	var nodes=document.querySelectorAll('.i18n'),c,s,i,j;
-	for(i=0;i<nodes.length;i++) nodes[i].innerHTML=_(nodes[i].innerHTML);
-},true);
 
 // Advanced
 var A=$('advanced');
@@ -265,9 +262,10 @@ var E=$('editor'),U=$('eUpdate'),M=$('meta'),
 		mU=$('mUpdateURL'),mD=$('mDownloadURL'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch'),
-		eS=$('eSave'),eSC=$('eSaveClose'),T=ace.edit('eCode');
+		eS=$('eSave'),eSC=$('eSaveClose'),T;
+initCodeMirror(function(o){T=o;});
 function markClean(){
-	T.getSession().getUndoManager().reset();
+	T.clearHistory();
 	eS.disabled=eSC.disabled=true;
 }
 function eSave(){
@@ -275,7 +273,7 @@ function eSave(){
 	bg.parseScript(null,{id:E.scr.id,code:T.getValue(),message:'',more:{update:U.checked}});
 	markClean();
 }
-function eClose(){switchTo(N);E.cur=E.scr=null;T.setValue('');}
+function eClose(){switchTo(N);E.cur=E.scr=null;}
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
 function metaChange(){M.dirty=true;}
 [mN,mH,mR,mU,mD,mI,mM,mE,cI,cM,cE].forEach(function(i){i.onchange=metaChange;});
@@ -329,28 +327,11 @@ $('mOK').onclick=function(){
 eS.onclick=eSave;
 eSC.onclick=function(){eSave();eClose();};
 E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
-T.setTheme('ace/theme/github');
-(function(s){
-	s.setMode('ace/mode/javascript');
-	s.on('change',E.markDirty);
-	s.setUseSoftTabs(false);
-	s.setUseWrapMode(true);
-	s.setUseWorker(true);
-})(T.getSession());
-T.commands.addCommand({
-	name:'Save',
-	bindKey:{win:'Ctrl-S',mac:'Command-S'},
-	exec:eSave,
-	readOnly:false,
-});
-T.commands.addCommand({
-	name:'Exit',
-	bindKey:{win:'Esc'},
-	exec:E.close,
-	readOnly:true,
-});
 
 // Load at last
+(function(nodes){
+	for(var i=0;i<nodes.length;i++) nodes[i].innerHTML=_(nodes[i].innerHTML);
+})(document.querySelectorAll('.i18n'));
 bg.getData(function(o){
 	L.innerHTML='';cache=o;bg.ids.forEach(function(i){addItem(bg.metas[i]);});
 });
