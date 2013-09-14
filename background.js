@@ -1,3 +1,12 @@
+// Check old version of Opera
+(function(v){
+	v=parseInt(v);
+	if(v<12) {
+		opera.extension.tabs.create({url:'oldversion.html'});
+		null[0];	// to stop running
+	}
+})(opera.version());
+
 // Multilingual
 function initMessages(callback){
 	var data={},req=new XMLHttpRequest();
@@ -20,7 +29,7 @@ function initMessages(callback){
 /* ===============Data format 0.5==================
  * Database: Violentmonkey
  * scripts {
- * 		id: Random
+ * 		id: Auto
  * 		uri: String
  * 		meta: {
  * 			custom: List-Dict	// Custom meta data
@@ -29,10 +38,6 @@ function initMessages(callback){
  * 		}
  * 		update: 0|1
  * 		position: Integer
- * 		code: String
- * }
- * require {
- * 		uri: String
  * 		code: String
  * }
  * cache {
