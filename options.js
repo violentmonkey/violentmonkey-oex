@@ -263,7 +263,6 @@ var E=$('editor'),U=$('eUpdate'),M=$('meta'),
     mI=$('mInclude'),mE=$('mExclude'),mM=$('mMatch'),
     cI=$('cInclude'),cE=$('cExclude'),cM=$('cMatch'),
 		eS=$('eSave'),eSC=$('eSaveClose'),T;
-initCodeMirror(function(o){T=o;});
 function markClean(){
 	T.clearHistory();
 	eS.disabled=eSC.disabled=true;
@@ -327,6 +326,7 @@ $('mOK').onclick=function(){
 eS.onclick=eSave;
 eSC.onclick=function(){eSave();eClose();};
 E.close=$('eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
+initEditor(function(o){T=o;},{save:eSave,exit:E.close,onchange:E.markDirty});
 
 // Load at last
 (function(nodes){
