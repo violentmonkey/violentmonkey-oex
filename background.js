@@ -150,10 +150,9 @@ function saveScript(o,callback){
 	});
 }
 function removeScript(i){
+	var id=ids.splice(i,1)[0];
 	db.transaction(function(t){
-		t.executeSql('DELETE FROM scripts WHERE id=?',[i],function(t,r){
-			delete metas[i];i=ids.indexOf(i);if(i>=0) ids.splice(i,1);
-		},dbError);
+		t.executeSql('DELETE FROM scripts WHERE id=?',[id],function(t,r){delete metas[id];},dbError);
 	});
 }
 
@@ -640,7 +639,7 @@ function initIcon(){
 	button=opera.contexts.toolbar.createItem({
 		title:_('extName'),
 		popup:{
-			href:"popup.html",
+			href:"menu.html",
 			width:222,
 			height:100
 		}

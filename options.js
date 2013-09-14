@@ -95,7 +95,7 @@ function addItem(o){
 			bg.enableScript(id,!s.enabled);
 		},
 		remove:function(i,p){
-			bg.removeScript(bg.ids[i]);
+			bg.removeScript(i);
 			L.removeChild(p);
 		},
 		update:function(i){
