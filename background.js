@@ -1,12 +1,3 @@
-// Check old version of Opera
-(function(v){
-	v=parseInt(v);
-	if(v<12) {
-		opera.extension.tabs.create({url:'oldversion.html'});
-		null[0];	// to stop running
-	}
-})(opera.version());
-
 // Multilingual
 function initMessages(callback){
 	var data={},req=new XMLHttpRequest();
@@ -107,6 +98,7 @@ function upgradeData(callback){
 		for(i in val) values.push([i,JSON.stringify(val[i])]);
 		upgradeDB('cache',cache);
 		upgradeDB('values',values);
+		if(!/\*/.test(getOption('search',''))) setOption('search',_('defaultSearch'));
 		setOption('version_storage',0.5);
 	} else if(callback) callback();
 }
@@ -383,9 +375,15 @@ function queryScript(id,meta,callback){
 	});
 }
 function parseScript(e,d,callback){
+	function finish(){
+		if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
+		updateItem(r);if(callback) callback();
+	}
 	var i,r={status:0,message:'message' in d?d.message:_('msgUpdated')};
-	if(d.status&&d.status!=200||!d.code) {r.status=-1;r.message=_('msgErrorFetchingScript');}
-	else {
+	if(d.status&&d.status!=200||!d.code) {
+		r.status=-1;r.message=_('msgErrorFetchingScript');
+		finish();
+	} else {
 		var meta=parseMeta(d.code);
 		queryScript(d.id,meta,function(c){
 			if(!c.id){r.status=1;r.message=_('msgInstalled');}
@@ -395,8 +393,7 @@ function parseScript(e,d,callback){
 			if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
 			saveScript(c,function(){
 				r.id=c.id;delete c.code;	// decrease memory use
-				if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
-				updateItem(r);if(callback) callback();
+				finish();
 			});
 		});
 		meta.require.forEach(fetchCache);	// @require
@@ -538,7 +535,7 @@ function checkUpdateO(o){
 			delete r.hideUpdate;
 			updateItem(r);finish();
 		});
-	}
+	} else finish();
 }
 function checkUpdate(id){
 	checkUpdateO(metas[id]);
@@ -666,7 +663,9 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,
 			AbortRequest:abortRequest,
 			SetValue:setValue,
 		};
-initMessages(function(){
+if(parseInt(opera.version())<12)	// Check old version of Opera
+	opera.extension.tabs.create({url:'oldversion.html'});
+else initMessages(function(){
 	initSettings();
 	initIcon();
 	initDatabase(function(){
