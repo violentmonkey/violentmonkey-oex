@@ -91,8 +91,7 @@ function upgradeData(callback){
 				o=JSON.parse(v);
 				if(!o.uri) o.uri=getNameURI(o);
 				saveScript(o);
-			}
-			else if(k in settings) {i++;continue;}
+			} else if(k in settings) {i++;continue;}
 			widget.preferences.removeItem(k);
 		}
 		for(i in val) values.push([i,JSON.stringify(val[i])]);
@@ -669,8 +668,8 @@ else initMessages(function(){
 	initSettings();
 	initIcon();
 	initDatabase(function(){
-		upgradeData(function(){
-			initScripts(function(){
+		initScripts(function(){
+			upgradeData(function(){
 				opera.extension.onmessage=function(e){
 					var m=e.data,c=maps[m.topic];
 					if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
