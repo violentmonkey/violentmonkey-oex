@@ -61,7 +61,10 @@ function initDatabase(callback){
 }
 function upgradeData(callback){
 	function finish(){
-		if(!--count&&callback) callback();
+		if(--count<=0) {
+			delete settings.version_storage;	// avoid import and export
+			if(callback) callback();
+		}
 	}
 	function upgradeDB(n,d){
 		count++;
@@ -95,11 +98,11 @@ function upgradeData(callback){
 			widget.preferences.removeItem(k);
 		}
 		for(i in val) values.push([i,JSON.stringify(val[i])]);
+		setOption('version_storage',0.5);
 		upgradeDB('cache',cache);
 		upgradeDB('values',values);
 		if(!/\*/.test(getOption('search',''))) setOption('search',_('defaultSearch'));
-		setOption('version_storage',0.5);
-	} else if(callback) callback();
+	} else finish();
 }
 
 function getNameURI(i){

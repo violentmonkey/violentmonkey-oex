@@ -195,7 +195,8 @@ function impo(b){
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
 	if(vm.values) for(z in vm.values) bg.setValue(z,vm.values[z]);
-	if(vm.settings) for(z in vm.settings) bg.setOption(z,vm.settings[z]);
+	if(vm.settings) for(z in vm.settings)
+		if(z in bg.settings) bg.setOption(z,vm.settings[z]);
 	alert(_('msgImported',count));
 	location.reload();
 }
