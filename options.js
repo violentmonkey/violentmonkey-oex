@@ -31,7 +31,7 @@ function loadItem(n,r){
 	+'<span class=message></span>'
 	+'<div class=panelB>'
 		+'<button data=edit>'+_('buttonEdit')+'</button> '
-		+'<button data=enable>'+_(n.enabled?'buttonDisable':'buttonEnable')+'</button> '
+		+'<button data=enable>'+(n.enabled?_('buttonDisable'):_('buttonEnable'))+'</button> '
 		+'<button data=remove>'+_('buttonRemove')+'</button>'
 	+'</div>';
 	d.className=n.enabled?'':'disabled';
@@ -180,7 +180,7 @@ A.close=$('aClose').onclick=function(){
 // Import
 function impo(b){
 	var z=new JSZip();
-	try{z.load(b);}catch(e){alert('Error loading zip file.');return;}
+	try{z.load(b);}catch(e){alert(_('msgErrorZip'));return;}
 	var vm=z.file('ViolentMonkey'),count=0;
 	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){vm={};opera.postError('Error parsing ViolentMonkey configuration.');}
 	z.file(/\.user\.js$/).forEach(function(o){

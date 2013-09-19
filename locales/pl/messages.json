@@ -11,13 +11,17 @@
 		"message": "MISI90 <cydziol@gmail.com>", 
 		"description": "Information of the translator."
 	}, 
+	"defaultSearch": {
+		"message": "http://www.google.com/search?q=*", 
+		"description": "URL for searching scripts, * stands for the keywords."
+	}, 
 	"msgUpdated": {
 		"message": "Skrypt zaktualizowany.", 
 		"description": "Message shown when a script is updated/reinstalled."
 	}, 
 	"msgErrorFetchingScript": {
 		"message": "Błąd przy pobieraniu skryptu!", 
-		"description": "Message shown when Violentmonkey failed fetching a new version of the script."
+		"description": "Message shown when Violentmonkey fails fetching a new version of the script."
 	}, 
 	"msgInstalled": {
 		"message": "Skrypt zainstalowany", 
@@ -41,15 +45,11 @@
 	}, 
 	"msgErrorFetchingUpdateInfo": {
 		"message": "Błąd pobierania informacji aktualizacji.", 
-		"description": "Message shown when Violentmonkey failed fetching version data of the script."
+		"description": "Message shown when Violentmonkey fails fetching version data of the script."
 	}, 
 	"msgNoUpdate": {
 		"message": "Nie znaleziono aktualizacji.", 
 		"description": "Message shown when there is no new version of a script."
-	}, 
-	"defaultSearch": {
-		"message": "http://www.google.com/search?q=*", 
-		"description": "URL for searching scripts, * stands for the keywords."
 	}, 
 	"labelNoName": {
 		"message": "Pusta nazwa", 
@@ -101,7 +101,7 @@
 	}, 
 	"labelShowDetails": {
 		"message": "Pokaż szczegóły", 
-		"description": "An option to show the details of scripts, such as author, description, etc."
+		"description": "Option to show the details of scripts, such as author, description, etc."
 	}, 
 	"anchorSupportPage": {
 		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>", 
@@ -121,7 +121,7 @@
 	}, 
 	"labelAllowUpdate": {
 		"message": "Zezwól na aktualizacje", 
-		"description": "An option to allow checking updates for a script."
+		"description": "Option to allow checking updates for a script."
 	}, 
 	"buttonSave": {
 		"message": "Zapisz", 
@@ -165,7 +165,7 @@
 	}, 
 	"labelKeepInclude": {
 		"message": "Zachowaj oryginalne zasady include", 
-		"description": "An option to keep the original @include rules."
+		"description": "Option to keep the original @include rules."
 	}, 
 	"labelCustomInclude": {
 		"message": "Własne zasady include: <em>(Jedna na linię)</em>", 
@@ -177,7 +177,7 @@
 	}, 
 	"labelKeepMatch": {
 		"message": "Zachowaj oryginalne zasady match", 
-		"description": "An option to keep the original @match rules."
+		"description": "Option to keep the original @match rules."
 	}, 
 	"labelCustomMatch": {
 		"message": "Własne zasady match: <em>(Jedna na linię)</em>", 
@@ -189,7 +189,7 @@
 	}, 
 	"labelKeepExclude": {
 		"message": "Zachowaj oryginalne zasady exclude", 
-		"description": "An option to keep the original @exclude rules."
+		"description": "Option to keep the original @exclude rules."
 	}, 
 	"labelCustomExclude": {
 		"message": "Własne zasady exclude: <em>(Jedna na linię)</em>", 
@@ -213,7 +213,7 @@
 	}, 
 	"labelExportScriptData": {
 		"message": "Eksportuj dane skryptu", 
-		"description": "An option to export script data along with scripts."
+		"description": "Option to export script data along with scripts."
 	}, 
 	"buttonAllNone": {
 		"message": "Wszystkie/Żaden", 
@@ -225,11 +225,11 @@
 	}, 
 	"labelShowButton": {
 		"message": "Pokaż przycisk na pasku", 
-		"description": "An option to show an icon of this extension in the toolbar."
+		"description": "Option to show an icon of this extension in the toolbar."
 	}, 
 	"labelAutoUpdate": {
 		"message": "Automatycznie sprawdzaj aktualizacje dla skryptów każdego dnia", 
-		"description": "An option to allow automatically checking scripts for updates every 24 hours."
+		"description": "Option to allow automatically checking scripts for updates every 24 hours."
 	}, 
 	"labelSearchLink": {
 		"message": "Adres wyszukiwarki:", 
@@ -271,14 +271,6 @@
 		"message": "Edytuj", 
 		"description": "Button to edit a script."
 	}, 
-	"buttonRemove": {
-		"message": "Usuń", 
-		"description": "Button to remove a script."
-	}, 
-	"labelAuthor": {
-		"message": "Autor: ", 
-		"description": "Label of author shown in the details of a script."
-	}, 
 	"buttonDisable": {
 		"message": "Wyłącz", 
 		"description": "Button to disable a script."
@@ -286,6 +278,14 @@
 	"buttonEnable": {
 		"message": "Włącz", 
 		"description": "Button to enable a script."
+	}, 
+	"buttonRemove": {
+		"message": "Usuń", 
+		"description": "Button to remove a script."
+	}, 
+	"labelAuthor": {
+		"message": "Autor: ", 
+		"description": "Label of author shown in the details of a script."
 	}, 
 	"confirmNotSaved": {
 		"message": "Modyfikacje nie zostały zapisane! Kliknij OK aby wyjść lub Anuluj aby zostać.", 
@@ -299,6 +299,10 @@
 		"message": "Dane wyczyszczone", 
 		"description": "Message shown when data is vacuumed."
 	}, 
+	"msgErrorZip": {
+		"message": "Błąd odczytywania pliku zip.", 
+		"description": "Message shown when Violentmonkey fails to open the zip file."
+	}, 
 	"msgImported": {
 		"message": "$1 pozycja(e) zaimportowana(e).", 
 		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
@@ -310,13 +314,5 @@
 	"buttonExporting": {
 		"message": "Eksportowanie danych...", 
 		"description": "Message shown when data export is in progress."
-	}, 
-	"buttonNormalEditor": {
-		"message": "Przełącz do standartowego edytora", 
-		"description": "Button to use a textarea as the script editor."
-	}, 
-	"buttonAdvancedEditor": {
-		"message": "Przełącz do zaawansowanego edytora", 
-		"description": "Button to use a syntax-highlighted script editor."
 	}
 }
