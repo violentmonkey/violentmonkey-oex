@@ -599,7 +599,7 @@ function getOption(k,def){
 		v=JSON.parse(v);
 	}catch(e){
 		v=def;
-		if(v!=undefined) setOption(k,v);
+		if(v!=undefined) return setOption(k,v);
 	}
 	settings[k]=v;
 	return v;

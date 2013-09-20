@@ -103,9 +103,9 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements=[];
+var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements=null;
 function runCode(c){
-	var require=c.meta.require||[],i,r=[],code=[];
+	var require=c.meta.require||[],i,r=[],code=[],w=new wrapper(c);
 	elements.forEach(function(i){r.push(i+'=window.'+i);});
 	code=['(function(){'];
 	if(r.length) code.push('var '+r.join(',')+';');
@@ -116,8 +116,7 @@ function runCode(c){
 	code.push(c.code);code.push('}).call(window);');
 	code=code.join('\n');
 	try{
-		r=new Function('w','with(w) '+code);
-		r(new wrapper(c));
+		(new Function('w','with(w) '+code)).call(this,w);
 	}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
@@ -148,6 +147,7 @@ function loadScript(data){
 	});
 	cache=data.cache;
 	values=data.values;
+	opera.postError(start.length+' '+body.length+' '+end.length);
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
@@ -156,7 +156,7 @@ function loadScript(data){
 }
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
-	var value=values[c.uri]||{},t=this;
+	var value=values[c.uri]||{},t=this,ele=[];
 
 	// functions and properties
 	function wrapFunction(o,i,c){
@@ -188,7 +188,7 @@ function wrapper(c){
 	function addProperty(name,prop,obj){
 		if('value' in prop) prop.writable=false;
 		prop.configurable=false;
-		if(!obj) {obj=t;elements.push(name);}
+		if(!obj) {obj=t;ele.push(name);}
 		Object.defineProperty(obj,name,prop);
 		if(typeof obj[name]=='function') obj[name].toString=propertyToString;
 	}
@@ -272,5 +272,6 @@ function wrapper(c){
 		var r=new Request(details);
 		return r.req;
 	}});
+	if(!elements) elements=ele;
 }
 if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
