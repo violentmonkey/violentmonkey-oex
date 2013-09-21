@@ -228,7 +228,7 @@
 		"description": "Option to show an icon of this extension in the toolbar."
 	}, 
 	"labelAutoUpdate": {
-		"message": "每天自动检查脚本更新", 
+		"message": "每天自动更新脚本", 
 		"description": "Option to allow automatically checking scripts for updates every 24 hours."
 	}, 
 	"labelSearchLink": {

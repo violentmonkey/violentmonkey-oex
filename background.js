@@ -394,7 +394,7 @@ function parseScript(e,d,callback){
 			if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 			if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
 			saveScript(c,function(){
-				r.id=c.id;delete c.code;	// decrease memory use
+				r.id=c.id;delete c.code;	// release memory
 				finish();
 			});
 		});

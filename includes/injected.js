@@ -147,7 +147,6 @@ function loadScript(data){
 	});
 	cache=data.cache;
 	values=data.values;
-	opera.postError(start.length+' '+body.length+' '+end.length);
 	runStart();
 	window.addEventListener('DOMNodeInserted',runBody,true);
 	window.addEventListener('DOMContentLoaded',runEnd,false);
