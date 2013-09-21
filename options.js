@@ -190,7 +190,7 @@ function impo(b){
 	if(vm.values) for(z in vm.values) bg.setValue(z,vm.values[z]);
 	if(vm.settings) for(z in vm.settings)
 		if(z in bg.settings) bg.setOption(z,vm.settings[z]);
-	alert(_('msgImported',count));
+	alert(_('msgImported',[count]));
 	location.reload();
 }
 

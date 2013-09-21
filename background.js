@@ -8,10 +8,9 @@ function initMessages(callback){
 		if(callback) callback();
 	};
 	req.send();
-	_=function(){
-		var args=arguments,k=args[0],r;
-		r=data[k];if(r) r=r.message;
-		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){return args[g1||g2]||'';});
+	_=function(k,a){
+		var r=data[k];if(r) r=r.message;
+		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){v=g1||g2;return a[v-1]||'';});
 		else return '';
 	};
 }
