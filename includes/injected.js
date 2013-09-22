@@ -103,7 +103,7 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],body=[],end=[],cache,values,scr=[],menu=[],command={},elements=null;
+var start=[],idle=[],end=[],cache,values,scr=[],menu=[],command={},elements=null,loaded=false;
 function runCode(c){
 	var require=c.meta.require||[],i,r=[],code=[],w=new wrapper(c);
 	elements.forEach(function(i){r.push(i+'=window.'+i);});
@@ -124,14 +124,10 @@ function runCode(c){
 		opera.postError('Error running script: '+(c.custom.name||c.meta.name||c.id)+'\n'+e);
 	}
 }
-function runStart(){while(start.length) runCode(start.shift());}
-function runBody(){
-	if(document.body) {
-		window.removeEventListener('DOMNodeInserted',runBody,true);
-		while(body.length) runCode(body.shift());
-	}
-}
-function runEnd(){while(end.length) runCode(end.shift());}
+function run(l){while(l.length) runCode(l.shift());}
+window.addEventListener('DOMContentLoaded',function(){
+	loaded=true;run(idle);run(end);
+},false);
 function loadScript(data){
 	var l;
 	data.scripts.forEach(function(i){
@@ -139,7 +135,7 @@ function loadScript(data){
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
 				case 'document-start': l=start;break;
-				case 'document-body': l=body;break;
+				case 'document-idle': l=idle;break;
 				default: l=end;
 			}
 			l.push(i);
@@ -147,11 +143,7 @@ function loadScript(data){
 	});
 	cache=data.cache;
 	values=data.values;
-	runStart();
-	window.addEventListener('DOMNodeInserted',runBody,true);
-	window.addEventListener('DOMContentLoaded',runEnd,false);
-	runBody();
-	if(document.readyState=='complete') runEnd();
+	run(start);if(loaded) {run(idle);run(end);}
 }
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(c){
@@ -258,7 +250,7 @@ function wrapper(c){
 		(document.head||document.documentElement).appendChild(v);
 		return v;
 	}});
-	addProperty('GM_log',{value:console.log});
+	addProperty('GM_log',{value:function(d){console.log(d);}});
 	addProperty('GM_openInTab',{value:function(url){window.open(url);}});
 	addProperty('GM_registerMenuCommand',{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}});
 	addProperty('GM_xmlhttpRequest',{value:function(details){
