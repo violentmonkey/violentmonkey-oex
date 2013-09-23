@@ -235,8 +235,8 @@
 		"message": "Adres wyszukiwarki:", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"labelSearchHint": {
-		"message": "<a title='Adres wyszukiwarki musi zawierać *. * oznacza słowa kluczowe generowane przez Violentmonkey.'>(?)</a>", 
+	"hintSearchLink": {
+		"message": "Adres wyszukiwarki musi zawierać *. * oznacza słowa kluczowe generowane przez Violentmonkey.", 
 		"description": "Hint for the search URL."
 	}, 
 	"buttonDefault": {
@@ -259,8 +259,8 @@
 		"message": "Wyczyść dane", 
 		"description": "Button to vacuum extension data."
 	}, 
-	"labelVacuumHint": {
-		"message": "<a title='Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.'>(?)</a>", 
+	"hintVacuumData": {
+		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.", 
 		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {

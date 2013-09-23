@@ -150,8 +150,9 @@ $('cShow').checked=bg.settings.showButton;
 $('cShow').onchange=function(){bg.showButton(bg.setOption('showButton',this.checked));};
 $('cUpdate').checked=bg.settings.autoUpdate;
 $('cUpdate').onchange=function(){if(bg.setOption('autoUpdate',this.checked)) bg.autoCheck();};
-$('tSearch').value=bg.settings.search;
 $('bDefSearch').onclick=function(){$('tSearch').value=_('defaultSearch');};
+$('tSearch').value=bg.settings.search;
+$('tSearch').title=_('hintSearchLink');
 $('aExport').onclick=function(){showDialog(X);xLoad();};
 $('aImport').onchange=function(e){
 	var i,f,files=e.target.files;
@@ -165,6 +166,7 @@ $('aVacuum').onclick=function(){
 	var t=this;t.disabled=true;t.innerHTML=_('buttonVacuuming');
 	bg.vacuum(function(){t.innerHTML=_('buttonVacuumed');});
 };
+$('aVacuum').title=_('hintVacuumData');
 A.close=$('aClose').onclick=function(){
 	bg.setOption('search',$('tSearch').value);
 	closeDialog();

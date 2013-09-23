@@ -235,8 +235,8 @@
 		"message": "Поисковый URL: ", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"labelSearchHint": {
-		"message": "<a title='Поисковый URL должен включать *, где * - ключевые слова генерируемые Violentmonkey'>(?)</a>", 
+	"hintSearchLink": {
+		"message": "Поисковый URL должен включать *, где * - ключевые слова генерируемые Violentmonkey", 
 		"description": "Hint for the search URL."
 	}, 
 	"buttonDefault": {
@@ -259,8 +259,8 @@
 		"message": "Сбросить кэш", 
 		"description": "Button to vacuum extension data."
 	}, 
-	"labelVacuumHint": {
-		"message": "<a title=\"Сбросить избыточность и попробовать перезагрузить недостающие ресурсы в кэше\">(?)</a>", 
+	"hintVacuumData": {
+		"message": "Сбросить избыточность и попробовать перезагрузить недостающие ресурсы в кэше", 
 		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
