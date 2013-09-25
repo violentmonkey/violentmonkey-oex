@@ -281,10 +281,7 @@ function getCache(uris,callback,t){
 function findScript(e,url){
 	var i,j,data={isApplied:settings.isApplied},cache={},values={};
 	url=url||e.origin;	// to recognize URLs like data:...
-	function finish(v){
-		if(v) data.values=v;
-		e.source.postMessage({topic:'FoundScript',data:data});
-	}
+	function finish(){e.source.postMessage({topic:'FoundScript',data:data});}
 	if(url.slice(0,5)!='data:') {
 		function addCache(i){cache[i]=1;}
 		var scripts=[];
@@ -300,7 +297,10 @@ function findScript(e,url){
 			data.scripts=o;
 			getCache(Object.getOwnPropertyNames(cache),function(o){
 				data.cache=o;
-				getValues(Object.getOwnPropertyNames(values),finish);
+				getValues(Object.getOwnPropertyNames(values),function(o){
+					data.values=o;
+					finish();
+				});
 			});
 		});
 	} else finish();
