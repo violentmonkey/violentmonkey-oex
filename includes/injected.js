@@ -107,16 +107,16 @@ var start=[],idle=[],end=[],cache,values,scr=[],menu=[],command={},elements=null
 function runCode(c){
 	var require=c.meta.require||[],i,r=[],code=[],w=new wrapper(c);
 	elements.forEach(function(i){r.push(i+'=window.'+i);});
-	code=['(function(){'];
+	code=[];
 	if(r.length) code.push('var '+r.join(',')+';');
 	for(i=0;i<require.length;i++) try{
 		r=cache[require[i]];if(!r) continue;
 		code.push(utf8decode(r));
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
-	code.push(c.code);code.push('}).call(window);');
+	code.push(c.code);
 	code=code.join('\n');
 	try{
-		(new Function('w','with(w) '+code)).call(this,w);
+		(new Function('w','with(w) eval('+JSON.stringify(code)+')')).call(w,w);
 	}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
@@ -210,7 +210,10 @@ function wrapper(c){
 		for(m in c.meta.resources) addProperty(m,{value:c.meta.resources[m]},o.script.resources);
 		return o;
 	}});
-	addProperty('GM_deleteValue',{value:function(key){widget.preferences.removeItem(ckey+key);}});
+	addProperty('GM_deleteValue',{value:function(key){
+		delete value[key];
+		opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,data:value}});
+	}});
 	addProperty('GM_getValue',{value:function(k,d){
 		var v=value[k];
 		if(v) {
