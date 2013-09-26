@@ -271,7 +271,15 @@ function edit(o){
 }
 function eSave(){
 	if(eS.disabled) return;	// in case fired by Ctrl-S
-	bg.parseScript(null,{id:E.scr.id,code:T.getValue(),message:'',more:{update:U.checked}});
+	bg.parseScript(null,{
+		id:E.cur,
+		code:T.getValue(),
+		message:'',
+		more:{
+			custom:E.scr.custom,
+			update:U.checked
+		}
+	});
 	markClean();
 }
 function eClose(){switchTo(N);E.cur=E.scr=null;}
@@ -320,8 +328,7 @@ $('mOK').onclick=function(){
 		c.match=split(mM.value);
 		c._exclude=cE.checked;
 		c.exclude=split(mE.value);
-		loadItem(E.cur,E.scr);
-		bg.saveScript(E.scr);
+		E.markDirty();
 	}
 	closeDialog();
 };
