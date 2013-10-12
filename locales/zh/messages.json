@@ -235,10 +235,6 @@
 		"message": "搜索网址：", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"hintSearchLink": {
-		"message": "搜索网址必须包含*，*将替换为由<暴力猴>生成的关键字。", 
-		"description": "Hint for the search URL."
-	}, 
 	"buttonDefault": {
 		"message": "默认", 
 		"description": "Button to replace search URL with the default one."
@@ -258,10 +254,6 @@
 	"buttonVacuumData": {
 		"message": "整理数据", 
 		"description": "Button to vacuum extension data."
-	}, 
-	"hintVacuumData": {
-		"message": "丢弃多余的数据，并尝试重新获取缺失的资源。", 
-		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
 		"message": "查找更新", 
@@ -291,6 +283,10 @@
 		"message": "修改尚未保存！\n点击确定放弃修改或点击取消停留此页面。", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"hintSearchLink": {
+		"message": "搜索网址必须包含*，*将替换为由<暴力猴>生成的关键字。", 
+		"description": "Hint for the search URL."
+	}, 
 	"buttonVacuuming": {
 		"message": "正在整理...", 
 		"description": "Message shown when data vacuum is in progress."
@@ -298,6 +294,10 @@
 	"buttonVacuumed": {
 		"message": "数据已整理", 
 		"description": "Message shown when data is vacuumed."
+	}, 
+	"hintVacuumData": {
+		"message": "丢弃多余的数据，并尝试重新获取缺失的资源。", 
+		"description": "Hint for vacuuming data."
 	}, 
 	"msgErrorZip": {
 		"message": "打开zip文件出错！", 
@@ -314,5 +314,21 @@
 	"buttonExporting": {
 		"message": "正在导出...", 
 		"description": "Message shown when data export is in progress."
+	}, 
+	"labelSearch": {
+		"message": "查找：", 
+		"description": "Label for search input in search box."
+	}, 
+	"labelReplace": {
+		"message": "替换：", 
+		"description": "Label for replace input in search box."
+	}, 
+	"buttonReplace": {
+		"message": "替换", 
+		"description": "Button to replace the current match."
+	}, 
+	"buttonReplaceAll": {
+		"message": "所有", 
+		"description": "Button to replace all matches."
 	}
 }

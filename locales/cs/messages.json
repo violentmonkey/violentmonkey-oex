@@ -235,10 +235,6 @@
 		"message": "hledat URL: ", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"hintSearchLink": {
-		"message": "Hledat URL musí být URL obsahující *. * má uplatnění pro klíčová slova generována Violentmonkey.", 
-		"description": "Hint for the search URL."
-	}, 
 	"buttonDefault": {
 		"message": "Výchozí", 
 		"description": "Button to replace search URL with the default one."
@@ -258,10 +254,6 @@
 	"buttonVacuumData": {
 		"message": "Vyprázdnit data", 
 		"description": "Button to vacuum extension data."
-	}, 
-	"hintVacuumData": {
-		"message": "Zbavit se nadbytečného a zkusit znovu načíst chybějící zdroje v cache.", 
-		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
 		"message": "Zkontrolovat aktualizace", 
@@ -291,6 +283,10 @@
 		"message": "Modifikace není uložena! Klikni na OK pro zbavení se jí, nebo na zrušit pro zůstání zde.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"hintSearchLink": {
+		"message": "Hledat URL musí být URL obsahující *. * má uplatnění pro klíčová slova generována Violentmonkey.", 
+		"description": "Hint for the search URL."
+	}, 
 	"buttonVacuuming": {
 		"message": "Čištení dat...", 
 		"description": "Message shown when data vacuum is in progress."
@@ -298,6 +294,10 @@
 	"buttonVacuumed": {
 		"message": "Data vyprázdněna", 
 		"description": "Message shown when data is vacuumed."
+	}, 
+	"hintVacuumData": {
+		"message": "Zbavit se nadbytečného a zkusit znovu načíst chybějící zdroje v cache.", 
+		"description": "Hint for vacuuming data."
 	}, 
 	"msgErrorZip": {
 		"message": "Error loading zip file.", 
@@ -314,5 +314,21 @@
 	"buttonExporting": {
 		"message": "Exportování dat...", 
 		"description": "Message shown when data export is in progress."
+	}, 
+	"labelSearch": {
+		"message": "Search for: ", 
+		"description": "Label for search input in search box."
+	}, 
+	"labelReplace": {
+		"message": "Replace with: ", 
+		"description": "Label for replace input in search box."
+	}, 
+	"buttonReplace": {
+		"message": "Replace", 
+		"description": "Button to replace the current match."
+	}, 
+	"buttonReplaceAll": {
+		"message": "All", 
+		"description": "Button to replace all matches."
 	}
 }

@@ -235,10 +235,6 @@
 		"message": "URL de recherche : ", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"hintSearchLink": {
-		"message": "L´URL de recherche doit contenir *. * sert à introduire des mot-clés pour ViolentMonkey.", 
-		"description": "Hint for the search URL."
-	}, 
 	"buttonDefault": {
 		"message": "Par d&eacute;faut", 
 		"description": "Button to replace search URL with the default one."
@@ -258,10 +254,6 @@
 	"buttonVacuumData": {
 		"message": "Traitement des donn&eacute;es", 
 		"description": "Button to vacuum extension data."
-	}, 
-	"hintVacuumData": {
-		"message": "Recharger les ressources en cache.", 
-		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
 		"message": "V&eacute;rifier les mises &agrave; jour", 
@@ -291,6 +283,10 @@
 		"message": "Les modifications ne sont pas enregistr&eacute;es !\n OK pour continuer ou annuler pour revenir.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"hintSearchLink": {
+		"message": "L´URL de recherche doit contenir *. * sert à introduire des mot-clés pour ViolentMonkey.", 
+		"description": "Hint for the search URL."
+	}, 
 	"buttonVacuuming": {
 		"message": "Vacuuming data...", 
 		"description": "Message shown when data vacuum is in progress."
@@ -298,6 +294,10 @@
 	"buttonVacuumed": {
 		"message": "Donn&eacute;es trait&eacute;es", 
 		"description": "Message shown when data is vacuumed."
+	}, 
+	"hintVacuumData": {
+		"message": "Recharger les ressources en cache.", 
+		"description": "Hint for vacuuming data."
 	}, 
 	"msgErrorZip": {
 		"message": "Error loading zip file.", 
@@ -314,5 +314,21 @@
 	"buttonExporting": {
 		"message": "Exporting data...", 
 		"description": "Message shown when data export is in progress."
+	}, 
+	"labelSearch": {
+		"message": "Search for: ", 
+		"description": "Label for search input in search box."
+	}, 
+	"labelReplace": {
+		"message": "Replace with: ", 
+		"description": "Label for replace input in search box."
+	}, 
+	"buttonReplace": {
+		"message": "Replace", 
+		"description": "Button to replace the current match."
+	}, 
+	"buttonReplaceAll": {
+		"message": "All", 
+		"description": "Button to replace all matches."
 	}
 }

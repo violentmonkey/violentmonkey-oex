@@ -235,10 +235,6 @@
 		"message": "Adres wyszukiwarki:", 
 		"description": "Label of URL for searching scripts for a site."
 	}, 
-	"hintSearchLink": {
-		"message": "Adres wyszukiwarki musi zawierać *. * oznacza słowa kluczowe generowane przez Violentmonkey.", 
-		"description": "Hint for the search URL."
-	}, 
 	"buttonDefault": {
 		"message": "Domyślne", 
 		"description": "Button to replace search URL with the default one."
@@ -258,10 +254,6 @@
 	"buttonVacuumData": {
 		"message": "Wyczyść dane", 
 		"description": "Button to vacuum extension data."
-	}, 
-	"hintVacuumData": {
-		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.", 
-		"description": "Hint for vacuuming data."
 	}, 
 	"anchorUpdate": {
 		"message": "Sprawdź aktualizacje", 
@@ -291,6 +283,10 @@
 		"message": "Modyfikacje nie zostały zapisane! Kliknij OK aby wyjść lub Anuluj aby zostać.", 
 		"description": "Confirm message shown when there are unsaved script modifications."
 	}, 
+	"hintSearchLink": {
+		"message": "Adres wyszukiwarki musi zawierać *. * oznacza słowa kluczowe generowane przez Violentmonkey.", 
+		"description": "Hint for the search URL."
+	}, 
 	"buttonVacuuming": {
 		"message": "Czyszczenie danych...", 
 		"description": "Message shown when data vacuum is in progress."
@@ -298,6 +294,10 @@
 	"buttonVacuumed": {
 		"message": "Dane wyczyszczone", 
 		"description": "Message shown when data is vacuumed."
+	}, 
+	"hintVacuumData": {
+		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.", 
+		"description": "Hint for vacuuming data."
 	}, 
 	"msgErrorZip": {
 		"message": "Błąd odczytywania pliku zip.", 
@@ -314,5 +314,21 @@
 	"buttonExporting": {
 		"message": "Eksportowanie danych...", 
 		"description": "Message shown when data export is in progress."
+	}, 
+	"labelSearch": {
+		"message": "Search for: ", 
+		"description": "Label for search input in search box."
+	}, 
+	"labelReplace": {
+		"message": "Replace with: ", 
+		"description": "Label for replace input in search box."
+	}, 
+	"buttonReplace": {
+		"message": "Replace", 
+		"description": "Button to replace the current match."
+	}, 
+	"buttonReplaceAll": {
+		"message": "All", 
+		"description": "Button to replace all matches."
 	}
 }
