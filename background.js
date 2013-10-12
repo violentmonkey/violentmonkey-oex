@@ -109,9 +109,6 @@ function getNameURI(i){
 	if(!ns&&!n) k+=i.id;return k;
 }
 
-function newPosition(){
-	return setOption('maxPosition',settings.maxPosition+1);
-}
 function newScript(){
 	var r={
 		custom:{},
@@ -123,7 +120,7 @@ function newScript(){
 	return r;
 }
 function saveScript(o,callback){
-	if(!o.position) o.position=newPosition();
+	if(!o.position) o.position=++pos;
 	db.transaction(function(t){
 		var d=[];
 		d.push(parseInt(o.id)||null);
@@ -214,12 +211,13 @@ function initScripts(callback){
 	ids=[];metas={};
 	db.readTransaction(function(t){
 		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
-			var i,v,o;
+			var i,v,o=null;
 			for(i=0;i<r.rows.length;i++) {
 				v=r.rows.item(i);
 				o=getScript(v,true);
 				ids.push(o.id);metas[o.id]=o;
 			}
+			if(o) pos=o.position;
 			if(callback) callback();
 		});
 	});
@@ -456,7 +454,7 @@ function vacuum(callback){
 			if(o.position!=i+1) s.push([i+1,o.id]);
 		}
 		update(s);
-		setOption('maxPosition',i);
+		pos=i;
 		vacuumDB('cache',cache);
 		vacuumDB('values',values);
 	}
@@ -612,11 +610,9 @@ function initSettings(){
 	getOption('isApplied',true);
 	getOption('autoUpdate',true);
 	getOption('lastUpdate',0);
-	getOption('maxPosition',0);
 	getOption('showDetails',false);
 	getOption('showButton',true);
-	getOption('editorType',1);
-	getOption('withData',1);
+	getOption('withData',true);
 	getOption('search',_('defaultSearch'));
 }
 function showButton(show){
@@ -654,7 +650,7 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,
+var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,pos=0,
 		maps={
 			FindScript:findScript,
 			InstallScript:installScript,
