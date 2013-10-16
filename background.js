@@ -21,11 +21,9 @@ function initMessages(callback){
  * scripts {
  * 		id: Auto
  * 		uri: String
- * 		meta: {
- * 			custom: List-Dict	// Custom meta data
- * 			meta: List-Dict
- * 			enabled: 0|1
- * 		}
+ * 		custom: List-Dict	// Custom meta data
+ * 		meta: List-Dict
+ * 		enabled: 0|1
  * 		update: 0|1
  * 		position: Integer
  * 		code: String
@@ -626,6 +624,7 @@ function updateItem(r){	// update loaded options pages
 			_updateItem[i](r);
 			i++;
 		}catch(e){
+			opera.postError(e.stack);
 			_updateItem.splice(i,1);
 		}
 }
