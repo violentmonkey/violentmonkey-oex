@@ -125,14 +125,14 @@ function saveScript(o,callback){
 		d.push(o.uri);
 		d.push(JSON.stringify(o.meta));
 		d.push(JSON.stringify(o.custom));
-		d.push(o.enabled);
-		d.push(o.update);
+		d.push(o.enabled=o.enabled?1:0);
+		d.push(o.update=o.update?1:0);
 		d.push(o.position);
 		d.push(o.code);
 		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)',d,function(t,r){
 			if(!o.id) o.id=r.insertId;
 			if(!(o.id in metas)) ids.push(o.id);
-			metas[o.id]=o;
+			metas[o.id]=getScript(o,true);
 			if(callback) callback(o);
 		},dbError);
 	});
@@ -183,8 +183,8 @@ function getScript(v,metaonly){
 	var o={
 		id:v.id,
 		uri:v.uri,
-		meta:JSON.parse(v.meta),
-		custom:JSON.parse(v.custom),
+		meta:typeof v.meta=='object'?v.meta:JSON.parse(v.meta),
+		custom:typeof v.custom=='object'?v.custom:JSON.parse(v.custom),
 		enabled:v.enabled?1:0,
 		update:v.update?1:0,
 		position:v.position
@@ -624,7 +624,6 @@ function updateItem(r){	// update loaded options pages
 			_updateItem[i](r);
 			i++;
 		}catch(e){
-			opera.postError(e.stack);
 			_updateItem.splice(i,1);
 		}
 }

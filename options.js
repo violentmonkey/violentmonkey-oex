@@ -344,7 +344,7 @@ bg.getData(function(o){
 	L.innerHTML='';cache=o;bg.ids.forEach(function(i){addItem(bg.metas[i]);});
 });
 function updateItem(r){
-	if(!('id' in r)) return;
+	if(!r.id) return;
 	var m=bg.metas[r.id];
 	switch(r.status){
 		case 0:loadItem(m,r);break;
@@ -352,4 +352,7 @@ function updateItem(r){
 		default:modifyItem(divs[r.id],r);
 	}
 }
-bg._updateItem.push(updateItem);
+bg._updateItem.push(function(r){
+	document.getElementById('sList');	// to assert that the window is valid
+	try{updateItem(r);}catch(e){opera.postError(e+'\n'+e.stack);}
+});
