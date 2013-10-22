@@ -1,13 +1,17 @@
 // Multilingual
 function initMessages(callback){
-	var data={},req=new XMLHttpRequest();
-	req.open('GET','messages.json',true);
-	req.onload=function(){
-		var i,j=JSON.parse(this.responseText);
+	var data={};
+	function init(d) {
+		var i,j=JSON.parse(d);
 		for(i in j) data[i]=j[i];
 		if(callback) callback();
-	};
-	req.send();
+	}
+	var f=opera.extension.getFile('messages.json');
+	if(f) {
+		var r=new FileReader();
+		r.onload=function(){init(r.result);}
+		r.readAsText(f);
+	}
 	_=function(k,a){
 		var r=data[k];if(r) r=r.message;
 		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){v=g1||g2;return a[v-1]||'';});

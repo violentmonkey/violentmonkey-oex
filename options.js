@@ -352,7 +352,4 @@ function updateItem(r){
 		default:modifyItem(divs[r.id],r);
 	}
 }
-bg._updateItem.push(function(r){
-	document.getElementById('sList');	// to assert that the window is valid
-	try{updateItem(r);}catch(e){opera.postError(e+'\n'+e.stack);}
-});
+bg._updateItem.push(updateItem);
