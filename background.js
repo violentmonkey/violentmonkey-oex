@@ -6,12 +6,23 @@ function initMessages(callback){
 		for(i in j) data[i]=j[i];
 		if(callback) callback();
 	}
-	var f=opera.extension.getFile('messages.json');
-	if(f) {
-		var r=new FileReader();
-		r.onload=function(){init(r.result);}
-		r.readAsText(f);
-	}
+
+	var f=new XMLHttpRequest();
+	f.open('GET','messages.json',true);
+	f.onload=function(){init(f.responseText);};
+	f.send();
+
+	/* opera.extension.getFile is useless
+	 * XMLHttpRequest works better on old versions of Opera
+	 *
+	 * var f=opera.extension.getFile('messages.json');
+	 * if(f) {
+	 * 	var r=new FileReader();
+	 * 	r.onload=function(){init(r.result);}
+	 * 	r.readAsText(f);
+	 * }
+	 */
+
 	_=function(k,a){
 		var r=data[k];if(r) r=r.message;
 		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){v=g1||g2;return a[v-1]||'';});
