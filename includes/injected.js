@@ -103,15 +103,19 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],idle=[],end=[],cache,values,scr=[],menu=[],command={},elements=null,loaded=false;
+var start=[],idle=[],end=[],cache,values,requires={},scr=[],menu=[],command={},elements=null,loaded=false;
 function runCode(c){
 	var require=c.meta.require||[],i,r=[],code=[],w=new wrapper(c);
 	elements.forEach(function(i){r.push(i+'=window.'+i);});
 	code=[];
 	if(r.length) code.push('var '+r.join(',')+';');
 	for(i=0;i<require.length;i++) try{
-		r=cache[require[i]];if(!r) continue;
-		code.push(utf8decode(r));
+		r=requires[require[i]];
+		if(!r) {
+			r=cache[require[i]];if(!r) continue;
+			requires[require[i]]=r=utf8decode(r);
+		}
+		code.push(r);
 	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
 	code.push(c.code);
 	code=code.join('\n');
