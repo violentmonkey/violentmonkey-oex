@@ -181,7 +181,7 @@ function impo(b){
 		var v,i,c={code:o.asText()};
 		try{
 			if(vm.scripts&&(v=vm.scripts[o.name.slice(0,-8)])) {
-				c.id=v.id;c.more=v;
+				delete v.id;c.more=v;
 			}
 			bg.parseScript(null,c);
 			count++;

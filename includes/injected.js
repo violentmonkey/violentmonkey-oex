@@ -109,14 +109,11 @@ function runCode(c){
 	elements.forEach(function(i){r.push(i+'=window.'+i);});
 	code=[];
 	if(r.length) code.push('var '+r.join(',')+';');
-	for(i=0;i<require.length;i++) try{
-		r=requires[require[i]];
-		if(!r) {
-			r=cache[require[i]];if(!r) continue;
-			requires[require[i]]=r=utf8decode(r);
-		}
-		code.push(r);
-	}catch(e){opera.postError(e+'\n'+e.stacktrace);}
+	require.forEach(function(i){
+		r=requires[i];
+		if(!r&&(r=cache[i])) requires[i]=r=utf8decode(r);
+		if(r) code.push(r);
+	});
 	code.push(c.code);
 	code=code.join('\n');
 	try{

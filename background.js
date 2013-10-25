@@ -52,6 +52,23 @@ function initMessages(callback){
  * 		values: String
  * }
  */
+function older(o,n){
+	o=(o||'').split('.');n=(n||'').split('.');
+	var r=/(\d*)([a-z]*)(\d*)([a-z]*)/i;
+	while(o.length&&n.length) {
+		var vo=o.shift().match(r),vn=n.shift().match(r);
+		vo.shift();vn.shift();	// origin string
+		vo[0]=parseInt(vo[0]||0,10);
+		vo[2]=parseInt(vo[2]||0,10);
+		vn[0]=parseInt(vn[0]||0,10);
+		vn[2]=parseInt(vn[2]||0,10);
+		while(vo.length&&vn.length) {
+			var eo=vo.shift(),en=vn.shift();
+			if(eo!=en) return eo<en;
+		}
+	}
+	return n.length;
+}
 function dbError(t,e){
 	opera.postError('Database error: '+e.message);
 }
@@ -73,10 +90,7 @@ function initDatabase(callback){
 }
 function upgradeData(callback){
 	function finish(){
-		if(--count<=0) {
-			delete settings.version_storage;	// avoid import and export
-			if(callback) callback();
-		}
+		if(--count<=0) {if(callback) callback();}
 	}
 	function upgradeDB(n,d){
 		count++;
@@ -90,7 +104,7 @@ function upgradeData(callback){
 		});
 	}
 	var i,j,k,l,o,cache=[],val={},values=[],count=0;
-	if(getOption('version_storage',0)<0.5) {
+	if(older(widget.preferences.version_storage||'','0.5')) {
 		for(i=0;k=widget.preferences.key(i);) {
 			v=widget.preferences.getItem(k);
 			if(/^cache:/.test(k)) cache.push([k.slice(6),v]);
@@ -110,10 +124,10 @@ function upgradeData(callback){
 			widget.preferences.removeItem(k);
 		}
 		for(i in val) values.push([i,JSON.stringify(val[i])]);
-		setOption('version_storage',0.5);
+		widget.preferences.version_storage='0.5';
 		upgradeDB('cache',cache);
 		upgradeDB('values',values);
-		if(!/\*/.test(getOption('search',''))) setOption('search',_('defaultSearch'));
+		if(getOption('search','').indexOf('*')<0) setOption('search',_('defaultSearch'));
 	} else finish();
 }
 
@@ -399,13 +413,12 @@ function parseScript(e,d,callback){
 		var meta=parseMeta(d.code);
 		queryScript(d.id,meta,function(c){
 			if(!c.id){r.status=1;r.message=_('msgInstalled');}
-			if(d.more) for(i in d.more) c[i]=d.more[i];	// for import and user edit
+			if(d.more) for(i in d.more) if(i in c) c[i]=d.more[i];	// for import and user edit
 			c.meta=meta;c.code=d.code;c.uri=getNameURI(c);
 			if(e&&!c.meta.homepage&&!c.custom.homepage&&!/^(file|data):/.test(e.origin)) c.custom.homepage=e.origin;
 			if(!c.meta.downloadURL&&!c.custom.downloadURL&&d.url) c.custom.downloadURL=d.url;
 			saveScript(c,function(){
-				r.id=c.id;delete c.code;	// release memory
-				finish();
+				r.id=c.id;finish();
 			});
 		});
 		meta.require.forEach(fetchCache);	// @require
@@ -501,23 +514,6 @@ function vacuum(callback){
 	}
 	vacuumPosition();
 }
-function canUpdate(o,n){
-	o=(o||'').split('.');n=(n||'').split('.');
-	var r=/(\d*)([a-z]*)(\d*)([a-z]*)/i;
-	while(o.length&&n.length) {
-		var vo=o.shift().match(r),vn=n.shift().match(r);
-		vo.shift();vn.shift();	// origin string
-		vo[0]=parseInt(vo[0]||0,10);
-		vo[2]=parseInt(vo[2]||0,10);
-		vn[0]=parseInt(vn[0]||0,10);
-		vn[2]=parseInt(vn[2]||0,10);
-		while(vo.length&&vn.length) {
-			var eo=vo.shift(),en=vn.shift();
-			if(eo!=en) return eo<en;
-		}
-	}
-	return n.length;
-}
 
 var _update={};
 function checkUpdateO(o){
@@ -541,7 +537,7 @@ function checkUpdateO(o){
 			r.message=_('msgErrorFetchingUpdateInfo');
 			if(this.status==200) try{
 				var m=parseMeta(this.responseText);
-				if(canUpdate(o.meta.version,m.version)) return update();
+				if(older(o.meta.version,m.version)) return update();
 				r.message=_('msgNoUpdate');
 			}catch(e){}
 			delete r.hideUpdate;
