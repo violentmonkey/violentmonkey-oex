@@ -105,6 +105,13 @@ function upgradeData(callback){
 	}
 	var i,j,k,l,o,cache=[],val={},values=[],count=0;
 	if(older(widget.preferences.version_storage||'','0.5')) {
+		var ids=localStorage.ids||'';
+		try{
+			ids=JSON.parse(ids);
+		}catch(e){
+			ids=[];
+		}
+		pos=localStorage.length-1;	// put scripts without `position` in the end
 		for(i=0;k=widget.preferences.key(i);) {
 			v=widget.preferences.getItem(k);
 			if(/^cache:/.test(k)) cache.push([k.slice(6),v]);
@@ -113,13 +120,13 @@ function upgradeData(callback){
 				j=l.slice(j+1).indexOf(':');
 				j=l.slice(j+1).indexOf(':');
 				j=l.slice(j+1).indexOf(':');
-				o=l.slice(j);l=l.slice(0,j);j=o;
-				o=val[l];if(!o) val[l]=o={};
-				o[j]=v;
+				o=l.slice(j+1);l=l.slice(0,j);
+				j=val[l];if(!j) val[l]=j={};j[o]=v;
 			} else if(/^vm:/.test(k)) {
 				o=JSON.parse(v);
 				if(!o.uri) o.uri=getNameURI(o);
-				saveScript(o);
+				o.position=ids.indexOf(o.id)+1;
+				delete o.id;saveScript(o);
 			} else if(k in settings) {i++;continue;}
 			widget.preferences.removeItem(k);
 		}
@@ -160,8 +167,10 @@ function saveScript(o,callback){
 		d.push(o.code);
 		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)',d,function(t,r){
 			if(!o.id) o.id=r.insertId;
-			if(!(o.id in metas)) ids.push(o.id);
-			metas[o.id]=getScript(o,true);
+			if(ids) {
+				if(!(o.id in metas)) ids.push(o.id);
+				metas[o.id]=getScript(o,true);
+			}
 			if(callback) callback(o);
 		},dbError);
 	});
@@ -244,7 +253,7 @@ function initScripts(callback){
 				o=getScript(v,true);
 				ids.push(o.id);metas[o.id]=o;
 			}
-			if(o) pos=o.position;
+			pos=o?o.position:0;
 			if(callback) callback();
 		});
 	});
@@ -659,7 +668,7 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
 }
-var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,pos=0,
+var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 		maps={
 			FindScript:findScript,
 			InstallScript:installScript,
@@ -670,13 +679,13 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids,metas,pos=0,
 			SetValue:setValue,
 		};
 if(parseInt(opera.version())<12)	// Check old version of Opera
-	opera.extension.tabs.create({url:'oldversion.html'});
+	opera.extension.tabs.create({url:'https://github.com/gera2ld/Violentmonkey-oex/wiki/Obsolete'});
 else initMessages(function(){
 	initSettings();
 	initIcon();
 	initDatabase(function(){
-		initScripts(function(){
-			upgradeData(function(){
+		upgradeData(function(){
+			initScripts(function(){
 				opera.extension.onmessage=function(e){
 					var m=e.data,c=maps[m.topic];
 					if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
