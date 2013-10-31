@@ -26,7 +26,7 @@ function utf8decode (utftext) {
 var requests={},qrequests=[];
 opera.extension.onmessage = function(e) {
 	var message=e.data,c;
-	if(message.topic=='FoundScript') loadScript(message.data);
+	if(message.topic=='GotInjected') loadScript(message.data);
 	else if(message.topic=='HttpRequested') {
 		c=requests[message.data.id];
 		if(c) c.callback(message.data);
@@ -269,4 +269,4 @@ function wrapper(c){
 	}});
 	if(!elements) elements=ele;
 }
-if(!installCallback) opera.extension.postMessage({topic:'FindScript',data:window.location.href});
+if(!installCallback) opera.extension.postMessage({topic:'GetInjected',data:window.location.href});

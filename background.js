@@ -312,31 +312,33 @@ function getCache(uris,callback,t){
 	}
 	if(t) query(t); else db.readTransaction(query);
 }
-function findScript(e,url){
-	var i,j,data={isApplied:settings.isApplied},cache={},values={};
+function getInjected(e,url){
+	var data={isApplied:settings.isApplied},cache={},values={};
 	url=url||e.origin;	// to recognize URLs like data:...
-	function finish(){e.source.postMessage({topic:'FoundScript',data:data});}
+	function finish(){e.source.postMessage({topic:'GotInjected',data:data});}
 	if(url.slice(0,5)!='data:') {
 		function addCache(i){cache[i]=1;}
-		var scripts=[];
-		ids.forEach(function(i){
-			var j,s=metas[i];if(!s) return;
-			if(testURL(url,s)) {
-				scripts.push(i);values[s.uri]=1;
-				if(s.meta.require) s.meta.require.forEach(addCache);
-				for(j in s.meta.resources) addCache(s.meta.resources[j]);
-			}
-		});
-		getScripts(scripts,false,function(o){
-			data.scripts=o;
-			getCache(Object.getOwnPropertyNames(cache),function(o){
-				data.cache=o;
-				getValues(Object.getOwnPropertyNames(values),function(o){
-					data.values=o;
-					finish();
+		getScripts(
+			ids.filter(function(i){
+				var j,s=metas[i];
+				if(s&&testURL(url,s)) {
+					values[s.uri]=1;
+					if(s.meta.require) s.meta.require.forEach(addCache);
+					for(j in s.meta.resources) addCache(s.meta.resources[j]);
+					return true;
+				}
+				return false;
+			}),false,function(o){
+				data.scripts=o;
+				getCache(Object.getOwnPropertyNames(cache),function(o){
+					data.cache=o;
+					getValues(Object.getOwnPropertyNames(values),function(o){
+						data.values=o;
+						finish();
+					});
 				});
-			});
-		});
+			}
+		);
 	} else finish();
 }
 function setValue(e,d){
@@ -431,7 +433,7 @@ function parseScript(e,d,callback){
 			});
 		});
 		meta.require.forEach(fetchCache);	// @require
-		for(d in meta.resources) fetchCache(meta.resources[d]);	// @resource
+		for(i in meta.resources) fetchCache(meta.resources[i]);	// @resource
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
 }
@@ -670,7 +672,7 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 }
 var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 		maps={
-			FindScript:findScript,
+			GetInjected:getInjected,
 			InstallScript:installScript,
 			ParseScript:parseScript,
 			GetRequestId:getRequestId,
