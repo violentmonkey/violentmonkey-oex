@@ -103,21 +103,40 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],idle=[],end=[],cache,values,requires={},scr=[],menu=[],command={},elements=null,loaded=false;
+var start=[],idle=[],end=[],cache,values,requires={},wrappers={},
+		scr=[],menu=[],command={},loaded=false;
 function runCode(c){
-	var require=c.meta.require||[],i,r=[],code=[],w=new wrapper(c);
-	elements.forEach(function(i){r.push(i+'=window.'+i);});
+	var w,require=c.meta.require||[],i,r=[],code=[],g;
+	if(w=i=c.meta.namespace) w=wrappers[w];
+	if(!w) w=new wrapper();
+	if(i) wrappers[i]=w;
+	g=wrapGM(c);
+	Object.getOwnPropertyNames(g).forEach(function(i){r.push(i+'=g["'+i+'"]');});
 	code=[];
-	if(r.length) code.push('var '+r.join(',')+';');
+
+	/* TODO: make it more compatible
+	if(r.length) code.push('var '+r.join(',')+';delete g;with(this)(function(){');
 	require.forEach(function(i){
 		r=requires[i];
 		if(!r&&(r=cache[i])) requires[i]=r=utf8decode(r);
 		if(r) code.push(r);
 	});
-	code.push(c.code);
+	code.push(c.code);code.push('}).call(window);');
+	*/
+
+	if(r.length) code.push('var '+r.join(',')+';delete g;');
+	var cc=[];
+	require.forEach(function(i){
+		r=requires[i];
+		if(!r&&(r=cache[i])) requires[i]=r=utf8decode(r);
+		if(r) cc.push(r);
+	});
+	cc.push(c.code);
+	code.push('with(this)eval('+JSON.stringify(cc.join('\n'))+');');
+
 	code=code.join('\n');
 	try{
-		(new Function('w','with(w) eval('+JSON.stringify(code)+')')).call(w,w);
+		(new Function('g',code)).call(w,g);
 	}catch(e){
 		e=e.toString()+'\n'+e.stacktrace;
 		i=e.lastIndexOf('\n',e.lastIndexOf('in evaluated code:\n'));
@@ -147,9 +166,7 @@ function loadScript(data){
 	run(start);if(loaded) {run(idle);run(end);}
 }
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
-function wrapper(c){
-	var value=values[c.uri]||{},t=this,ele=[];
-
+function wrapper(){
 	// functions and properties
 	function wrapFunction(o,i,c){
 		var f=function(){
@@ -171,16 +188,18 @@ function wrapper(c){
 			});
 		}catch(e){}
 	}
-	var itemWrapper=null;
+	var t=this,itemWrapper=null;
 	Object.getOwnPropertyNames(window).forEach(wrapItem);
 	itemWrapper=wrapFunction;
 	n=window;while(n=Object.getPrototypeOf(n)) Object.getOwnPropertyNames(n).forEach(wrapItem);
-
+}
+function wrapGM(c){
+	var value=values[c.uri]||{},gm={};
 	function getCache(name){for(var i in resources) if(name==i) return cache[resources[i]];}
 	function addProperty(name,prop,obj){
 		if('value' in prop) prop.writable=false;
 		prop.configurable=false;
-		if(!obj) {obj=t;ele.push(name);}
+		if(!obj) obj=gm;
 		Object.defineProperty(obj,name,prop);
 		if(typeof obj[name]=='function') obj[name].toString=propertyToString;
 	}
@@ -267,6 +286,6 @@ function wrapper(c){
 		var r=new Request(details);
 		return r.req;
 	}});
-	if(!elements) elements=ele;
+	return gm;
 }
 if(!installCallback) opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
