@@ -336,9 +336,8 @@ initEditor(function(o){T=o;},{save:eSave,exit:E.close,onchange:E.markDirty});
 
 // Load at last
 (function(nodes){
-	for(var i=0;i<nodes.length;i++) nodes[i].innerHTML=_(nodes[i].innerHTML);
-	switchTo(N);
-})(document.querySelectorAll('.i18n'));
+	for(var i=0;i<nodes.length;i++) nodes[i].innerHTML=_(nodes[i].getAttribute('data-i18n'));
+})(document.querySelectorAll('*[data-i18n]'));
 bg.getData(function(o){
 	L.innerHTML='';cache=o;bg.ids.forEach(function(i){addItem(bg.metas[i]);});
 });
