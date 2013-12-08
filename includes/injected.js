@@ -132,7 +132,9 @@ function runCode(c){
 		if(r) cc.push(r);
 	});
 	cc.push(c.code);
-	code.push('with(this)eval('+JSON.stringify(cc.join('\n'))+');');
+	//code.push('with(this)eval('+JSON.stringify(cc.join('\n'))+');');	// eval without wrap
+	//code.push('with(this)(function(){'+cc.join('\n')+'}).call(window);');	// wrap without eval, Presto-specific errors occur
+	code.push('with(this)eval('+JSON.stringify('(function(){'+cc.join('\n')+'}).call(window);')+');');
 
 	code=code.join('\n');
 	try{
