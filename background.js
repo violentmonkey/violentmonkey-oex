@@ -82,8 +82,8 @@ function initDatabase(callback){
 		}
 		var count=0,sql=[
 			'CREATE TABLE IF NOT EXISTS scripts(id INTEGER PRIMARY KEY,uri VARCHAR,meta TEXT,custom TEXT,enabled INTEGER,"update" INTEGER,position INTEGER,code TEXT)',
-			'CREATE TABLE IF NOT EXISTS cache(uri VARCHAR UNIQUE,data BLOB)',
-			'CREATE TABLE IF NOT EXISTS "values"(uri VARCHAR UNIQUE,data TEXT)',
+			'CREATE TABLE IF NOT EXISTS cache(uri VARCHAR UNIQUE NOT NULL,data BLOB)',
+			'CREATE TABLE IF NOT EXISTS "values"(uri VARCHAR UNIQUE NOT NULL,data TEXT)',
 		];
 		executeSql();
 	});
@@ -499,8 +499,11 @@ function vacuum(callback){
 		function del(o){
 			db.transaction(function(t){
 				function loop(){
-					var i=o.shift();
-					if(i) t.executeSql('DELETE FROM "'+n+'" WHERE uri=?',i,loop,dbError);
+					var i=o.shift(),s='DELETE FROM "'+n+'" WHERE ';
+					if(i) {
+						if(i[0]) s+='uri=?'; else {s+='IFNULL(uri,0)=0';i.shift();}
+						t.executeSql(s,i,loop,dbError);
+					}
 				}
 				loop();
 			});
