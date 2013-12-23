@@ -1,7 +1,6 @@
-var $=document.getElementById.bind(document),P=$('popup'),C=$('commands'),
+var P=$('popup'),C=$('commands'),_=bg._,
 		pT=P.querySelector('.top'),pB=P.querySelector('.bot'),
 		cT=C.querySelector('.top'),cB=C.querySelector('.bot'),
-		bg=opera.extension.bgProcess,_=bg._,
 		tab=bg.opera.extension.tabs.getFocused(),ia=null;
 function loadItem(d,c){
 	if(c) {

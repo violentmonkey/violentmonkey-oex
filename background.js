@@ -71,6 +71,8 @@ function older(o,n){
 }
 function dbError(t,e){
 	opera.postError('Database error: '+e.message);
+	if(e.code==4)
+		opera.extension.tabs.create({url:'/notice_quota.html'}).focus();
 }
 function initDatabase(callback){
 	db=openDatabase('Violentmonkey','0.5','Violentmonkey data',10*1024*1024);

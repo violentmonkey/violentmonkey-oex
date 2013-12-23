@@ -1,6 +1,4 @@
-var $=document.getElementById.bind(document),
-		N=$('main'),L=$('sList'),O=$('overlay'),
-		bg=opera.extension.bgProcess,_=bg._,cache,divs={};
+var N=$('main'),L=$('sList'),O=$('overlay'),_=bg._,cache,divs={};
 
 // Main options
 function getIcon(n){
