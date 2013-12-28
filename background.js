@@ -25,7 +25,9 @@ function initMessages(callback){
 
 	_=function(k,a){
 		var r=data[k];if(r) r=r.message;
-		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){v=g1||g2;return a[v-1]||'';});
+		if(r) return r.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){
+			v=g1||g2;v=a[v-1];return v==null?'':v;
+		});
 		else return '';
 	};
 }
