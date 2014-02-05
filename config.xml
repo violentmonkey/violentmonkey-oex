@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget xmlns="http://www.w3.org/ns/widgets" version="1.5.1" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
+<widget xmlns="http://www.w3.org/ns/widgets" version="1.5.1.1" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
 	<name>Violent monkey</name>
 	<author href="http://geraldl.tk" email="gera2ld@163.net">Gerald</author>
 	<icon src="images/icon64.png"/>
@@ -11,5 +11,5 @@
 	<description xml:lang="en">Userscript support for Opera.</description>
 	<description xml:lang="zh">为Opera提供用户脚本支持。</description>
 	<description xml:lang="pl">Wsparcie dla UserScriptów w Operze.</description>
-	<description xml:lang="ru">Поддержка пользовательских скриптов (Userscript) для Opera.</description>
+	<description xml:lang="ru">Поддержка пользовательских скриптов для Opera.</description>
 </widget>
