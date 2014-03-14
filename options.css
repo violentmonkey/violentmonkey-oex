@@ -1,6 +1,6 @@
 div.left{float:left;}
 div.right{float:right;}
-textarea{width:100%;border:none;margin:0;padding:0;}
+textarea{box-sizing:border-box;width:100%;}
 fieldset{border-radius:5px;}
 #main{background:transparent;width:800px;margin:0 auto;}
 #main fieldset{position:relative;height:100%;padding:0;}

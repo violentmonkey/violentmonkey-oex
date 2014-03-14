@@ -368,10 +368,12 @@ function parseMeta(d){
 	delete meta.resource;
 	return meta;
 }
-function fetchURL(url,cb,type){
-	var req=new XMLHttpRequest();
+function fetchURL(url,cb,type,headers){
+	var req=new XMLHttpRequest(),i;
 	req.open('GET',url,true);
 	if(type) req.responseType=type;
+	if(headers) for(i in headers)
+		req.setRequestHeader(i,headers[i]);
 	if(cb) req.onloadend=cb;
 	req.send();
 }
@@ -560,7 +562,7 @@ function checkUpdateO(o){
 			}catch(e){}
 			delete r.hideUpdate;
 			updateItem(r);finish();
-		});
+		},null,{Accept:'text/x-userscript-meta'});
 	} else finish();
 }
 function checkUpdate(id){
