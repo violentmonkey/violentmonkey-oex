@@ -1,4 +1,4 @@
-.menu{overflow-y:auto;}
+.menu{overflow-y:auto;max-width:300px;}
 .menu>div{cursor:pointer;padding:5px;display:block;}
 .menu>div:hover{background:gray;color:gold;}
 .menu>div.disabled{color:gray;}

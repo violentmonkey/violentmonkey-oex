@@ -1,4 +1,4 @@
-var P=$('popup'),C=$('commands'),_=bg._,
+var P=$('#popup'),C=$('#commands'),
 		pT=P.querySelector('.top'),pB=P.querySelector('.bot'),
 		cT=C.querySelector('.top'),cB=C.querySelector('.bot'),
 		tab=bg.opera.extension.tabs.getFocused(),ia=null;
