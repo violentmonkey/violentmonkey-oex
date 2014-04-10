@@ -17,7 +17,7 @@ function modifyItem(r){
 	if(r.message) d.querySelector('.message').innerHTML=r.message;
 	d.className=n.enabled?'':'disabled';
 	var a=d.querySelector('.update');
-	if(a) a.classList[r.hideUpdate?'add':'remove']('hide');
+	if(a) a.disabled=r.updating;
 	a=d.querySelector('.name');
 	getName(a,n.custom.name||n.meta.name);
 	if(o=n.custom.homepage||n.meta.homepage) a.href=o;
@@ -31,13 +31,13 @@ function modifyItem(r){
 function loadItem(n,r){
 	var d=divs[n.id];if(!r) r={id:n.id};
 	d.innerHTML='<img class=icon>'
-	+'<h3><a class="name ellipsis" target=_blank></a></h3>'
+	+'<a class="name ellipsis" target=_blank></a>'
 	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
 	+'<span class=author></span>'
 	+'<div class=panelT>'
 		+'<span class=move data=move>&equiv;</span>'
 	+'</div>'
-	+'<div class="descrip ellipsis"></div>'
+	+'<p class="descrip ellipsis"></p>'
 	+'<div class=panelB>'
 		+'<button data=edit>'+_('buttonEdit')+'</button> '
 		+'<button data=enable class=enable></button> '
