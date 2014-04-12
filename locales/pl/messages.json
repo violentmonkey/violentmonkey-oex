@@ -8,7 +8,7 @@
 		"description": "Description for this extension."
 	},
 	"extTranslator": {
-		"message": "MISI90 <cydziol@gmail.com>",
+		"message": "MISI90 <cydziol@gmail.com>, Piter432 <MyReksio@gmail.com>",
 		"description": "Information of the translator."
 	},
 	"defaultSearch": {
@@ -84,11 +84,11 @@
 		"description": "Label of the list of installed scripts."
 	},
 	"sideMenuSettings": {
-		"message": "Settings",
+		"message": "Ustawienia",
 		"description": "Side menu: Settings"
 	},
 	"sideMenuAbout": {
-		"message": "About",
+		"message": "O rozszerzeniu",
 		"description": "Side menu: About"
 	},
 	"buttonNew": {
@@ -100,11 +100,11 @@
 		"description": "Check all scripts for updates."
 	},
 	"msgLoading": {
-		"message": "Loading ...",
+		"message": "Wczytywanie...",
 		"description": "Message shown in the options page before script list is loaded."
 	},
 	"labelSettings": {
-		"message": "Settings",
+		"message": "Ustawienia",
 		"description": "Label shown on the top of settings page"
 	},
 	"labelShowButton": {
@@ -124,7 +124,7 @@
 		"description": "Button to replace search URL with the default one."
 	},
 	"labelDataImport": {
-		"message": "Data Import",
+		"message": "Imporotwanie danych",
 		"description": "Section title of data import."
 	},
 	"buttonImportData": {
@@ -136,11 +136,11 @@
 		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
-		"message": "Data Export",
+		"message": "Eksportowanie danych",
 		"description": "Section title of data export."
 	},
 	"labelScriptsToExport": {
-		"message": "Scripts to export",
+		"message": "Skrypty do wyeksportowania",
 		"description": "Label shown on top of the script list for export."
 	},
 	"labelExportScriptData": {
@@ -156,19 +156,19 @@
 		"description": "Button to open the data export dialog."
 	},
 	"labelAbout": {
-		"message": "About Violentmonkey",
+		"message": "O rozszerzeniu Violentmonkey",
 		"description": "Label shown on top of the about page."
 	},
 	"labelSupportPage": {
-		"message": "Support page: ",
+		"message": "Strona wsparcia: ",
 		"description": "Label of support page."
 	},
 	"anchorSupportPage": {
-		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Here</a>",
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violetmonkey</a>",
 		"description": "Link to the support page of Violentmonkey."
 	},
 	"labelAuthor": {
-		"message": "Autor: ",
+		"message": "Autor rozszerzenia: ",
 		"description": "Label of author shown in the details of a script."
 	},
 	"anchorAuthor": {
@@ -176,11 +176,11 @@
 		"description": "Author shown in the footer of options page, translator information may be added."
 	},
 	"labelTranslator": {
-		"message": "Translator: ",
+		"message": "Tłumacze: ",
 		"description": "Label of translator."
 	},
 	"anchorTranslator": {
-		"message": "MISI90",
+		"message": "<a href=mailto:cydziol@gmail.com>MISI90</a>, <a href=mailto:MyReksio@gmail.com>Piter432</a>",
 		"description": "Translator shown on about tab."
 	},
 	"labelScriptEditor": {
@@ -320,19 +320,19 @@
 		"description": "Message shown when data export is in progress."
 	},
 	"labelSearch": {
-		"message": "Search for: ",
+		"message": "Szukaj w: ",
 		"description": "Label for search input in search box."
 	},
 	"labelReplace": {
-		"message": "Replace with: ",
+		"message": "Zamień na: ",
 		"description": "Label for replace input in search box."
 	},
 	"buttonReplace": {
-		"message": "Replace",
+		"message": "Zamień",
 		"description": "Button to replace the current match."
 	},
 	"buttonReplaceAll": {
-		"message": "All",
+		"message": "Wszystko",
 		"description": "Button to replace all matches."
 	}
 }
