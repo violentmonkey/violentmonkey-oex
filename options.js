@@ -217,7 +217,6 @@ xE.onclick=function(){
 		z.file('ViolentMonkey',JSON.stringify(vm));
 		c={compression:'DEFLATE'};
 		n=z.generate(c);
-		X.close();
 		bg.opera.extension.tabs.create({url:'data:application/zip;base64,'+n}).focus();
 	}
 	for(i=0;i<bg.ids.length;i++)
