@@ -184,7 +184,7 @@ function impo(b){
 var xL=$('#xList'),xE=$('#bExport'),xD=$('#cWithData');
 xD.checked=bg.settings.withData;
 function xLoad() {
-	xL.innerHTML='';xE.disabled=false;
+	xL.innerHTML='';
 	bg.ids.forEach(function(i){
 		var d=document.createElement('div'),n=bg.metas[i];
 		d.className='ellipsis';
@@ -209,7 +209,7 @@ function getNameURI(c){
 	if(!t&&!n) ckey+=c.id;return ckey;
 }
 xE.onclick=function(){
-	this.disabled=true;this.innerHTML=_('buttonExporting');
+	xE.disabled=true;
 	var z=new JSZip(),n,_n,names={},c,i,j,ns={},_ids=[],
 			vm={scripts:{},settings:bg.settings};
 	function finish(v){
@@ -218,6 +218,7 @@ xE.onclick=function(){
 		c={compression:'DEFLATE'};
 		n=z.generate(c);
 		bg.opera.extension.tabs.create({url:'data:application/zip;base64,'+n}).focus();
+		xE.disabled=false;
 	}
 	for(i=0;i<bg.ids.length;i++)
 		if(xL.childNodes[i].classList.contains('selected')) _ids.push(bg.ids[i]);

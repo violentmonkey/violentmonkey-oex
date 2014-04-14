@@ -28,11 +28,12 @@ function addItem(h,c,b){
 }
 function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
 function menuScript(s) {
-	var n,d;
-	n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
-	d=addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
-		bg.enableScript(s.id,!s.enabled,function(){loadItem(d,s.enabled);});
-	}});
+	if(s) {
+		var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
+		addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
+			bg.enableScript(s.id,!s.enabled,function(){loadItem(d,s.enabled);});
+		}});
+	}
 }
 function initMenu(){
 	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',onclick:function(){
