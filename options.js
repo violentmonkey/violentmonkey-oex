@@ -154,7 +154,7 @@ V.onclick=function(){
 	var t=this;t.disabled=true;t.innerHTML=_('buttonVacuuming');
 	bg.vacuum(function(){t.innerHTML=_('buttonVacuumed');});
 };
-V.title=_('hintVacuumData');
+V.title=_('hintVacuum');
 
 // Import
 function impo(b){
