@@ -52,7 +52,7 @@
 		"description": "Message shown when there is no new version of a script."
 	},
 	"labelNoName": {
-		"message": "Pusta nazwa",
+		"message": "Brak nazwy",
 		"description": "Text as the name of a script when no @name is assigned."
 	},
 	"menuManageScripts": {
@@ -164,11 +164,11 @@
 		"description": "Label of support page."
 	},
 	"anchorSupportPage": {
-		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violetmonkey</a>",
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>",
 		"description": "Link to the support page of Violentmonkey."
 	},
 	"labelAuthor": {
-		"message": "Autor rozszerzenia: ",
+		"message": "Autor: ",
 		"description": "Label of author shown in the details of a script."
 	},
 	"anchorAuthor": {
@@ -288,7 +288,7 @@
 		"description": "Check a script for updates."
 	},
 	"confirmNotSaved": {
-		"message": "Modyfikacje nie zostały zapisane! Kliknij OK aby wyjść lub Anuluj aby zostać.",
+		"message": "Modyfikacje nie zostały zapisane! Kliknij OK, aby wyjść lub Anuluj aby zostać.",
 		"description": "Confirm message shown when there are unsaved script modifications."
 	},
 	"hintSearchLink": {
@@ -312,7 +312,7 @@
 		"description": "Message shown when Violentmonkey fails to open the zip file."
 	},
 	"msgImported": {
-		"message": "$1 pozycja(e) zaimportowana(e).",
+		"message": "$1 pozycja/e zaimportowana/e.",
 		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
 	},
 	"buttonExporting": {
