@@ -1,334 +1,334 @@
 {
 	"extName": {
-		"description": "Name of this extension.",
-		"message": "Violentmonkey"
+		"message": "Violentmonkey",
+		"description": "Name of this extension."
 	},
 	"extDescription": {
-		"description": "Description for this extension.",
-		"message": "Wsparcie dla UserScriptów dla Opery."
+		"message": "Wsparcie dla UserScriptów dla Opery.",
+		"description": "Description for this extension."
 	},
 	"extTranslator": {
-		"description": "Information of the translator.",
-		"message": "MISI90 <cydziol@gmail.com>, Piter432 <MyReksio@gmail.com>"
+		"message": "MISI90 <cydziol@gmail.com>, Piter432 <MyReksio@gmail.com>",
+		"description": "Information of the translator."
 	},
 	"defaultSearch": {
-		"description": "URL for searching scripts, * stands for the keywords.",
-		"message": "http://www.google.com/search?q=*"
+		"message": "http://www.google.com/search?q=*",
+		"description": "URL for searching scripts, * stands for the keywords."
 	},
 	"msgUpdated": {
-		"description": "Message shown when a script is updated/reinstalled.",
-		"message": "Skrypt zaktualizowany."
+		"message": "Skrypt zaktualizowany.",
+		"description": "Message shown when a script is updated/reinstalled."
 	},
 	"msgErrorFetchingScript": {
-		"description": "Message shown when Violentmonkey fails fetching a new version of the script.",
-		"message": "Błąd przy pobieraniu skryptu!"
+		"message": "Błąd przy pobieraniu skryptu!",
+		"description": "Message shown when Violentmonkey fails fetching a new version of the script."
 	},
 	"msgInstalled": {
-		"description": "Message shown when a script is installed.",
-		"message": "Skrypt zainstalowany"
+		"message": "Skrypt zainstalowany",
+		"description": "Message shown when a script is installed."
 	},
 	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "Czy chcesz zainstalować ten UserScript?"
+		"message": "Czy chcesz zainstalować ten skrypt?",
+		"description": "Message shown before installing a script."
 	},
 	"msgUpdating": {
-		"description": "Message shown when a new version of script is being fetched.",
-		"message": "Aktualizowanie..."
+		"message": "Aktualizowanie skryptu...",
+		"description": "Message shown when a new version of script is being fetched."
 	},
 	"msgNewVersion": {
-		"description": "Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided.",
-		"message": "Znaleziono nową wersję."
+		"message": "Znaleziono nową wersję skryptu.",
+		"description": "Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided."
 	},
 	"msgCheckingForUpdate": {
-		"description": "Message shown when a script is being checked for updates by version numbers.",
-		"message": "Sprawdzanie aktualizacji..."
+		"message": "Sprawdzanie aktualizacji skryptu...",
+		"description": "Message shown when a script is being checked for updates by version numbers."
 	},
 	"msgErrorFetchingUpdateInfo": {
-		"description": "Message shown when Violentmonkey fails fetching version data of the script.",
-		"message": "Błąd pobierania informacji aktualizacji."
+		"message": "Błąd podczas pobierania informacji aktualizacji skryptu.",
+		"description": "Message shown when Violentmonkey fails fetching version data of the script."
 	},
 	"msgNoUpdate": {
-		"description": "Message shown when there is no new version of a script.",
-		"message": "Nie znaleziono aktualizacji."
+		"message": "Brak aktualizacji dla tego skryptu.",
+		"description": "Message shown when there is no new version of a script."
 	},
 	"labelNoName": {
-		"description": "Text as the name of a script when no @name is assigned.",
-		"message": "Brak nazwy"
+		"message": "Brak nazwy",
+		"description": "Text as the name of a script when no @name is assigned."
 	},
 	"menuManageScripts": {
-		"description": "Menu item to manage scripts, or to open the options page of the extension.",
-		"message": "Zarządzaj skryptami"
+		"message": "Zarządzaj skryptami",
+		"description": "Menu item to manage scripts, or to open the options page of the extension."
 	},
 	"menuFindScripts": {
-		"description": "Menu item to find scripts for a site.",
-		"message": "Znajdź skrypty dla tej strony"
+		"message": "Znajdź skrypty dla tej strony",
+		"description": "Menu item to find scripts for a site."
 	},
 	"menuScriptEnabled": {
-		"description": "Menu item showing the status of Violentmonkey, whether enabled.",
-		"message": "Skrypty włączone"
+		"message": "Skrypty włączone",
+		"description": "Menu item showing the status of Violentmonkey, whether enabled."
 	},
 	"menuBack": {
-		"description": "Menu item to go back to main menu from script commands.",
-		"message": "Wstecz"
+		"message": "Wstecz",
+		"description": "Menu item to go back to main menu from script commands."
 	},
 	"menuCommands": {
-		"description": "Menu item to list script commands.",
-		"message": "Komendy skryptu..."
+		"message": "Komendy skryptu...",
+		"description": "Menu item to list script commands."
 	},
 	"anchorGetMoreScripts": {
-		"description": "Link to get more scripts.",
-		"message": "<a href=http://userscripts.org target=_blank>Znajdź nowe skrypty</a>"
+		"message": "<a href=http://userscripts.org target=_blank>Znajdź nowe skrypty</a>",
+		"description": "Link to get more scripts."
 	},
 	"sideMenuInstalled": {
-		"description": "Label of the list of installed scripts.",
-		"message": "Zainstalowane skrypty"
+		"message": "Zainstalowane skrypty",
+		"description": "Label of the list of installed scripts."
 	},
 	"sideMenuSettings": {
-		"description": "Side menu: Settings",
-		"message": "Ustawienia"
+		"message": "Ustawienia",
+		"description": "Side menu: Settings"
 	},
 	"sideMenuAbout": {
-		"description": "Side menu: About",
-		"message": "O rozszerzeniu"
+		"message": "O rozszerzeniu",
+		"description": "Side menu: About"
 	},
 	"buttonNew": {
-		"description": "Button to create a new script.",
-		"message": "Nowy"
+		"message": "Nowy skrypt",
+		"description": "Button to create a new script."
 	},
 	"anchorUpdateAll": {
-		"description": "Check all scripts for updates.",
-		"message": "Sprawdź aktualizacje dla wszystkich"
+		"message": "Sprawdź aktualizacje dla wszystkich skryptów",
+		"description": "Check all scripts for updates."
 	},
 	"msgLoading": {
-		"description": "Message shown in the options page before script list is loaded.",
-		"message": "Wczytywanie..."
+		"message": "Wczytywanie...",
+		"description": "Message shown in the options page before script list is loaded."
 	},
 	"labelSettings": {
-		"description": "Label shown on the top of settings page",
-		"message": "Ustawienia"
+		"message": "Ustawienia",
+		"description": "Label shown on the top of settings page"
 	},
 	"labelShowButton": {
-		"description": "Option to show an icon of this extension in the toolbar.",
-		"message": "Pokaż przycisk na pasku"
+		"message": "Pokaż przycisk tego rozszerzenia na pasku rozszerzeń",
+		"description": "Option to show an icon of this extension in the toolbar."
 	},
 	"labelAutoUpdate": {
-		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
-		"message": "Automatycznie sprawdzaj aktualizacje dla skryptów każdego dnia"
+		"message": "Automatycznie sprawdzaj aktualizacje dla skryptów każdego dnia",
+		"description": "Option to allow automatically checking scripts for updates every 24 hours."
 	},
 	"labelSearchLink": {
-		"description": "Label of URL for searching scripts for a site.",
-		"message": "Adres wyszukiwarki:"
+		"message": "Adres wyszukiwarki:",
+		"description": "Label of URL for searching scripts for a site."
 	},
 	"buttonDefault": {
-		"description": "Button to replace search URL with the default one.",
-		"message": "Domyślne"
+		"message": "Domyślne",
+		"description": "Button to replace search URL with the default one."
 	},
 	"labelDataImport": {
-		"description": "Section title of data import.",
-		"message": "Imporotwanie danych"
+		"message": "Imporotwanie danych",
+		"description": "Section title of data import."
 	},
 	"buttonImportData": {
-		"description": "Button to choose a file for data import.",
-		"message": "Importuj z pliku zip"
+		"message": "Importuj skrypty z pliku zip",
+		"description": "Button to choose a file for data import."
 	},
 	"buttonVacuum": {
-		"description": "Button to vacuum extension data.",
-		"message": "Wyczyść dane"
+		"message": "Wyczyść dane",
+		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
-		"description": "Section title of data export.",
-		"message": "Eksportowanie danych"
+		"message": "Eksportowanie danych",
+		"description": "Section title of data export."
 	},
 	"labelScriptsToExport": {
-		"description": "Label shown on top of the script list for export.",
-		"message": "Skrypty do wyeksportowania"
+		"message": "Skrypty do eksportu",
+		"description": "Label shown on top of the script list for export."
 	},
 	"labelExportScriptData": {
-		"description": "Option to export script data along with scripts.",
-		"message": "Eksportuj dane skryptu"
+		"message": "Eksportuj dane skryptu",
+		"description": "Option to export script data along with scripts."
 	},
 	"buttonAllNone": {
-		"description": "Button to select all scripts or none.",
-		"message": "Wszystkie/Żaden"
+		"message": "Wszystkie/Żaden",
+		"description": "Button to select all scripts or none."
 	},
 	"buttonExportData": {
-		"description": "Button to open the data export dialog.",
-		"message": "Eksportuj do pliku zip"
+		"message": "Eksportuj skrypty do pliku zip",
+		"description": "Button to open the data export dialog."
 	},
 	"labelAbout": {
-		"description": "Label shown on top of the about page.",
-		"message": "O rozszerzeniu Violentmonkey"
+		"message": "O rozszerzeniu Violentmonkey",
+		"description": "Label shown on top of the about page."
 	},
 	"labelSupportPage": {
-		"description": "Label of support page.",
-		"message": "Strona wsparcia: "
+		"message": "Strona wsparcia: ",
+		"description": "Label of support page."
 	},
 	"anchorSupportPage": {
-		"description": "Link to the support page of Violentmonkey.",
-		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>"
+		"message": "<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>",
+		"description": "Link to the support page of Violentmonkey."
 	},
 	"labelAuthor": {
-		"description": "Label of author shown in the details of a script.",
-		"message": "Autor: "
+		"message": "Autor: ",
+		"description": "Label of author shown in the details of a script."
 	},
 	"anchorAuthor": {
-		"description": "Author shown in the footer of options page, translator information may be added.",
-		"message": "<a href=mailto:gera2ld@163.com>Gerald</a>"
+		"message": "<a href=mailto:gera2ld@163.com>Gerald</a>",
+		"description": "Author shown in the footer of options page, translator information may be added."
 	},
 	"labelTranslator": {
-		"description": "Label of translator.",
-		"message": "Tłumacze: "
+		"message": "Tłumacze: ",
+		"description": "Label of translator."
 	},
 	"anchorTranslator": {
-		"description": "Translator shown on about tab.",
-		"message": "<a href=mailto:cydziol@gmail.com>MISI90</a>, <a href=mailto:MyReksio@gmail.com>Piter432</a>"
+		"message": "<a href=mailto:cydziol@gmail.com>MISI90</a>, <a href=mailto:MyReksio@gmail.com>Piter432</a>",
+		"description": "Translator shown on about tab."
 	},
 	"labelScriptEditor": {
-		"description": "Shown in the title of the script editing page.",
-		"message": "Edytor skryptów"
+		"message": "Edytor skryptów",
+		"description": "Shown in the title of the script editing page."
 	},
 	"buttonCustomMeta": {
-		"description": "Button to edit the custom meta data of a script.",
-		"message": "Własne dane meta"
+		"message": "Własne metadane skryptu",
+		"description": "Button to edit the custom meta data of a script."
 	},
 	"labelName": {
-		"description": "Label of script name.",
-		"message": "Nazwa:"
+		"message": "Nazwa:",
+		"description": "Label of script name."
 	},
 	"labelRunAt": {
-		"description": "Label of script @run-at properties in custom meta data.",
-		"message": "Uruchom gdy: "
+		"message": "Uruchom gdy: ",
+		"description": "Label of script @run-at properties in custom meta data."
 	},
 	"labelRunAtDefault": {
-		"description": "Shown when custom @run-at is not assigned.",
-		"message": "(domyślnie)"
+		"message": "(domyślnie)",
+		"description": "Shown when custom @run-at is not assigned."
 	},
 	"labelHomepage": {
-		"description": "Label of script @homepage in custom meta data.",
-		"message": "Strona domowa:"
+		"message": "Strona domowa:",
+		"description": "Label of script @homepage in custom meta data."
 	},
 	"labelUpdateURL": {
-		"description": "Label of script @updateURL in custom meta data.",
-		"message": "URL do aktualizacji:"
+		"message": "URL do aktualizacji:",
+		"description": "Label of script @updateURL in custom meta data."
 	},
 	"labelDownloadURL": {
-		"description": "Label of script @downloadURL in custom meta data.",
-		"message": "URL do pobrania:"
+		"message": "URL do pobrania:",
+		"description": "Label of script @downloadURL in custom meta data."
 	},
 	"labelInclude": {
-		"description": "Label of @include rules.",
-		"message": "Includes"
+		"message": "Includes",
+		"description": "Label of @include rules."
 	},
 	"labelKeepInclude": {
-		"description": "Option to keep the original @include rules.",
-		"message": "Zachowaj oryginalne zasady include"
+		"message": "Zachowaj oryginalne zasady include",
+		"description": "Option to keep the original @include rules."
 	},
 	"labelCustomInclude": {
-		"description": "Label of custom @include rules.",
-		"message": "Własne zasady include: <em>(Jedna na linię)</em>"
+		"message": "Własne zasady include: <em>(Jedna na linię)</em>",
+		"description": "Label of custom @include rules."
 	},
 	"labelMatch": {
-		"description": "Label of @match rules.",
-		"message": "Matches"
+		"message": "Matches",
+		"description": "Label of @match rules."
 	},
 	"labelKeepMatch": {
-		"description": "Option to keep the original @match rules.",
-		"message": "Zachowaj oryginalne zasady match"
+		"message": "Zachowaj oryginalne zasady match",
+		"description": "Option to keep the original @match rules."
 	},
 	"labelCustomMatch": {
-		"description": "Label of custom @match rules.",
-		"message": "Własne zasady match: <em>(Jedna na linię)</em>"
+		"message": "Własne zasady match: <em>(Jedna na linię)</em>",
+		"description": "Label of custom @match rules."
 	},
 	"labelExclude": {
-		"description": "Label of @exclude rules.",
-		"message": "Excludes"
+		"message": "Excludes",
+		"description": "Label of @exclude rules."
 	},
 	"labelKeepExclude": {
-		"description": "Option to keep the original @exclude rules.",
-		"message": "Zachowaj oryginalne zasady exclude"
+		"message": "Zachowaj oryginalne zasady exclude",
+		"description": "Option to keep the original @exclude rules."
 	},
 	"labelCustomExclude": {
-		"description": "Label of custom @exclude rules.",
-		"message": "Własne zasady exclude: <em>(Jedna na linię)</em>"
+		"message": "Własne zasady exclude: <em>(Jedna na linię)</em>",
+		"description": "Label of custom @exclude rules."
 	},
 	"labelAllowUpdate": {
-		"description": "Option to allow checking updates for a script.",
-		"message": "Zezwól na aktualizacje"
+		"message": "Zezwól na aktualizacje skryptu",
+		"description": "Option to allow checking updates for a script."
 	},
 	"buttonSave": {
-		"description": "Button to save modifications of a script.",
-		"message": "Zapisz"
+		"message": "Zapisz skrypt",
+		"description": "Button to save modifications of a script."
 	},
 	"buttonSaveClose": {
-		"description": "Button to save modifications of a script and then close the editing page.",
-		"message": "Zapisz i zamknij"
+		"message": "Zapisz skrypt i zamknij kartę/okno",
+		"description": "Button to save modifications of a script and then close the editing page."
 	},
 	"buttonClose": {
-		"description": "Button to close window.",
-		"message": "Zamknij"
+		"message": "Zamknij kartę/okno",
+		"description": "Button to close window."
 	},
 	"buttonDisable": {
-		"description": "Button to disable a script.",
-		"message": "Wyłącz"
+		"message": "Wyłącz skrypt",
+		"description": "Button to disable a script."
 	},
 	"buttonEnable": {
-		"description": "Button to enable a script.",
-		"message": "Włącz"
+		"message": "Włącz skrypt",
+		"description": "Button to enable a script."
 	},
 	"buttonEdit": {
-		"description": "Button to edit a script.",
-		"message": "Edytuj"
+		"message": "Edytuj skrypt",
+		"description": "Button to edit a script."
 	},
 	"buttonRemove": {
-		"description": "Button to remove a script.",
-		"message": "Usuń"
+		"message": "Usuń skrypt",
+		"description": "Button to remove a script."
 	},
 	"anchorUpdate": {
-		"description": "Check a script for updates.",
-		"message": "Sprawdź aktualizacje"
+		"message": "Sprawdź aktualizację/e skryptu",
+		"description": "Check a script for updates."
 	},
 	"confirmNotSaved": {
-		"description": "Confirm message shown when there are unsaved script modifications.",
-		"message": "Modyfikacje nie zostały zapisane! Kliknij OK, aby wyjść lub Anuluj aby zostać."
+		"message": "Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij OK, aby wyjść lub Anuluj aby pozostać.",
+		"description": "Confirm message shown when there are unsaved script modifications."
 	},
 	"hintSearchLink": {
-		"description": "Hint for the search URL.",
-		"message": "Adres wyszukiwarki musi zawierać *. * oznacza słowa kluczowe generowane przez Violentmonkey."
+		"message": "Adres wyszukiwarki musi zawierać *. *, co oznacza słowa kluczowe generowane przez Violentmonkey.",
+		"description": "Hint for the search URL."
 	},
 	"buttonVacuuming": {
-		"description": "Message shown when data vacuum is in progress.",
-		"message": "Czyszczenie danych..."
+		"message": "Czyszczenie danych...",
+		"description": "Message shown when data vacuum is in progress."
 	},
 	"buttonVacuumed": {
-		"description": "Message shown when data is vacuumed.",
-		"message": "Dane wyczyszczone"
+		"message": "Dane wyczyszczone",
+		"description": "Message shown when data is vacuumed."
 	},
 	"hintVacuum": {
-		"description": "Hint for vacuuming data.",
-		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache."
+		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.",
+		"description": "Hint for vacuuming data."
 	},
 	"msgErrorZip": {
-		"description": "Message shown when Violentmonkey fails to open the zip file.",
-		"message": "Błąd odczytywania pliku zip."
+		"message": "Błąd odczytywania pliku zip.",
+		"description": "Message shown when Violentmonkey fails to open the zip file."
 	},
 	"msgImported": {
-		"description": "Message shown after import. There is an argument referring to the count of scripts imported.",
-		"message": "$1 pozycja/e zaimportowana/e."
+		"message": "$1 pozycja/e zaimportowana/e.",
+		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
 	},
 	"labelSearch": {
-		"description": "Label for search input in search box.",
-		"message": "Szukaj w: "
+		"message": "Szukaj w: ",
+		"description": "Label for search input in search box."
 	},
 	"labelReplace": {
-		"description": "Label for replace input in search box.",
-		"message": "Zamień na: "
+		"message": "Zamień na: ",
+		"description": "Label for replace input in search box."
 	},
 	"buttonReplace": {
-		"description": "Button to replace the current match.",
-		"message": "Zamień"
+		"message": "Zamień",
+		"description": "Button to replace the current match."
 	},
 	"buttonReplaceAll": {
-		"description": "Button to replace all matches.",
-		"message": "Wszystko"
+		"message": "Wszystko",
+		"description": "Button to replace all matches."
 	}
 }
