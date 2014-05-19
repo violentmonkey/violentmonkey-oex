@@ -76,7 +76,7 @@
 		"description": "Menu item to list script commands."
 	},
 	"anchorGetMoreScripts": {
-		"message": "<a href=http://userscripts.org target=_blank>Get more scripts</a>",
+		"message": "Get more scripts",
 		"description": "Link to get more scripts."
 	},
 	"sideMenuInstalled": {

@@ -76,7 +76,7 @@
 		"description": "Menu item to list script commands."
 	},
 	"anchorGetMoreScripts": {
-		"message": "<a href=http://userscripts.org target=_blank>获取更多脚本</a>",
+		"message": "获取更多脚本",
 		"description": "Link to get more scripts."
 	},
 	"sideMenuInstalled": {
