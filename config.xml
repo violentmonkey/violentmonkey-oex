@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget xmlns="http://www.w3.org/ns/widgets" version="1.6.0.1" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
+<widget xmlns="http://www.w3.org/ns/widgets" version="1.6.1" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="https://addons.opera.com/extensions/details/violent-monkey/">
 	<name>Violent monkey</name>
-	<author href="http://geraldl.tk" email="gera2ld@163.net">Gerald</author>
+	<author href="http://geraldl.ml" email="gera2ld@163.net">Gerald</author>
 	<icon src="images/icon64.png"/>
 	<icon src="images/icon18.png"/>
 	<feature name="opera:share-cookies" required="false"/>
