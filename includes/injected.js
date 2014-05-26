@@ -85,7 +85,7 @@ if((function(){
 	var m=window.location.href.match(/(\.user\.js)$/);
 	function install(){
 		if(document&&document.body&&!document.querySelector('title')) {	// plain text
-			installCallback=function(){opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText}});};
+			installCallback=function(){opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText,from:document.referrer}});};
 			opera.extension.postMessage({topic:'InstallScript'});
 		}
 	}
@@ -93,7 +93,9 @@ if((function(){
 		if(document.readyState!='complete') window.addEventListener('load',install,false);
 		else install();
 	}else return true;
-})()&&['userscripts.org','j.mozest.com'].indexOf(window.location.host)>=0) window.addEventListener('click',function(e){
+})()&&[
+	'greasyfork.org','userscripts.org','j.mozest.com','userscripts.org:8080'
+].indexOf(window.location.host)>=0) window.addEventListener('click',function(e){
 	var o=e.target;while(o&&o.tagName!='A') o=o.parentNode;
 	if(o&&/\.user\.js$/.test(o.href)) {
 		e.preventDefault();
