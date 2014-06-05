@@ -36,7 +36,7 @@
 		"description": "Message shown when a new version of script is being fetched."
 	},
 	"msgNewVersion": {
-		"message": "Znaleziono nową wersję skryptu.",
+		"message": "Znaleziono nową wersję tego skryptu.",
 		"description": "Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided."
 	},
 	"msgCheckingForUpdate": {
@@ -44,7 +44,7 @@
 		"description": "Message shown when a script is being checked for updates by version numbers."
 	},
 	"msgErrorFetchingUpdateInfo": {
-		"message": "Błąd podczas pobierania informacji aktualizacji skryptu.",
+		"message": "Błąd podczas pobierania informacji aktualizacji dla tego skryptu.",
 		"description": "Message shown when Violentmonkey fails fetching version data of the script."
 	},
 	"msgNoUpdate": {
@@ -52,7 +52,7 @@
 		"description": "Message shown when there is no new version of a script."
 	},
 	"labelNoName": {
-		"message": "Brak nazwy",
+		"message": "Bez nazwy",
 		"description": "Text as the name of a script when no @name is assigned."
 	},
 	"menuManageScripts": {
@@ -128,7 +128,7 @@
 		"description": "Section title of data import."
 	},
 	"buttonImportData": {
-		"message": "Importuj skrypty z pliku zip",
+		"message": "Importuj skrypty z pliku \".zip\"",
 		"description": "Button to choose a file for data import."
 	},
 	"buttonVacuum": {
@@ -152,7 +152,7 @@
 		"description": "Button to select all scripts or none."
 	},
 	"buttonExportData": {
-		"message": "Eksportuj skrypty do pliku zip",
+		"message": "Eksportuj skrypty do pliku \".zip\"",
 		"description": "Button to open the data export dialog."
 	},
 	"labelAbout": {
@@ -168,7 +168,7 @@
 		"description": "Link to the support page of Violentmonkey."
 	},
 	"labelDonate": {
-		"message": "Donate",
+		"message": "Dotacja",
 		"description": "Label of link to donate page."
 	},
 	"labelAuthor": {
@@ -212,11 +212,11 @@
 		"description": "Label of script @homepage in custom meta data."
 	},
 	"labelUpdateURL": {
-		"message": "URL do aktualizacji:",
+		"message": "URL do aktualizacji skryptu:",
 		"description": "Label of script @updateURL in custom meta data."
 	},
 	"labelDownloadURL": {
-		"message": "URL do pobrania:",
+		"message": "URL do pobrania skryptu:",
 		"description": "Label of script @downloadURL in custom meta data."
 	},
 	"labelInclude": {
@@ -228,7 +228,7 @@
 		"description": "Option to keep the original @include rules."
 	},
 	"labelCustomInclude": {
-		"message": "Własne zasady include: <em>(Jedna na linię)</em>",
+		"message": "Własne zasady include: <em>(jedna na linię)</em>",
 		"description": "Label of custom @include rules."
 	},
 	"labelMatch": {
@@ -240,7 +240,7 @@
 		"description": "Option to keep the original @match rules."
 	},
 	"labelCustomMatch": {
-		"message": "Własne zasady match: <em>(Jedna na linię)</em>",
+		"message": "Własne zasady match: <em>(jedna na linię)</em>",
 		"description": "Label of custom @match rules."
 	},
 	"labelExclude": {
@@ -252,7 +252,7 @@
 		"description": "Option to keep the original @exclude rules."
 	},
 	"labelCustomExclude": {
-		"message": "Własne zasady exclude: <em>(Jedna na linię)</em>",
+		"message": "Własne zasady exclude: <em>(jedna na linię)</em>",
 		"description": "Label of custom @exclude rules."
 	},
 	"labelAllowUpdate": {
@@ -264,11 +264,11 @@
 		"description": "Button to save modifications of a script."
 	},
 	"buttonSaveClose": {
-		"message": "Zapisz skrypt i zamknij kartę/okno",
+		"message": "Zapisz skrypt i zamknij edytor",
 		"description": "Button to save modifications of a script and then close the editing page."
 	},
 	"buttonClose": {
-		"message": "Zamknij kartę/okno",
+		"message": "Zamknij edytor",
 		"description": "Button to close window."
 	},
 	"buttonDisable": {
@@ -292,7 +292,7 @@
 		"description": "Check a script for updates."
 	},
 	"confirmNotSaved": {
-		"message": "Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij OK, aby wyjść lub Anuluj aby pozostać.",
+		"message": "Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij \"OK\", aby wyjść lub \"Anuluj\", aby pozostać.",
 		"description": "Confirm message shown when there are unsaved script modifications."
 	},
 	"hintSearchLink": {
@@ -308,15 +308,15 @@
 		"description": "Message shown when data is vacuumed."
 	},
 	"hintVacuum": {
-		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w cache.",
+		"message": "Usuń nadmiarowość i spróbuj przeładować brakujące dane w pamięci podręcznej.",
 		"description": "Hint for vacuuming data."
 	},
 	"msgErrorZip": {
-		"message": "Błąd odczytywania pliku zip.",
+		"message": "Błąd odczytywania pliku \".zip\".",
 		"description": "Message shown when Violentmonkey fails to open the zip file."
 	},
 	"msgImported": {
-		"message": "$1 pozycja/e zaimportowana/e.",
+		"message": "$1 pozycja/e/i zaimportowana/e/ych.",
 		"description": "Message shown after import. There is an argument referring to the count of scripts imported."
 	},
 	"labelSearch": {
