@@ -188,7 +188,7 @@
 		"description": "Translator shown on about tab."
 	},
 	"labelScriptEditor": {
-		"message": "Edytor skryptów",
+		"message": "Edytor skryptu",
 		"description": "Shown in the title of the script editing page."
 	},
 	"buttonCustomMeta": {
