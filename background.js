@@ -1,27 +1,14 @@
 // Multilingual
 function initMessages(callback){
-	var data={};
-	function init(d) {
-		var i,j=JSON.parse(d);
-		for(i in j) data[i]=j[i];
-		if(callback) callback();
-	}
-
-	var f=new XMLHttpRequest();
+	var data={},f=new XMLHttpRequest();
 	f.open('GET','messages.json',true);
-	f.onload=function(){init(f.responseText);};
+	f.responseType='json';
+	f.onload=function(){
+		var i,o=f.response;
+		for(i in o) data[i]=o[i];
+		if(callback) callback();
+	};
 	f.send();
-
-	/* opera.extension.getFile is useless
-	 * XMLHttpRequest works better on old versions of Opera
-	 *
-	 * var f=opera.extension.getFile('messages.json');
-	 * if(f) {
-	 * 	var r=new FileReader();
-	 * 	r.onload=function(){init(r.result);}
-	 * 	r.readAsText(f);
-	 * }
-	 */
 
 	_=function(k,a){
 		var r=data[k]||'';
@@ -34,7 +21,7 @@ function initMessages(callback){
 }
 
 // Database
-/* ===============Data format 0.5==================
+/* ===============Data v0.5==================
  * Database: Violentmonkey
  * scripts {
  * 		id: Auto
@@ -264,9 +251,10 @@ function initScripts(callback){
 	});
 }
 function getData(callback){
-	var cache={};
+	var i,cache={};
 	for(i in metas) if(metas[i].meta.icon) cache[metas[i].meta.icon]=1;
 	getCache(Object.getOwnPropertyNames(cache),function(o){
+		for(i in o) o[i]='data:image/png;base64,'+window.btoa(o[i]);
 		if(callback) callback(o);
 	});
 }
@@ -322,14 +310,13 @@ function getInjected(e,url){
 	url=url||e.origin;	// to recognize URLs like data:...
 	function finish(){e.source.postMessage({topic:'GotInjected',data:data});}
 	if(url.slice(0,5)!='data:') {
-		function addCache(i){cache[i]=1;}
 		getScripts(
 			ids.filter(function(i){
 				var j,s=metas[i];
 				if(s&&testURL(url,s)) {
 					values[s.uri]=1;
-					if(s.meta.require) s.meta.require.forEach(addCache);
-					for(j in s.meta.resources) addCache(s.meta.resources[j]);
+					if(s.meta.require) s.meta.require.forEach(function(i){cache[i]=1;});
+					for(j in s.meta.resources) cache[s.meta.resources[j]]=1;
 					return true;
 				}
 				return false;
@@ -477,7 +464,6 @@ function move(s,d){
 }
 function vacuum(callback){
 	var cache={},values={},count=0;
-	function addCache(i){cache[i]=1;}
 	function vacuumPosition(){
 		function update(o){
 			db.transaction(function(t){
@@ -492,9 +478,9 @@ function vacuum(callback){
 		for(i=0;i<ids.length;i++) {
 			o=metas[ids[i]];
 			values[o.uri]=1;
-			if(o.meta.icon) addCache(o.meta.icon);
-			if(o.meta.require) o.meta.require.forEach(addCache);
-			for(j in o.meta.resources) addCache(o.meta.resources[j]);
+			if(o.meta.icon) cache[o.meta.icon]=1;
+			if(o.meta.require) o.meta.require.forEach(function(i){cache[i]=1;});
+			for(j in o.meta.resources) cache[o.meta.resources[j]]=1;
 			if(o.position!=i+1) s.push([i+1,o.id]);
 		}
 		update(s);

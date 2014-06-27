@@ -14,13 +14,14 @@ function allowUpdate(n){
 	);
 }
 function setIcon(n,d){
-	var c=cache[n.meta.icon];
-	d.src=c?'data:image/x;base64,'+btoa(c):'images/icon64.png';
+	d.src=cache[n.meta.icon]||'images/icon64.png';
 }
 function getAuthor(a,n){
 	var m=n.match(/^(.*?)\s<(\S*?@\S*?)>$/),t=_('labelAuthor');
 	if(m) a.innerHTML=t+'<a href=mailto:'+m[2]+'>'+m[1]+'</a>';
-	else a.innerText=t+n;
+	else {
+		if(n) n=t+n;a.innerText=n;
+	}
 }
 function modifyItem(r){
 	var d=divs[r.id],n=bg.metas[r.id],o;
