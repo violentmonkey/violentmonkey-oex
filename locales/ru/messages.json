@@ -75,9 +75,9 @@
 		"message": "Команды сценария...",
 		"description": "Menu item to list script commands."
 	},
-	"anchorGetMoreScripts": {
-		"message": "Скачать скрипты",
-		"description": "Link to get more scripts."
+	"buttonVacuum": {
+		"message": "Сбросить кэш",
+		"description": "Button to vacuum extension data."
 	},
 	"sideMenuInstalled": {
 		"message": "Установленные скрипты",
@@ -98,6 +98,10 @@
 	"anchorUpdateAll": {
 		"message": "Проверить обновления скриптов",
 		"description": "Check all scripts for updates."
+	},
+	"anchorGetMoreScripts": {
+		"message": "Скачать скрипты",
+		"description": "Link to get more scripts."
 	},
 	"msgLoading": {
 		"message": "Loading ...",
@@ -130,10 +134,6 @@
 	"buttonImportData": {
 		"message": "Импорт из zip-файла",
 		"description": "Button to choose a file for data import."
-	},
-	"buttonVacuum": {
-		"message": "Сбросить кэш",
-		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
 		"message": "Data Export",
@@ -207,9 +207,9 @@
 		"message": "(по умолчанию)",
 		"description": "Shown when custom @run-at is not assigned."
 	},
-	"labelHomepage": {
+	"labelHomepageURL": {
 		"message": "Дом. страница:",
-		"description": "Label of script @homepage in custom meta data."
+		"description": "Label of script @homepageURL in custom meta data."
 	},
 	"labelUpdateURL": {
 		"message": "Адрес обновления:",

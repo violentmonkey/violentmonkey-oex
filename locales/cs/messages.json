@@ -75,9 +75,9 @@
 		"message": "Skriptové příkazy...",
 		"description": "Menu item to list script commands."
 	},
-	"anchorGetMoreScripts": {
-		"message": "Získej více skritpů",
-		"description": "Link to get more scripts."
+	"buttonVacuum": {
+		"message": "Vyprázdnit data",
+		"description": "Button to vacuum extension data."
 	},
 	"sideMenuInstalled": {
 		"message": "Nainstalované skripty",
@@ -98,6 +98,10 @@
 	"anchorUpdateAll": {
 		"message": "Zkontrolovat aktualizace",
 		"description": "Check all scripts for updates."
+	},
+	"anchorGetMoreScripts": {
+		"message": "Získej více skritpů",
+		"description": "Link to get more scripts."
 	},
 	"msgLoading": {
 		"message": "Loading ...",
@@ -130,10 +134,6 @@
 	"buttonImportData": {
 		"message": "Importovat ze souboru zip",
 		"description": "Button to choose a file for data import."
-	},
-	"buttonVacuum": {
-		"message": "Vyprázdnit data",
-		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
 		"message": "Data Export",
@@ -207,9 +207,9 @@
 		"message": "(standardní)",
 		"description": "Shown when custom @run-at is not assigned."
 	},
-	"labelHomepage": {
+	"labelHomepageURL": {
 		"message": "Domovská stránka:",
-		"description": "Label of script @homepage in custom meta data."
+		"description": "Label of script @homepageURL in custom meta data."
 	},
 	"labelUpdateURL": {
 		"message": "Update URL:",

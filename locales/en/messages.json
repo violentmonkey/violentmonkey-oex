@@ -75,9 +75,9 @@
 		"message": "Script commands...",
 		"description": "Menu item to list script commands."
 	},
-	"anchorGetMoreScripts": {
-		"message": "Get more scripts",
-		"description": "Link to get more scripts."
+	"buttonVacuum": {
+		"message": "Vacuum database",
+		"description": "Button to vacuum extension data."
 	},
 	"sideMenuInstalled": {
 		"message": "Installed scripts",
@@ -98,6 +98,10 @@
 	"anchorUpdateAll": {
 		"message": "Check all for updates",
 		"description": "Check all scripts for updates."
+	},
+	"anchorGetMoreScripts": {
+		"message": "Get more scripts",
+		"description": "Link to get more scripts."
 	},
 	"msgLoading": {
 		"message": "Loading ...",
@@ -130,10 +134,6 @@
 	"buttonImportData": {
 		"message": "Import from zip",
 		"description": "Button to choose a file for data import."
-	},
-	"buttonVacuum": {
-		"message": "Vacuum database",
-		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
 		"message": "Data Export",
@@ -207,9 +207,9 @@
 		"message": "(Default)",
 		"description": "Shown when custom @run-at is not assigned."
 	},
-	"labelHomepage": {
-		"message": "Homepage:",
-		"description": "Label of script @homepage in custom meta data."
+	"labelHomepageURL": {
+		"message": "Homepage URL:",
+		"description": "Label of script @homepageURL in custom meta data."
 	},
 	"labelUpdateURL": {
 		"message": "Update URL:",

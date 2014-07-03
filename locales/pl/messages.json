@@ -75,9 +75,9 @@
 		"message": "Komendy skryptu...",
 		"description": "Menu item to list script commands."
 	},
-	"anchorGetMoreScripts": {
-		"message": "Znajdź nowe skrypty",
-		"description": "Link to get more scripts."
+	"buttonVacuum": {
+		"message": "Wyczyść dane",
+		"description": "Button to vacuum extension data."
 	},
 	"sideMenuInstalled": {
 		"message": "Zainstalowane skrypty",
@@ -98,6 +98,10 @@
 	"anchorUpdateAll": {
 		"message": "Sprawdź aktualizacje dla wszystkich skryptów",
 		"description": "Check all scripts for updates."
+	},
+	"anchorGetMoreScripts": {
+		"message": "Znajdź nowe skrypty",
+		"description": "Link to get more scripts."
 	},
 	"msgLoading": {
 		"message": "Wczytywanie...",
@@ -130,10 +134,6 @@
 	"buttonImportData": {
 		"message": "Importuj skrypty z pliku \".zip\"",
 		"description": "Button to choose a file for data import."
-	},
-	"buttonVacuum": {
-		"message": "Wyczyść dane",
-		"description": "Button to vacuum extension data."
 	},
 	"labelDataExport": {
 		"message": "Eksportowanie danych",
@@ -207,9 +207,9 @@
 		"message": "(domyślnie)",
 		"description": "Shown when custom @run-at is not assigned."
 	},
-	"labelHomepage": {
+	"labelHomepageURL": {
 		"message": "Strona domowa:",
-		"description": "Label of script @homepage in custom meta data."
+		"description": "Label of script @homepageURL in custom meta data."
 	},
 	"labelUpdateURL": {
 		"message": "URL do aktualizacji skryptu:",
