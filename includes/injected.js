@@ -53,14 +53,38 @@ function showMessage(data){
 function Request(details){
 	this.callback=function(d){
 		var c=details['on'+d.type];
-		if(c) c(d.data);
+		if(c) {
+			if(d.data.response) {
+				if(!this.data.length) {
+					if(d.resType) {	// blob or arraybuffer
+						var m=d.data.response.match(/^data:(.*?);base64,(.*)$/);
+						if(!m) d.data.response=null;
+						else {
+							var b=window.atob(m[2]);
+							if(details.responseType=='blob') {
+								this.data.push(new window.Blob([b],{type:m[1]}));
+							} else {	// arraybuffer
+								m=new Uint8Array(b.length);
+								for(i=0;i<b.length;i++) m[i]=b.charCodeAt(i);
+								this.data.push(m.buffer);
+							}
+						}
+					} else if(details.responseType=='json')	// json
+						this.data.push(JSON.parse(d.data.response));
+					else	// text
+						this.data.push(d.data.response);
+				}
+				d.data.response=this.data[0];
+			}
+			c(d.data);
+		}
 		if(!this.id) for(var i in d.data) this.req[i]=d.data[i];
 		if(d.type=='load') delete requests[this.id];
 	};
 	this.start=function(id){
 		this.id=id;
 		requests[id]=this;
-		opera.extension.postMessage({topic:'HttpRequest',data:{
+		var data={
 			id:id,
 			method:details.method,
 			url:details.url,
@@ -70,11 +94,14 @@ function Request(details){
 			password:details.password,
 			headers:details.headers,
 			overrideMimeType:details.overrideMimeType,
-		}});
+		};
+		if(['arraybuffer','blob'].indexOf(details.responseType)>=0) data.responseType='blob';
+		opera.extension.postMessage({topic:'HttpRequest',data:data});
 	};
 	this.req={
 		abort:function(){opera.extension.postMessage({topic:'AbortRequest',data:this.id});}
 	};
+	this.data=[];
 	qrequests.push(this);
 	opera.extension.postMessage({topic:'GetRequestId'});
 };

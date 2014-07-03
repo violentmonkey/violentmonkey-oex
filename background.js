@@ -573,21 +573,37 @@ function getRequestId(e){
 }
 function httpRequest(e,details){
 	function callback(evt){
-		var d={
-			topic:'HttpRequested',
-			data:{
-				id:details.id,
-				type:evt.type,
+		function finish(){
+			e.source.postMessage({
+				topic:'HttpRequested',
 				data:{
-					readyState:req.readyState,
-					responseHeaders:req.getAllResponseHeaders(),
-					responseText:req.responseText,
-					status:req.status,
-					statusText:req.statusText,
+					id:details.id,
+					type:evt.type,
+					resType:req.responseType,
+					data:data
 				}
-			}
-		};
-		e.source.postMessage(d);
+			});
+		}
+		var data={
+			readyState:req.readyState,
+			responseHeaders:req.getAllResponseHeaders(),
+			status:req.status,
+			statusText:req.statusText,
+		},r;
+		try {
+			data.responseText=req.responseText;
+		} catch(e) {}
+		if(req.response&&req.responseType=='blob') {
+			r=new FileReader();
+			r.onload=function(e){
+				data.response=r.result;
+				finish();
+			};
+			r.readAsDataURL(req.response);
+		} else {	// default `null` for blob and '' for text
+			data.response=req.response;
+			finish();
+		}
 	}
 	var i,req;
 	if(details.id) req=requests[details.id];
@@ -595,6 +611,7 @@ function httpRequest(e,details){
 	try{
 		req.open(details.method,details.url,details.async,details.user,details.password);
 		if(details.headers) for(i in details.headers) req.setRequestHeader(i,details.headers[i]);
+		if(details.responseType) req.responseType='blob';
 		if(details.overrideMimeType) req.overrideMimeType(details.overrideMimeType);
 		['abort','error','load','progress','readystatechange','timeout'].forEach(function(i){req['on'+i]=callback;});
 		req.send(details.data);
