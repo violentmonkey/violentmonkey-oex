@@ -81,52 +81,25 @@ function initDatabase(callback){
 	});
 }
 function upgradeData(callback){
-	function finish(){
-		if(--count<=0) {if(callback) callback();}
-	}
-	function upgradeDB(n,d){
-		count++;
+	function finish(){if(callback) callback();}
+	var dataVer='0.5.1';
+	if(older(widget.preferences.version_storage||'',dataVer)) {
 		db.transaction(function(t){
-			function loop(){
-				var i=d.pop();
-				if(i) t.executeSql('REPLACE INTO "'+n+'"(uri,data) VALUES(?,?)',i,loop,dbError);
-				else finish();
+			function update(){
+				var o=data.shift();
+				if(!o) finish();
+				else t.executeSql('UPDATE scripts SET meta=? WHERE id=?',[JSON.stringify(o[1]),o[0]],update,dbError);
 			}
-			loop();
+			var data=[],i,v;
+			t.executeSql('SELECT * FROM scripts',[],function(t,r){
+				for(i=0;i<r.rows.length;i++) {
+					v=r.rows.item(i);
+					data.push([v.id,parseMeta(v.code)]);
+				}
+				update();
+			},dbError);
 		});
-	}
-	var i,j,k,l,o,cache=[],val={},values=[],count=0;
-	if(older(widget.preferences.version_storage||'','0.5')) {
-		var ids=localStorage.ids||'';
-		try{
-			ids=JSON.parse(ids);
-		}catch(e){
-			ids=[];
-		}
-		pos=localStorage.length-1;	// put scripts without `position` in the end
-		for(i=0;k=widget.preferences.key(i);) {
-			v=widget.preferences.getItem(k);
-			if(/^cache:/.test(k)) cache.push([k.slice(6),v]);
-			else if(/^val:/.test(k)) {
-				l=k.slice(4);j=0;
-				j=l.slice(j+1).indexOf(':');
-				j=l.slice(j+1).indexOf(':');
-				j=l.slice(j+1).indexOf(':');
-				o=l.slice(j+1);l=l.slice(0,j);
-				j=val[l];if(!j) val[l]=j={};j[o]=v;
-			} else if(/^vm:/.test(k)) {
-				o=JSON.parse(v);
-				if(!o.uri) o.uri=getNameURI(o);
-				o.position=ids.indexOf(o.id)+1;
-				delete o.id;saveScript(o);
-			} else if(k in settings) {i++;continue;}
-			widget.preferences.removeItem(k);
-		}
-		for(i in val) values.push([i,JSON.stringify(val[i])]);
-		widget.preferences.version_storage='0.5';
-		upgradeDB('cache',cache);
-		upgradeDB('values',values);
-		if(getOption('search','').indexOf('*')<0) setOption('search',_('defaultSearch'));
+		widget.preferences.version_storage=dataVer;
 	} else finish();
 }
 
@@ -339,8 +312,7 @@ function setValue(e,d){
 	});
 }
 function parseMeta(d){
-	var o=-1,meta={include:[],exclude:[],match:[],require:[],resources:{}};
-	meta.resource=[];
+	var o=-1,meta={include:[],exclude:[],match:[],require:[],resource:[],grant:[]};
 	d.replace(/(?:^|\n)\/\/\s*([@=]\S+)(.*)/g,function(m,k,v){
 		if(o<0&&k=='==UserScript==') o=1;
 		else if(k=='==/UserScript==') o=0;
@@ -349,6 +321,7 @@ function parseMeta(d){
 		if(meta[k]&&meta[k].push) meta[k].push(v);	// multiple values allowed
 		else if(!(k in meta)) meta[k]=v;	// only first value will be stored
 	});
+	meta.resources={};
 	meta.resource.forEach(function(i){
 		o=i.match(/^(\w\S*)\s+(.*)/);
 		if(o) meta.resources[o[1]]=o[2];
