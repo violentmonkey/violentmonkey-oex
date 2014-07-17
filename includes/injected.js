@@ -76,6 +76,10 @@ function Request(details){
 				}
 				d.data.response=this.data[0];
 			}
+			// finalUrl not supported
+			Object.defineProperty(d.data,'finalUrl',{
+				get:function(){console.log('[Violentmonkey]Warning: finalUrl not supported for GM_xmlhttpRequest yet!');}
+			});
 			c(d.data);
 		}
 		if(!this.id) for(var i in d.data) this.req[i]=d.data[i];
@@ -132,8 +136,13 @@ if((function(){
 },false);
 
 // For injected scripts
-var start=[],idle=[],end=[],cache,values,requires={},
+var start=[],end=[],cache,values,requires={},
 		scr=[],menu=[],command={},loaded=false;
+function abspath(u){
+	// convert url to absolute path
+	var a=document.createElement('a');
+	a.href=u;return a.href;
+}
 function propertyToString(){return 'Property for Violentmonkey: designed by Gerald';}
 function wrapper(raw){
 	// functions and properties
@@ -242,20 +251,18 @@ function wrapGM(c){
 			return b;
 		}},
 		GM_addStyle:{value:function(css){
-			var v=document.createElement('style');
-			v.innerHTML=css;
-			(document.head||document.documentElement).appendChild(v);
-			return v;
+			if(document.head) {
+				var v=document.createElement('style');
+				v.innerHTML=css;
+				document.head.appendChild(v);
+				return v;
+			}
 		}},
 		GM_log:{value:function(d){console.log(d);}},
-		GM_openInTab:{value:function(url){window.open(url);}},
+		GM_openInTab:{value:function(url){opera.extension.postMessage({topic:'NewTab',data:abspath(url)});}},
 		GM_registerMenuCommand:{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}},
 		GM_xmlhttpRequest:{value:function(details){
-			// convert url to absolute path
-			var a=document.createElement('a');
-			a.href=details.url;
-			details.url=a.href;
-			delete a;
+			details.url=abspath(details.url);
 			// synchronous mode not supported
 			var r=new Request(details);
 			return r.req;
@@ -292,7 +299,7 @@ function runCode(c){
 }
 function run(l){while(l.length) runCode(l.shift());}
 window.addEventListener('DOMContentLoaded',function(){
-	loaded=true;run(idle);run(end);
+	loaded=true;run(end);
 },false);
 function loadScript(data){
 	var l;
@@ -301,7 +308,6 @@ function loadScript(data){
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
 				case 'document-start': l=start;break;
-				case 'document-idle': l=idle;break;
 				default: l=end;
 			}
 			l.push(i);
@@ -309,6 +315,6 @@ function loadScript(data){
 	});
 	cache=data.cache;
 	values=data.values;
-	run(start);if(loaded) {run(idle);run(end);}
+	run(start);if(loaded) run(end);
 }
 if(!installCallback) opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
