@@ -665,7 +665,6 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 			HttpRequest:httpRequest,
 			AbortRequest:abortRequest,
 			SetValue:setValue,
-			NewTab:function(e,d){opera.extension.tabs.create({url:d}).focus();},
 		};
 if(parseInt(opera.version())<12)	// Check old version of Opera
 	opera.extension.tabs.create({url:'https://github.com/gera2ld/Violentmonkey-oex/wiki/Obsolete'});

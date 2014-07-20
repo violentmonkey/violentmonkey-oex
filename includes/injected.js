@@ -259,7 +259,10 @@ function wrapGM(c){
 			}
 		}},
 		GM_log:{value:function(d){console.log(d);}},
-		GM_openInTab:{value:function(url){opera.extension.postMessage({topic:'NewTab',data:abspath(url)});}},
+		GM_openInTab:{value:function(url){
+			var a=document.createElement('a');
+			a.href=url;a.target='_blank';a.click();
+		}},
 		GM_registerMenuCommand:{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}},
 		GM_xmlhttpRequest:{value:function(details){
 			details.url=abspath(details.url);
@@ -302,19 +305,21 @@ window.addEventListener('DOMContentLoaded',function(){
 	loaded=true;run(end);
 },false);
 function loadScript(data){
-	var l;
+	var l,idle=[];
+	cache=data.cache;
+	values=data.values;
 	data.scripts.forEach(function(i){
 		scr.push(i.id);
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
-				case 'document-start': l=start;break;
-				default: l=end;
+				case 'document-start':l=start;break;
+				case 'document-idle':l=idle;break;
+				default:l=end;
 			}
 			l.push(i);
 		}
 	});
-	cache=data.cache;
-	values=data.values;
+	end=end.concat(idle);
 	run(start);if(loaded) run(end);
 }
 if(!installCallback) opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
