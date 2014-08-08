@@ -42,9 +42,11 @@ function modifyItem(r){
 function loadItem(n,r){
 	var d=divs[n.id];if(!r) r={id:n.id};
 	d.innerHTML='<img class=icon>'
-	+'<a class="name ellipsis" target=_blank></a>'
-	+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
-	+'<span class=author></span>'
+	+'<div class=panelH>'
+		+'<a class="name ellipsis" target=_blank></a>'
+		+'<span class=version>'+(n.meta.version?'v'+n.meta.version:'')+'</span>'
+		+'<span class=author></span>'
+	+'</div>'
 	+'<div class=panelT>'
 		+'<span class=move data=move>&equiv;</span>'
 	+'</div>'
@@ -53,7 +55,7 @@ function loadItem(n,r){
 		+'<button data=edit>'+_('buttonEdit')+'</button> '
 		+'<button data=enable class=enable></button> '
 		+'<button data=remove>'+_('buttonRemove')+'</button> '
-		+(allowUpdate(n)?'<button data=update class=update>'+_('anchorUpdate')+'</button> ':'')
+		+(allowUpdate(n)?'<button data=update class=update>'+_('buttonUpdate')+'</button> ':'')
 		+'<span class=message></span>'
 	+'</div>';
 	modifyItem(r);

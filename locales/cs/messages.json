@@ -95,7 +95,7 @@
 		"message": "Nový",
 		"description": "Button to create a new script."
 	},
-	"anchorUpdateAll": {
+	"buttonUpdateAll": {
 		"message": "Zkontrolovat aktualizace",
 		"description": "Check all scripts for updates."
 	},
@@ -287,7 +287,7 @@
 		"message": "Odstranit",
 		"description": "Button to remove a script."
 	},
-	"anchorUpdate": {
+	"buttonUpdate": {
 		"message": "Zkontrolovat aktualizace",
 		"description": "Check a script for updates."
 	},
