@@ -323,6 +323,10 @@
 		"description": "Message shown after import. There is an argument referring to the count of scripts imported.",
 		"message": "$1 пункт(ов) импортировано."
 	},
+	"hintUseDownloadURL": {
+		"description": "Shown as a place holder for @updateURL when it is not assigned",
+		"message": "Use @downloadURL"
+	},
 	"labelSearch": {
 		"description": "Label for search input in search box.",
 		"message": "Найти для: "
