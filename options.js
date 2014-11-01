@@ -11,8 +11,7 @@ I.onclick=function(){
 		url:data.url,
 		from:data.from,
 		code:T.getValue(),
-		require:data.require,
-		resources:data.resources,
+		cache:data.cache,
 	},function(o){
 		showMsg(o.message);
 		if(o.status>=0&&C.checked) window.close();
@@ -49,7 +48,7 @@ initEditor(function(o){
 								if(b) {
 									var r=new FileReader();
 									r.onload=function(e){
-										d[u]=window.btoa(r.result);
+										d[u]=r.result;
 										next();
 									};
 									r.readAsBinaryString(this.response);
@@ -65,10 +64,9 @@ initEditor(function(o){
 				l=o.require.length+u.length;
 				if(l) {
 					showMsg(_('msgLoadingDependency',[i,l]));
-					data.require={};
-					loadDependency(data.require,o.require);
-					data.resources={};
-					loadDependency(data.resources,u,true);
+					data.cache={};
+					loadDependency(data.cache,o.require);
+					loadDependency(data.cache,u,true);
 				} else loaded();
 			} else error();
 		});

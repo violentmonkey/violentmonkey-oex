@@ -339,6 +339,12 @@ function fetchURL(url,cb,type,headers){
 	if(cb) req.onloadend=cb;
 	req.send();
 }
+function saveCache(url,data) {
+	db.transaction(function(t){
+		t.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)',[url,data],function(t,r){
+		},dbError);
+	});
+}
 var _cache={};
 function fetchCache(url){
 	if(_cache[url]) return;
@@ -347,11 +353,8 @@ function fetchCache(url){
 		if(this.status!=200) return;
 		var r=new FileReader();
 		r.onload=function(e){
-			db.transaction(function(t){
-				t.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)',[url,e.target.result],function(t,r){
-					delete _cache[url];
-				},dbError);
-			});
+			saveCache(url,e.target.result);
+			delete _cache[url];
 		};
 		r.readAsBinaryString(this.response);
 	},'blob');
@@ -399,8 +402,14 @@ function parseScript(d,callback){
 				r.id=c.id;finish();
 			});
 		});
-		meta.require.forEach(fetchCache);	// @require
-		for(i in meta.resources) fetchCache(meta.resources[i]);	// @resource
+		meta.require.forEach(function(u){	// @require
+			var c=d.cache&&d.cache[u];
+			if(c) saveCache(u,c); else fetchCache(u);
+		});
+		for(i in meta.resources) {	// @resource
+			var u=meta.resources[i],c=o.cache&&o.cache[u];
+			if(c) saveCache(u,c); else fetchCache(u);
+		}
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
 }
