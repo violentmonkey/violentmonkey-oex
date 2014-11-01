@@ -379,10 +379,9 @@ function queryScript(id,meta,callback){
 		queryId();
 	});
 }
-function parseScript(e,d,callback){
+function parseScript(d,callback){
 	function finish(){
-		if(e) e.source.postMessage({topic:'ShowMessage',data:r.message});
-		updateItem(r);if(callback) callback();
+		updateItem(r);if(callback) callback(r);
 	}
 	var i,r={status:0,message:'message' in d?d.message:_('msgUpdated')};
 	if(d.status&&d.status!=200||!d.code) {
@@ -394,7 +393,7 @@ function parseScript(e,d,callback){
 			if(!c.id){r.status=1;r.message=_('msgInstalled');}
 			if(d.more) for(i in d.more) if(i in c) c[i]=d.more[i];	// for import and user edit
 			c.meta=meta;c.code=d.code;c.uri=getNameURI(c);
-			if(e&&!c.meta.homepageURL&&!c.custom.homepageURL&&!/^(file|data):/.test(d.from)) c.custom.homepageURL=d.from;
+			if(!c.meta.homepageURL&&!c.custom.homepageURL&&!/^(file|data):/.test(d.from)) c.custom.homepageURL=d.from;
 			if(d.url&&!/^(file|data):/.test(d.url)) c.custom.lastInstallURL=d.url;
 			saveScript(c,function(){
 				r.id=c.id;finish();
@@ -405,12 +404,10 @@ function parseScript(e,d,callback){
 		if(meta.icon) fetchCache(meta.icon);	// @icon
 	}
 }
-function installScript(e,url){
-	if(!url)
-		e.source.postMessage({topic:'ConfirmInstall',data:_('msgConfirm')});
-	else fetchURL(url,function(){
-		parseScript(e,{status:this.status,code:this.responseText,url:url,from:e.origin});
-	});
+function installScript(e,data){
+	var s=[],i;
+	for(i in data) s.push(i+'='+encodeURIComponent(data[i]));
+	opera.extension.tabs.create({url:'/options.html?'+s.join('&')}).focus();
 }
 function move(s,d){
 	function update(o){
@@ -505,7 +502,7 @@ function checkUpdateO(o){
 		if(du) {
 			r.message=_('msgUpdating');
 			fetchURL(du,function(){
-				parseScript(null,{id:o.id,status:this.status,code:this.responseText});
+				parseScript({id:o.id,status:this.status,code:this.responseText});
 			});
 		} else r.message='<span class=new>'+_('msgNewVersion')+'</span>';
 		updateItem(r);finish();
@@ -619,6 +616,7 @@ function initSettings(){
 	getOption('lastUpdate',0);
 	getOption('showButton',true);
 	getOption('withData',true);
+	getOption('closeAfterInstall',false);
 	getOption('search',_('defaultSearch'));
 }
 function showButton(show){
@@ -660,7 +658,6 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 		maps={
 			GetInjected:getInjected,
 			InstallScript:installScript,
-			ParseScript:parseScript,
 			GetRequestId:getRequestId,
 			HttpRequest:httpRequest,
 			AbortRequest:abortRequest,

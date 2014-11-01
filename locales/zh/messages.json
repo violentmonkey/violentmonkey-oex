@@ -23,10 +23,6 @@
 		"description": "Message shown when a script is installed.",
 		"message": "脚本已安装。"
 	},
-	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "确定安装此脚本？"
-	},
 	"msgUpdating": {
 		"description": "Message shown when a new version of script is being fetched.",
 		"message": "正在更新..."
@@ -274,6 +270,42 @@
 	"buttonClose": {
 		"description": "Button to close window.",
 		"message": "关闭"
+	},
+	"labelInstall": {
+		"description": "Shown in the title of the confirm page while trying to install a script.",
+		"message": "安装脚本"
+	},
+	"optionClose": {
+		"description": "Option to close confirm window after installation.",
+		"message": "安装完成后关闭"
+	},
+	"buttonConfirmInstallation": {
+		"description": "Button to confirm installation of a script.",
+		"message": "确认安装"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "脚本URL：$1"
+	},
+	"msgErrorLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
+		"message": "加载脚本数据发生错误。"
+	},
+	"msgLoadedData": {
+		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
+		"message": "脚本数据已加载。"
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "正在加载脚本数据..."
+	},
+	"msgErrorLoadingDependency": {
+		"description": "Message shown when not all requirements are loaded successfully.",
+		"message": "加载脚本依赖发生错误。"
+	},
+	"msgLoadingDependency": {
+		"description": "Message shown on confirm page when the requirements are being downloaded.",
+		"message": "正在加载脚本依赖...（$1/$2）"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",

@@ -1,3 +1,21 @@
+if(document.contentType!='text/html'&&/\.user\.js$/i.test(window.location.href)){
+
+// For UserScripts installation
+function installScript(){
+	// check if this is a userscript
+	if(!/^\/\//.test(document.body.innerText)) return;
+	var data={
+		url:window.location.href,
+		from:document.referrer,
+	};
+	opera.extension.postMessage({topic:'InstallScript',data:data});
+	window.history.go(-1);
+}
+if(document.readyState!='complete') window.addEventListener('load',installScript,false);
+else installScript();
+
+} else {
+
 /**
 * http://www.webtoolkit.info/javascript-utf8.html
 */
@@ -34,22 +52,8 @@ opera.extension.onmessage = function(e) {
 		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
-	} else if(message.topic=='ConfirmInstall') {
-		if(message.data&&confirm(message.data)&&installCallback) installCallback();
 	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
-	else if(message.topic=='ShowMessage') showMessage(message.data);
 };
-function showMessage(data){
-	var d=document.createElement('div');
-	d.style='position:fixed;border-radius:5px;background:orange;padding:20px;z-index:9999;box-shadow:5px 10px 15px rgba(0,0,0,0.4);transition:opacity 1s linear;opacity:0;text-align:left;';
-	document.body.appendChild(d);d.innerHTML=data;
-	d.style.top=(window.innerHeight-d.offsetHeight)/2+'px';
-	d.style.left=(window.innerWidth-d.offsetWidth)/2+'px';
-	function close(){document.body.removeChild(d);delete d;}
-	d.onclick=close;	// close immediately
-	setTimeout(function(){d.style.opacity=1;},1);	// fade in
-	setTimeout(function(){d.style.opacity=0;setTimeout(close,1000);},3000);	// fade out
-}
 function Request(details){
 	this.callback=function(d){
 		var c=details['on'+d.type];
@@ -109,31 +113,6 @@ function Request(details){
 	qrequests.push(this);
 	opera.extension.postMessage({topic:'GetRequestId'});
 };
-
-// For UserScripts installation
-var installCallback=null;
-if((function(){
-	var m=window.location.href.match(/(\.user\.js)$/);
-	function install(){
-		if(document&&document.body&&!document.querySelector('title')) {	// plain text
-			installCallback=function(){opera.extension.postMessage({topic:'ParseScript',data:{code:document.body.innerText,from:document.referrer}});};
-			opera.extension.postMessage({topic:'InstallScript'});
-		}
-	}
-	if(m){
-		if(document.readyState!='complete') window.addEventListener('load',install,false);
-		else install();
-	}else return true;
-})()&&[
-	'greasyfork.org','userscripts.org','j.mozest.com','userscripts.org:8080'
-].indexOf(window.location.host)>=0) window.addEventListener('click',function(e){
-	var o=e.target;while(o&&o.tagName!='A') o=o.parentNode;
-	if(o&&/\.user\.js$/.test(o.href)) {
-		e.preventDefault();
-		installCallback=function(){opera.extension.postMessage({topic:'InstallScript',data:o.href});};
-		opera.extension.postMessage({topic:'InstallScript'});
-	}
-},false);
 
 // For injected scripts
 var start=[],end=[],cache,values,requires={},
@@ -322,4 +301,6 @@ function loadScript(data){
 	end=end.concat(idle);
 	run(start);if(loaded) run(end);
 }
-if(!installCallback) opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
+opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
+
+}

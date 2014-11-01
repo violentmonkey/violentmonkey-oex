@@ -23,10 +23,6 @@
 		"description": "Message shown when a script is installed.",
 		"message": "Script installed."
 	},
-	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "Do you want to install this script?"
-	},
 	"msgUpdating": {
 		"description": "Message shown when a new version of script is being fetched.",
 		"message": "Updating..."
@@ -274,6 +270,42 @@
 	"buttonClose": {
 		"description": "Button to close window.",
 		"message": "Close"
+	},
+	"labelInstall": {
+		"description": "Shown in the title of the confirm page while trying to install a script.",
+		"message": "Installing script"
+	},
+	"optionClose": {
+		"description": "Option to close confirm window after installation.",
+		"message": "Close after installation"
+	},
+	"buttonConfirmInstallation": {
+		"description": "Button to confirm installation of a script.",
+		"message": "Confirm installation"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "Script URL: $1"
+	},
+	"msgErrorLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
+		"message": "Error loading script data."
+	},
+	"msgLoadedData": {
+		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
+		"message": "Script data loaded."
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "Loading script data..."
+	},
+	"msgErrorLoadingDependency": {
+		"description": "Message shown when not all requirements are loaded successfully.",
+		"message": "Error loading dependencies."
+	},
+	"msgLoadingDependency": {
+		"description": "Message shown on confirm page when the requirements are being downloaded.",
+		"message": "Loading dependencies... ($1/$2)"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",

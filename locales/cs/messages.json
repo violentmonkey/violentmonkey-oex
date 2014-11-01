@@ -23,10 +23,6 @@
 		"description": "Message shown when a script is installed.",
 		"message": "Skript nainstalován."
 	},
-	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "Chcete nainstalovat tento UserScript?"
-	},
 	"msgUpdating": {
 		"description": "Message shown when a new version of script is being fetched.",
 		"message": "Aktualizuji..."
@@ -274,6 +270,42 @@
 	"buttonClose": {
 		"description": "Button to close window.",
 		"message": "Zavřít"
+	},
+	"labelInstall": {
+		"description": "Shown in the title of the confirm page while trying to install a script.",
+		"message": "Instaluji skript"
+	},
+	"optionClose": {
+		"description": "Option to close confirm window after installation.",
+		"message": "Close po instalaci"
+	},
+	"buttonConfirmInstallation": {
+		"description": "Button to confirm installation of a script.",
+		"message": "Potvrdit instalaci"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "Skript URL: $1"
+	},
+	"msgErrorLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
+		"message": "Chyba při načítání skript."
+	},
+	"msgLoadedData": {
+		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
+		"message": "Skript načten."
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "Nahrávám skript..."
+	},
+	"msgErrorLoadingDependency": {
+		"description": "Message shown when not all requirements are loaded successfully.",
+		"message": "Chyba při načítání požadavky."
+	},
+	"msgLoadingDependency": {
+		"description": "Message shown on confirm page when the requirements are being downloaded.",
+		"message": "Vkládání požadavky... ($1/$2)"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",

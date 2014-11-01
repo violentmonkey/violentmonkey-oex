@@ -1,6 +1,6 @@
 a{color:dodgerblue;}
 textarea,input[type=text]{box-sizing:border-box;width:100%;}
-.main{max-width:900px;height:100%;margin:0 auto;}
+#main{max-width:900px;height:100%;margin:0 auto;}
 .sidebar{position:fixed;background:#fafafa;width:200px;margin-top:30px;box-sizing:border-box;border:1px solid darkgray;border-radius:10px 0 0 10px;border-right:none;padding:20px 10px 10px;text-align:right;}
 .sidebar img{width:64px;}
 .sidebar>hr{border:none;border-top:1px solid darkgray;}

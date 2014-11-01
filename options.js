@@ -1,5 +1,84 @@
-var L=$('#sList'),cache,divs={},cur=null,C=$('.content');
 initI18n();
+if(location.search) {	// confirm install
+
+$('#wndInstall').classList.remove('hide');
+var M=$('#msg'),I=$('#bInstall'),U=$('#url'),B=$('#bClose'),C=$('#cClose'),data={},T;
+function showMsg(m,t){M.innerHTML=m;M.setAttribute('title',t||m);}
+B.onclick=function(){window.close();};
+C.onchange=function(){bg.setOption('closeAfterInstall',C.checked);};
+I.onclick=function(){
+	bg.parseScript({
+		url:data.url,
+		from:data.from,
+		code:T.getValue(),
+		require:data.require,
+		resources:data.resources,
+	},function(o){
+		showMsg(o.message);
+		if(o.status>=0&&C.checked) window.close();
+	});
+	I.disabled=true;
+};
+C.checked=bg.settings.closeAfterInstall;
+initEditor(function(o){
+	T=o;o=location.search.slice(1);
+	o.split('&').forEach(function(i){
+		i.replace(/^([^=]*)=(.*)$/,function(r,g1,g2){data[g1]=decodeURIComponent(g2);});
+	});
+	U.innerHTML=_('msgScriptURL',[data.url||'-']);
+	function error(){showMsg(_('msgErrorLoadingData'));}
+	function loaded(){showMsg(_('msgLoadedData'));I.disabled=false;}
+	if(data.url) {
+		U.setAttribute('title',data.url);
+		showMsg(_('msgLoadingData'));
+		bg.fetchURL(data.url,function(){
+			if((!this.status||this.status==200)&&this.responseText) {
+				T.setValueAndFocus(this.responseText);
+				var o=bg.parseMeta(this.responseText);
+				function next() {
+					i++;
+					if(i>=l) {
+						if(err.length) showMsg(_('msgErrorLoadingDependency'),err.join('\n'));
+						else loaded();
+					} else showMsg(_('msgLoadingDependency',[i,l]));
+				}
+				function loadDependency(d,r,b) {
+					r.forEach(function(u){
+						bg.fetchURL(u,function(){
+							if(this.status==200) {
+								if(b) {
+									var r=new FileReader();
+									r.onload=function(e){
+										d[u]=window.btoa(r.result);
+										next();
+									};
+									r.readAsBinaryString(this.response);
+									return;
+								} else d[u]=this.responseText;
+							} else err.push(u);
+							next();
+						},b?'blob':null);
+					});
+				}
+				var i=0,l,err=[],u=[];
+				for(l in o.resources) u.push(o.resources[l]);
+				l=o.require.length+u.length;
+				if(l) {
+					showMsg(_('msgLoadingDependency',[i,l]));
+					data.require={};
+					loadDependency(data.require,o.require);
+					data.resources={};
+					loadDependency(data.resources,u,true);
+				} else loaded();
+			} else error();
+		});
+	} else error();
+},{exit:B.onclick,readonly:true,dom:$('#cCode')});
+
+} else {	// options page
+
+$('#main').classList.remove('hide');
+var L=$('#sList'),cache,divs={},cur=null,C=$('.content');
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
 function getName(d,n,def){
 	d.title=n||'';
@@ -188,7 +267,7 @@ function impo(b){
 			if(vm.scripts&&(v=vm.scripts[o.name.slice(0,-8)])) {
 				delete v.id;c.more=v;
 			}
-			bg.parseScript(null,c);
+			bg.parseScript(c);
 			count++;
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
@@ -285,13 +364,10 @@ function mReset(){
 	}
 	cI.checked=c._include!=false;
 	mI.value=(c.include||e).join('\n');
-	mI.placeholder=m.include.join('\n');
 	cM.checked=c._match!=false;
 	mM.value=(c.match||e).join('\n');
-	mM.placeholder=m.match.join('\n');
 	cE.checked=c._exclude!=false;
 	mE.value=(c.exclude||e).join('\n');
-	mE.placeholder=m.exclude.join('\n');
 }
 function edit(o){
 	E.classList.remove('hide');
@@ -320,7 +396,7 @@ function eSave(){
 		c._exclude=cE.checked;
 		c.exclude=split(mE.value);
 	}
-	bg.parseScript(null,{
+	bg.parseScript({
 		id:E.scr.id,
 		code:T.getValue(),
 		message:'',
@@ -343,7 +419,9 @@ $('#bCustom').onclick=function(){
 eS.onclick=eSave;
 eSC.onclick=function(){eSave();eClose();};
 E.close=$('#eClose').onclick=function(){if(confirmCancel(!eS.disabled)) eClose();};
-initEditor(function(o){T=o;},{save:eSave,exit:E.close,onchange:E.markDirty});
+initEditor(function(o){T=o;},{
+	save:eSave,exit:E.close,onchange:E.markDirty,dom:$('#eCode'),
+});
 // double click to fill with default value
 function mDefault(e){
 	e=e.target;
@@ -368,3 +446,5 @@ function updateItem(r){
 	}
 }
 bg._updateItem.push(updateItem);
+
+}

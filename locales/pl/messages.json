@@ -23,10 +23,6 @@
 		"description": "Message shown when a script is installed.",
 		"message": "Skrypt zainstalowany"
 	},
-	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "Czy chcesz zainstalować ten skrypt?"
-	},
 	"msgUpdating": {
 		"description": "Message shown when a new version of script is being fetched.",
 		"message": "Aktualizowanie skryptu..."
@@ -274,6 +270,42 @@
 	"buttonClose": {
 		"description": "Button to close window.",
 		"message": "Zamknij edytor"
+	},
+	"labelInstall": {
+		"description": "Shown in the title of the confirm page while trying to install a script.",
+		"message": "Instalator skryptu"
+	},
+	"optionClose": {
+		"description": "Option to close confirm window after installation.",
+		"message": "Zamknij instalator tego skryptu po zakończeniu instalacji skryptu"
+	},
+	"buttonConfirmInstallation": {
+		"description": "Button to confirm installation of a script.",
+		"message": "Potwierdź instalację skryptu"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "Adres URL skryptu: $1"
+	},
+	"msgErrorLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
+		"message": "Błąd wczytywania skryptu."
+	},
+	"msgLoadedData": {
+		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
+		"message": "Skrypt wczytany."
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "Wczytywanie skryptu..."
+	},
+	"msgErrorLoadingDependency": {
+		"description": "Message shown when not all requirements are loaded successfully.",
+		"message": "Błąd podczas wczytywania wymagań."
+	},
+	"msgLoadingDependency": {
+		"description": "Message shown on confirm page when the requirements are being downloaded.",
+		"message": "Wczytywanie wymagań... ($1/$2)"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",

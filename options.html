@@ -10,7 +10,7 @@
 		<title data-i18n=extName></title>
 	</head>
 	<body>
-		<div class=main>
+		<div id=main class=hide>
 			<div class=sidebar>
 				<img src=images/icon64.png>
 				<h2 data-i18n=extName></h2>
@@ -135,6 +135,18 @@
 					<button id=eClose data-i18n=buttonClose></button>
 				</td>
 			</tr>
+		</table>
+		<table id=wndInstall class="frame hide">
+			<tr>
+				<td><h1><span data-i18n=labelInstall></span> - <span data-i18n=extName></span></h1></td>
+				<td class="right bottom">
+					<input type=checkbox id=cClose><label for=cClose data-i18n=optionClose></label>
+					<button id=bInstall disabled=disabled data-i18n=buttonConfirmInstallation></button>
+					<button id=bClose data-i18n=buttonClose></button>
+				</td>
+			</tr>
+			<tr><td id=url class=ellipsis></td><td id=msg class="ellipsis right">&nbsp;</td></tr>
+			<tr class=expand><td colspan=2 class=expandr><div id=cCode class=expanda></div></td></tr>
 		</table>
 	</body>
 </html>

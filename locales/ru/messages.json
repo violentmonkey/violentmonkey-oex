@@ -23,10 +23,6 @@
 		"description": "Message shown when a script is installed.",
 		"message": "Скрипт установлен."
 	},
-	"msgConfirm": {
-		"description": "Message shown before installing a script.",
-		"message": "Вы хотите установить этот UserScript?"
-	},
 	"msgUpdating": {
 		"description": "Message shown when a new version of script is being fetched.",
 		"message": "Обновление..."
@@ -274,6 +270,42 @@
 	"buttonClose": {
 		"description": "Button to close window.",
 		"message": "Закрыть"
+	},
+	"labelInstall": {
+		"description": "Shown in the title of the confirm page while trying to install a script.",
+		"message": "Установка скрипта"
+	},
+	"optionClose": {
+		"description": "Option to close confirm window after installation.",
+		"message": "Закрыть после установки"
+	},
+	"buttonConfirmInstallation": {
+		"description": "Button to confirm installation of a script.",
+		"message": "Установить"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "URL-адрес скрипта: $1"
+	},
+	"msgErrorLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
+		"message": "Ошибка загрузки скрипта."
+	},
+	"msgLoadedData": {
+		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
+		"message": "Скрипт загружен."
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "Загружается скрипт..."
+	},
+	"msgErrorLoadingDependency": {
+		"description": "Message shown when not all requirements are loaded successfully.",
+		"message": "Ошибка загрузки требований."
+	},
+	"msgLoadingDependency": {
+		"description": "Message shown on confirm page when the requirements are being downloaded.",
+		"message": "Загрузка требований... ($1/$2)"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",
