@@ -43,10 +43,6 @@
 		"description": "Message shown when there is no new version of a script.",
 		"message": "Обновления не найдены."
 	},
-	"defaultSearch": {
-		"description": "URL for searching scripts, * stands for the keywords.",
-		"message": "http://www.google.com/search?q=*"
-	},
 	"labelNoName": {
 		"description": "Text as the name of a script when no @name is assigned.",
 		"message": "Null name"
@@ -114,14 +110,6 @@
 	"labelAutoUpdate": {
 		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
 		"message": "Ежедневно проверять обновления скриптов"
-	},
-	"labelSearchLink": {
-		"description": "Label of URL for searching scripts for a site.",
-		"message": "Поисковый адрес: "
-	},
-	"buttonDefault": {
-		"description": "Button to replace search URL with the default one.",
-		"message": "По умолчанию"
 	},
 	"labelDataImport": {
 		"description": "Section title of data import.",
@@ -330,10 +318,6 @@
 	"confirmNotSaved": {
 		"description": "Confirm message shown when there are unsaved script modifications.",
 		"message": "Изменения не сохранены!\nНажмите OK, чтобы выйти или Отмена, чтобы вернуться."
-	},
-	"hintSearchLink": {
-		"description": "Hint for the search URL.",
-		"message": "Поисковый адрес должен включать *, где * - ключевые слова генерируемые Violentmonkey"
 	},
 	"buttonVacuuming": {
 		"description": "Message shown when data vacuum is in progress.",

@@ -43,10 +43,6 @@
 		"description": "Message shown when there is no new version of a script.",
 		"message": "Brak aktualizacji dla tego skryptu."
 	},
-	"defaultSearch": {
-		"description": "URL for searching scripts, * stands for the keywords.",
-		"message": "http://www.google.com/search?q=*"
-	},
 	"labelNoName": {
 		"description": "Text as the name of a script when no @name is assigned.",
 		"message": "Bez nazwy"
@@ -114,14 +110,6 @@
 	"labelAutoUpdate": {
 		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
 		"message": "Automatycznie sprawdzaj aktualizacje dla skryptów każdego dnia"
-	},
-	"labelSearchLink": {
-		"description": "Label of URL for searching scripts for a site.",
-		"message": "Adres wyszukiwarki:"
-	},
-	"buttonDefault": {
-		"description": "Button to replace search URL with the default one.",
-		"message": "Domyślne"
 	},
 	"labelDataImport": {
 		"description": "Section title of data import.",
@@ -330,10 +318,6 @@
 	"confirmNotSaved": {
 		"description": "Confirm message shown when there are unsaved script modifications.",
 		"message": "Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij \"OK\", aby wyjść lub \"Anuluj\", aby pozostać."
-	},
-	"hintSearchLink": {
-		"description": "Hint for the search URL.",
-		"message": "Adres wyszukiwarki musi zawierać *. *, co oznacza słowa kluczowe generowane przez Violentmonkey."
 	},
 	"buttonVacuuming": {
 		"description": "Message shown when data vacuum is in progress.",

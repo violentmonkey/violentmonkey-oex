@@ -626,7 +626,6 @@ function initSettings(){
 	getOption('showButton',true);
 	getOption('withData',true);
 	getOption('closeAfterInstall',false);
-	getOption('search',_('defaultSearch'));
 }
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);
