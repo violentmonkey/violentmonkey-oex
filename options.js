@@ -229,15 +229,11 @@ function confirmCancel(dirty){
 }
 
 // Advanced
-var H=$('#iImport'),S=$('#tSearch'),V=$('#bVacuum');
+var H=$('#iImport'),V=$('#bVacuum');
 $('#cShow').checked=bg.settings.showButton;
 $('#cShow').onchange=function(){bg.showButton(bg.setOption('showButton',this.checked));};
 $('#cUpdate').checked=bg.settings.autoUpdate;
 $('#cUpdate').onchange=function(){if(bg.setOption('autoUpdate',this.checked)) bg.autoCheck();};
-S.value=bg.settings.search;
-S.title=_('hintSearchLink');
-S.onchange=function(){bg.setOption('search',S.value);};
-$('#bDefSearch').onclick=function(){S.value=_('defaultSearch');S.onchange();};
 $('#aImport').onchange=function(e){
 	var i,f,files=e.target.files;
 	for(i=0;f=files[i];i++) {

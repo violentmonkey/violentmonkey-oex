@@ -39,13 +39,11 @@ function initMenu(){
 	addItem(_('menuManageScripts'),{holder:pT,symbol:'➤',onclick:function(){
 		bg.opera.extension.tabs.create({url:'/options.html'}).focus();
 	}});
-  /*if(/^https?:\/\//i.test(tab.url))
+  if(/^https?:\/\//i.test(tab.url))
 		addItem(_('menuFindScripts'),{holder:pT,symbol:'➤',onclick:function(){
-			var q='site:userscripts.org+inurl:show+'+tab.url.replace(/^.*?:\/\/([^\/]*?)\.\w+\/.*$/,function(v,g){
-				return g.replace(/\.(com|..)$/,'').replace(/\./g,'+');
-			}),url=bg.settings.search.replace('*',q);
-			bg.opera.extension.tabs.create({url:url}).focus();
-		}});*/
+			var h=tab.url.match(/:\/\/(?:www\.)?([^\/]*)/);
+			bg.opera.extension.tabs.create({url:'https://greasyfork.org/scripts/search?q='+h[1]}).focus();
+		}});
 	ia=addItem(_('menuScriptEnabled'),{holder:pT,data:bg.settings.isApplied,onclick:function(e){
 		loadItem(this,bg.setOption('isApplied',!bg.settings.isApplied));bg.updateIcon();
 	}});
