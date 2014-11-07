@@ -399,7 +399,9 @@ function parseScript(d,callback){
 			if(!c.meta.homepageURL&&!c.custom.homepageURL&&!/^(file|data):/.test(d.from)) c.custom.homepageURL=d.from;
 			if(d.url&&!/^(file|data):/.test(d.url)) c.custom.lastInstallURL=d.url;
 			saveScript(c,function(){
-				r.id=c.id;finish();
+				r.id=c.id;
+				if(!meta.grant.length) r.warnGrant=meta.name;
+				finish();
 			});
 		});
 		meta.require.forEach(function(u){	// @require

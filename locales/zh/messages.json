@@ -271,6 +271,14 @@
 		"description": "Button to confirm installation of a script.",
 		"message": "确认安装"
 	},
+	"Warning": {
+		"description": "Show warnings with a notification.",
+		"message": "警告"
+	},
+	"msgWarnGrant": {
+		"description": "Message shown when `@grant` is not found in a script.",
+		"message": "脚本【$1】没有`@grant`行！点击查看更多信息。"
+	},
 	"msgScriptURL": {
 		"description": "URL of the script to be installed on confirm page.",
 		"message": "脚本URL：$1"

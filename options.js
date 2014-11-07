@@ -1,4 +1,22 @@
+function warnGrant(name) {
+	function close() {
+		n.classList.remove('show');
+		setTimeout(function(){n.classList.add('hide');},1000);
+	}
+	var n=$('#notify'),m=n.querySelector('.message');
+	n.classList.remove('hide');
+	m.innerHTML=_('msgWarnGrant',[name||_('labelNoName')]);
+	m.onclick=function(){
+		bg.opera.extension.tabs.create({url:'http://wiki.greasespot.net/@grant'}).focus();
+		close();
+	};
+	n.querySelector('.close').onclick=function(e){
+		e.preventDefault();close();
+	};
+	setTimeout(function(){n.classList.add('show');},100);
+}
 initI18n();
+
 if(location.search) {	// confirm install
 
 $('#wndInstall').classList.remove('hide');
@@ -14,7 +32,8 @@ I.onclick=function(){
 		cache:data.cache,
 	},function(o){
 		showMsg(o.message);
-		if(o.status>=0&&C.checked) window.close();
+		if(o.warnGrant) warnGrant(o.warnGrant);
+		else if(o.status>=0&&C.checked) window.close();
 	});
 	I.disabled=true;
 };
@@ -252,7 +271,7 @@ V.title=_('hintVacuum');
 function impo(b){
 	var z=new JSZip();
 	try{z.load(b);}catch(e){alert(_('msgErrorZip'));return;}
-	var vm=z.file('ViolentMonkey'),count=0;
+	var vm=z.file('ViolentMonkey'),count=0,warn=[];
 	if(vm) try{vm=JSON.parse(vm.asText());}catch(e){vm={};opera.postError('Error parsing ViolentMonkey configuration.');}
 	z.file(/\.user\.js$/).forEach(function(o){
 		if(o.dir) return;
@@ -261,7 +280,9 @@ function impo(b){
 			if(vm.scripts&&(v=vm.scripts[o.name.slice(0,-8)])) {
 				delete v.id;c.more=v;
 			}
-			bg.parseScript(c);
+			bg.parseScript(c,function(r){
+				if(r.warnGrant) warn.push(r.warnGrant);
+			});
 			count++;
 		}catch(e){opera.postError('Error importing data: '+o.name+'\n'+e);}
 	});
@@ -398,6 +419,8 @@ function eSave(){
 			custom:E.scr.custom,
 			update:U.checked
 		}
+	},function(r){
+		if(r.warnGrant) warnGrant(r.warnGrant);
 	});
 	markClean();
 }

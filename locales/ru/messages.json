@@ -271,6 +271,14 @@
 		"description": "Button to confirm installation of a script.",
 		"message": "Установить"
 	},
+	"Warning": {
+		"description": "Show warnings with a notification.",
+		"message": "Warning"
+	},
+	"msgWarnGrant": {
+		"description": "Message shown when `@grant` is not found in a script.",
+		"message": "Script [$1] has no `@grant` lines! Click to see more details."
+	},
 	"msgScriptURL": {
 		"description": "URL of the script to be installed on confirm page.",
 		"message": "URL-адрес скрипта: $1"
