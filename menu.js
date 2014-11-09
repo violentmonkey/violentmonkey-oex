@@ -29,10 +29,11 @@ function addItem(h,c,b){
 function menuCommand(e){e=e.target;tab.postMessage({topic:'Command',data:e.cmd});}
 function menuScript(s) {
 	if(s) {
-		var n=s.meta.name?s.meta.name.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>',
-				d=addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
-					bg.enableScript(s.id,!s.enabled,function(){loadItem(d,s.enabled);});
-				}});
+		var n=s.custom.name||getLocaleString(s.meta,'name'),d;
+		n=n?n.replace(/&/g,'&amp;').replace(/</g,'&lt;'):'<em>'+_('labelNoName')+'</em>';
+		d=addItem(n,{holder:pB,data:s.enabled,title:s.meta.name,onclick:function(e){
+			bg.enableScript(s.id,!s.enabled,function(){loadItem(d,s.enabled);});
+		}});
 	}
 }
 function initMenu(){
