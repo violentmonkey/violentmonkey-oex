@@ -3,7 +3,7 @@ if(document.contentType!='text/html'&&/\.user\.js$/i.test(window.location.href))
 // For UserScripts installation
 function installScript(){
 	// check if this is a userscript
-	if(!/^\/\//.test(document.body.innerText)) return;
+	if(/^\s*</.test(document.body.innerText)) return;
 	var data={
 		url:window.location.href,
 		from:document.referrer,
@@ -264,6 +264,7 @@ function runCode(c){
 		if(r) cc.push(r);
 	});
 	cc.push(c.code);
+	cc.push('');	// ensure ending with an eol
 
 	//code.push('with(this)eval('+JSON.stringify(cc.join('\n'))+');');	// eval without wrap
 	//code.push('with(this)(function(){'+cc.join('\n')+'}).call(window);');	// wrap without eval, Presto-specific errors occur
