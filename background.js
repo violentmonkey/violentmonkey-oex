@@ -157,8 +157,10 @@ function matchTest(s,u){
 	var m=s.match(match_reg);
 	if(!m) return false;
 	// scheme
-	if(m[1]=='*') {if(u[1]!='http'&&u[1]!='https') return false;}	// * = http|https
-	else if(m[1]!=u[1]) return false;
+	if(!(
+		m[1]=='*'&&/^https?$/i.test(u[1])	// * = http|https
+		||m[1]==u[1]
+	)) return false;
 	// host
 	if(m[2]!='*') {
 		if(m[2].slice(0,2)=='*.') {
@@ -223,9 +225,13 @@ function initScripts(callback){
 		});
 	});
 }
+function isRemote(url){
+	return url&&!/^data:/.test(url);
+}
 function getData(callback){
 	var i,cache={};
-	for(i in metas) if(metas[i].meta.icon) cache[metas[i].meta.icon]=1;
+	for(i in metas)
+		if(isRemote(metas[i].meta.icon)) cache[metas[i].meta.icon]=1;
 	getCache(Object.getOwnPropertyNames(cache),function(o){
 		for(i in o) o[i]='data:image/png;base64,'+window.btoa(o[i]);
 		if(callback) callback(o);
@@ -282,7 +288,7 @@ function getInjected(e,url){
 	var data={isApplied:settings.isApplied},cache={},values={};
 	url=url||e.origin;	// to recognize URLs like data:...
 	function finish(){e.source.postMessage({topic:'GotInjected',data:data});}
-	if(url.slice(0,5)!='data:') {
+	if(isRemote(url)) {
 		getScripts(
 			ids.filter(function(i){
 				var j,s=metas[i];
@@ -412,7 +418,7 @@ function parseScript(d,callback){
 			var u=meta.resources[i],c=o.cache&&o.cache[u];
 			if(c) saveCache(u,c); else fetchCache(u);
 		}
-		if(meta.icon) fetchCache(meta.icon);	// @icon
+		if(isRemote(meta.icon)) fetchCache(meta.icon);	// @icon
 	}
 }
 function installScript(e,data){
@@ -460,7 +466,7 @@ function vacuum(callback){
 		for(i=0;i<ids.length;i++) {
 			o=metas[ids[i]];
 			values[o.uri]=1;
-			if(o.meta.icon) cache[o.meta.icon]=1;
+			if(isRemote(o.meta.icon)) cache[o.meta.icon]=1;
 			if(o.meta.require) o.meta.require.forEach(function(i){cache[i]=1;});
 			for(j in o.meta.resources) cache[o.meta.resources[j]]=1;
 			if(o.position!=i+1) s.push([i+1,o.id]);
