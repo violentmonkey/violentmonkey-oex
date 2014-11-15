@@ -60,22 +60,22 @@ initEditor(function(o){
 						else loaded();
 					} else showMsg(_('msgLoadingDependency',[i,l]));
 				}
-				function loadDependency(d,r,b) {
+				function loadDependency(d,r) {
+					// regard both requirements and resources as binary
+					// to be consistent with background.js
 					r.forEach(function(u){
 						bg.fetchURL(u,function(){
 							if(this.status==200) {
-								if(b) {
-									var r=new FileReader();
-									r.onload=function(e){
-										d[u]=r.result;
-										next();
-									};
-									r.readAsBinaryString(this.response);
-									return;
-								} else d[u]=this.responseText;
+								var r=new FileReader();
+								r.onload=function(e){
+									d[u]=r.result;
+									next();
+								};
+								r.readAsBinaryString(this.response);
+								return;
 							} else err.push(u);
 							next();
-						},b?'blob':null);
+						},'blob');
 					});
 				}
 				var i=0,l,err=[],u=[];
@@ -85,7 +85,7 @@ initEditor(function(o){
 					showMsg(_('msgLoadingDependency',[i,l]));
 					data.cache={};
 					loadDependency(data.cache,o.require);
-					loadDependency(data.cache,u,true);
+					loadDependency(data.cache,u);
 				} else loaded();
 			} else error();
 		});
