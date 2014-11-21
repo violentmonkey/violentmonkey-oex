@@ -248,9 +248,18 @@ function confirmCancel(dirty){
 }
 
 // Advanced
-var H=$('#iImport'),V=$('#bVacuum');
-$('#cShow').checked=bg.settings.showButton;
-$('#cShow').onchange=function(){bg.showButton(bg.setOption('showButton',this.checked));};
+var H=$('#iImport'),V=$('#bVacuum'),cB=$('#cButton'),cN=$('#cButtonAsNeeded'),cA=$('#cBadge');
+function updateSuboptions(e){
+	var b=e.parentNode.nextElementSibling.querySelectorAll('input');
+	Array.prototype.forEach.call(b,function(i){i.disabled=!e.checked;});
+}
+cB.checked=bg.settings.showButton;
+cB.onchange=function(){bg.showButton(bg.setOption('showButton',this.checked));updateSuboptions(this);};
+updateSuboptions(cB);
+cN.checked=bg.settings.showButtonAsNeeded;
+cN.onchange=function(){bg.setOption('showButtonAsNeeded',this.checked);};
+cA.checked=bg.settings.showBadge;
+cA.onchange=function(){bg.setOption('showBadge',this.checked);bg.showBadge();};
 $('#cUpdate').checked=bg.settings.autoUpdate;
 $('#cUpdate').onchange=function(){if(bg.setOption('autoUpdate',this.checked)) bg.autoCheck();};
 $('#aImport').onchange=function(e){

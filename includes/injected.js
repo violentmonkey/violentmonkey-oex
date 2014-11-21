@@ -48,8 +48,8 @@ opera.extension.onmessage = function(e) {
 	else if(message.topic=='HttpRequested') {
 		c=requests[message.data.id];
 		if(c) c.callback(message.data);
-	} else if(message.topic=='GetPopup')
-		opera.extension.postMessage({topic:'GotPopup',data:[menu,scr]});
+	} else if(message.topic=='GetTabData')
+		opera.extension.postMessage({topic:'GotTabData',data:[menu,scr]});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
 	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
@@ -301,6 +301,7 @@ function loadScript(data){
 	});
 	end=end.concat(idle);
 	run(start);if(loaded) run(end);
+	opera.extension.postMessage({topic:'GetTabData'});
 }
 opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
 

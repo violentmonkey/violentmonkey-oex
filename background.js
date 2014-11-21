@@ -632,6 +632,8 @@ function initSettings(){
 	getOption('autoUpdate',true);
 	getOption('lastUpdate',0);
 	getOption('showButton',true);
+	getOption('showBadge',true);
+	getOption('showButtonAsNeeded',false);
 	getOption('withData',true);
 	getOption('closeAfterInstall',false);
 }
@@ -655,13 +657,19 @@ function initIcon(){
 		popup:{
 			href:"menu.html",
 			width:222,
-			height:100
-		}
+			height:100,
+		},
+		badge:{
+			backgroundColor:'#808',
+			color:'white',
+			display:'none',
+		},
 	});
 	updateIcon();
 	showButton(settings.showButton);
 }
-function autoCheck(o){	// check for updates automatically in 20 seconds
+function autoCheck(o){
+	// check for updates automatically in 20 seconds
 	function check(){
 		if(settings.autoUpdate) {
 			if(Date.now()-settings.lastUpdate>=864e5) checkUpdateAll();
@@ -669,6 +677,40 @@ function autoCheck(o){	// check for updates automatically in 20 seconds
 		} else checking=false;
 	}
 	if(!checking) {checking=true;setTimeout(check,o||0);}
+}
+function clearPopupTimer(){
+	if(popupTimer) {
+		clearTimeout(popupTimer);
+		popupTimer=null;
+	}
+}
+function clearBadge(){
+	button.badge.display='none';
+	clearPopupTimer();
+	if(settings.showButton&&settings.showButtonAsNeeded) showButton(false);
+}
+function showBadge(){
+	var n=tabData&&tabData[1]&&tabData[1].length;
+	if(n&&settings.showBadge) {
+		if(settings.showButton&&settings.showButtonAsNeeded) showButton(true);
+		button.badge.textContent=n>99?'99+':n;
+		button.badge.display='block';
+		clearPopupTimer();
+	} else clearBadge();
+}
+function getTabData(){
+	// send a command to refresh badge
+	try{
+		opera.extension.tabs.getFocused().postMessage({topic:'GetTabData'});
+		popupTimer=setTimeout(clearBadge,200);
+	}catch(e){
+		clearBadge();
+	}
+}
+function gotTabData(e,data){
+	// refresh badge with data
+	tabData=data;
+	showBadge();
 }
 var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 		maps={
@@ -678,7 +720,9 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 			HttpRequest:httpRequest,
 			AbortRequest:abortRequest,
 			SetValue:setValue,
-		};
+			GotTabData:gotTabData,
+			GetTabData:getTabData,
+		},tabData=null,popupTimer=null;
 if(parseInt(opera.version())<12)	// Check old version of Opera
 	opera.extension.tabs.create({url:'https://github.com/gera2ld/Violentmonkey-oex/wiki/Obsolete'});
 else initMessages(function(){
@@ -692,6 +736,9 @@ else initMessages(function(){
 					if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
 				};
 				if(settings.autoUpdate) autoCheck(2e4);
+				opera.extension.tabs.onfocus=function(e){
+					tabData=null;getTabData();
+				};
 			});
 		});
 	});

@@ -41,8 +41,14 @@
 				</table>
 				<div id=tabSettings class=hide>
 					<h1 data-i18n=labelSettings></h1>
-					<div><label><input type=checkbox id=cShow><span data-i18n=labelShowButton></span></label></div>
 					<div><label><input type=checkbox id=cUpdate><span data-i18n=labelAutoUpdate></span></label></div>
+					<div>
+						<label><input type=checkbox id=cButton><span data-i18n=labelShowButton></span></label>
+						<div class="suboption">
+							<div><label><input type=checkbox id=cButtonAsNeeded><span data-i18n=labelShowButtonAsNeeded></span></label></div>
+							<div><label><input type=checkbox id=cBadge><span data-i18n=labelShowBadge></span></label></div>
+						</div>
+					</div>
 					<fieldset class=title>
 						<legend data-i18n=labelDataImport></legend>
 						<div id=dImport><button data-i18n=buttonImportData></button><input id=aImport type=file></div>

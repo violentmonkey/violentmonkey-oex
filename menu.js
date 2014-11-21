@@ -56,7 +56,7 @@ function adjustSize(){
 		pB.style.pixelHeight=innerHeight-pB.offsetTop;
 	},0);
 }
-function load(e,data){
+function load(data){
 	if(data&&data[0]&&data[0].length) {
 		addItem(_('menuBack'),{holder:cT,symbol:'◄',title:true,onclick:function(){
 			C.classList.add('hide');P.classList.remove('hide');
@@ -76,5 +76,4 @@ function load(e,data){
 	}
 	adjustSize();
 }
-initMenu();bg.maps['GotPopup']=load;
-try{tab.postMessage({topic:'GetPopup'});}catch(e){}
+initMenu();load(bg.tabData);
