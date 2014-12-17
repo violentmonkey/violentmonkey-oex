@@ -257,7 +257,7 @@ cB.checked=bg.settings.showButton;
 cB.onchange=function(){bg.showButton(bg.setOption('showButton',this.checked));updateSuboptions(this);};
 updateSuboptions(cB);
 cN.checked=bg.settings.showButtonAsNeeded;
-cN.onchange=function(){bg.setOption('showButtonAsNeeded',this.checked);};
+cN.onchange=function(){bg.setOption('showButtonAsNeeded',this.checked);bg.showButton(bg.settings.showButton);};
 cA.checked=bg.settings.showBadge;
 cA.onchange=function(){bg.setOption('showBadge',this.checked);bg.showBadge();};
 $('#cUpdate').checked=bg.settings.autoUpdate;

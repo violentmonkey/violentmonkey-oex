@@ -415,7 +415,7 @@ function parseScript(d,callback){
 			if(c) saveCache(u,c); else fetchCache(u);
 		});
 		for(i in meta.resources) {	// @resource
-			var u=meta.resources[i],c=o.cache&&o.cache[u];
+			var u=meta.resources[i],c=d.cache&&d.cache[u];
 			if(c) saveCache(u,c); else fetchCache(u);
 		}
 		if(isRemote(meta.icon)) fetchCache(meta.icon);	// @icon
