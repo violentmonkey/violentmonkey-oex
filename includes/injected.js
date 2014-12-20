@@ -242,7 +242,10 @@ function wrapGM(c){
 			var a=document.createElement('a');
 			a.href=url;a.target='_blank';a.click();
 		}},
-		GM_registerMenuCommand:{value:function(cap,func,acc){menu.push([cap,acc]);command[cap]=func;}},
+		GM_registerMenuCommand:{value:function(cap,func,acc){
+			menu.push([cap,acc]);command[cap]=func;
+			opera.extension.postMessage({topic:'GetTabData'});
+		}},
 		GM_xmlhttpRequest:{value:function(details){
 			details.url=abspath(details.url);
 			// synchronous mode not supported

@@ -3,145 +3,149 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8">
 		<link rel="shortcut icon" type="image/png" href="images/icon18.png">
-		<link rel="stylesheet" type="text/css" href="common.css">
-		<link rel="stylesheet" type="text/css" href="options.css">
+		<link rel="stylesheet" type="text/css" href="lib/font-awesome/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="style.min.css">
 		<script src="lib/jszip/jszip.min.js"></script>
 		<script src="load.js"></script>
 		<title data-i18n=extName></title>
 	</head>
 	<body>
-		<div id=main class=hide>
-			<div class=sidebar>
-				<img src=images/icon64.png>
-				<h2 data-i18n=extName></h2>
-				<p>2013-2014</p>
-				<hr>
-				<div class=sidemenu>
-					<a id=smInstalled href=#Installed data-i18n=sideMenuInstalled></a>
-					<a id=smSettings href=#Settings data-i18n=sideMenuSettings></a>
-					<a id=smAbout href=#About data-i18n=sideMenuAbout></a>
-				</div>
-			</div>
-			<div class=content>
-				<div id=tabInstalled class=hide>
-					<div class=header>
-						<button id=bNew data-i18n=buttonNew></button>
-						<button id=bUpdate data-i18n=buttonUpdateAll></button>
-						<a href=https://greasyfork.org/scripts target=_blank data-i18n=anchorGetMoreScripts></a>
-					</div>
-					<div id=sList>
-						<span id=message data-i18n=msgLoading></span>
+		<div id=options class=hide>
+			<div class=main>
+				<div class=sidebar>
+					<img src=images/icon64.png>
+					<h2 data-i18n=extName></h2>
+					<p>2013-2014</p>
+					<hr>
+					<div class=sidemenu>
+						<a id=smInstalled href=#Installed data-i18n=sideMenuInstalled></a>
+						<a id=smSettings href=#Settings data-i18n=sideMenuSettings></a>
+						<a id=smAbout href=#About data-i18n=sideMenuAbout></a>
 					</div>
 				</div>
-				<div id=tabSettings class=hide>
-					<h1 data-i18n=labelSettings></h1>
-					<div><label><input type=checkbox id=cUpdate><span data-i18n=labelAutoUpdate></span></label></div>
-					<div>
-						<label><input type=checkbox id=cButton><span data-i18n=labelShowButton></span></label>
-						<div class="suboption">
-							<div><label><input type=checkbox id=cButtonAsNeeded><span data-i18n=labelShowButtonAsNeeded></span></label></div>
-							<div><label><input type=checkbox id=cBadge><span data-i18n=labelShowBadge></span></label></div>
+				<div class=content>
+					<div id=tabInstalled class=hide>
+						<div class=header>
+							<button id=bNew data-i18n=buttonNew></button>
+							<button id=bUpdate data-i18n=buttonUpdateAll></button>
+							<a href=https://greasyfork.org/scripts target=_blank data-i18n=anchorGetMoreScripts></a>
+						</div>
+						<div id=sList>
+							<span id=message data-i18n=msgLoading></span>
 						</div>
 					</div>
-					<fieldset class=title>
-						<legend data-i18n=labelDataImport></legend>
-						<div id=dImport><button data-i18n=buttonImportData></button><input id=aImport type=file></div>
-						<button id=bVacuum data-i18n=buttonVacuum></button>
-					</fieldset>
-					<fieldset class=title>
-						<legend data-i18n=labelDataExport></legend>
-						<b data-i18n=labelScriptsToExport></b>
-						<label><input type=checkbox id=cWithData><span data-i18n=labelExportScriptData></span></label>
-						<div id=xList></div>
-						<button id=bSelect data-i18n=buttonAllNone></button>
-						<button id=bExport data-i18n=buttonExportData></button>
-					</fieldset>
+					<div id=tabSettings class=hide>
+						<h1 data-i18n=labelSettings></h1>
+						<div><label><input type=checkbox id=cUpdate><span data-i18n=labelAutoUpdate></span></label></div>
+						<div>
+							<label><input type=checkbox id=cButton><span data-i18n=labelShowButton></span></label>
+							<div class="suboption">
+								<div><label><input type=checkbox id=cButtonAsNeeded><span data-i18n=labelShowButtonAsNeeded></span></label></div>
+								<div><label><input type=checkbox id=cBadge><span data-i18n=labelShowBadge></span></label></div>
+							</div>
+						</div>
+						<fieldset class=title>
+							<legend data-i18n=labelDataImport></legend>
+							<div id=dImport><button data-i18n=buttonImportData></button><input id=aImport type=file></div>
+							<button id=bVacuum data-i18n=buttonVacuum></button>
+						</fieldset>
+						<fieldset class=title>
+							<legend data-i18n=labelDataExport></legend>
+							<b data-i18n=labelScriptsToExport></b>
+							<label><input type=checkbox id=cWithData><span data-i18n=labelExportScriptData></span></label>
+							<div id=xList></div>
+							<button id=bSelect data-i18n=buttonAllNone></button>
+							<button id=bExport data-i18n=buttonExportData></button>
+						</fieldset>
+					</div>
+					<div id=tabAbout class=hide>
+						<h1 data-i18n=labelAbout></h1>
+						<p data-i18n=extDescription></p>
+						<p><label data-i18n=labelRelated></label><span data-i18n=anchorSupportPage></span> | <a href=http://geraldl.net/donate target=_blank data-i18n=labelDonate></a> | <a href=https://github.com/gera2ld/Violentmonkey-oex/issues target=_blank data-i18n=labelFeedback></a></p>
+						<p><label data-i18n=labelAuthor></label><span data-i18n=anchorAuthor></span></p>
+						<p><label data-i18n=labelTranslator></label><span data-i18n=anchorTranslator></span></p>
+					</div>
 				</div>
-				<div id=tabAbout class=hide>
-					<h1 data-i18n=labelAbout></h1>
-					<p data-i18n=extDescription></p>
-					<p><label data-i18n=labelRelated></label><span data-i18n=anchorSupportPage></span> | <a href=http://geraldl.net/donate target=_blank data-i18n=labelDonate></a> | <a href=https://github.com/gera2ld/Violentmonkey-oex/issues target=_blank data-i18n=labelFeedback></a></p>
-					<p><label data-i18n=labelAuthor></label><span data-i18n=anchorAuthor></span></p>
-					<p><label data-i18n=labelTranslator></label><span data-i18n=anchorTranslator></span></p>
+			</div>
+			<div id=wndEditor class="frame hide">
+				<div class=header>
+					<h2 data-i18n=labelScriptEditor></h2>
+					<div class=buttons><button id=bCustom><i id=sCustom class="fa fa-caret-down"></i> <span data-i18n=buttonCustomMeta></span></button></div>
+				</div>
+				<div class=body>
+					<div id=eCode></div>
+					<div id=eMeta class=hide>
+						<table>
+							<tr>
+								<td title="@name" data-i18n=labelName></td><td class=expand><input type=text id=mName></td>
+								<td title="@run-at" data-i18n=labelRunAt></td><td>
+									<select id=mRunAt>
+										<option value=default data-i18n=labelRunAtDefault></option>
+										<option value=start>document-start</option>
+										<option value=idle>document-idle</option>
+										<option value=end>document-end</option>
+									</select>
+								</td>
+							</tr>
+							<tr title="@homepageURL"><td data-i18n=labelHomepageURL></td><td colspan=3 class=expand><input type=text id=mHomepageURL></td></tr>
+						</table>
+						<table>
+							<tr title="@updateURL"><td data-i18n=labelUpdateURL></td><td class=expand><input type=text id=mUpdateURL></td></tr>
+							<tr title="@downloadURL"><td data-i18n=labelDownloadURL></td><td class=expand><input type=text id=mDownloadURL></td></tr>
+						</table>
+						<fieldset title="@include">
+							<legend>
+								<span data-i18n=labelInclude></span>
+								<label><input type=checkbox id=cInclude><span data-i18n=labelKeepInclude></span></label>
+							</legend>
+							<div data-i18n=labelCustomInclude></div>
+							<textarea id=mInclude></textarea>
+						</fieldset>
+						<fieldset title="@match">
+							<legend>
+								<span data-i18n=labelMatch></span>
+								<label><input type=checkbox id=cMatch><span data-i18n=labelKeepMatch></span></label>
+							</legend>
+							<div data-i18n=labelCustomMatch></div>
+							<textarea id=mMatch></textarea>
+						</fieldset>
+						<fieldset title="@exclude">
+							<legend>
+								<span data-i18n=labelExclude></span>
+								<label><input type=checkbox id=cExclude><span data-i18n=labelKeepExclude></span></label>
+							</legend>
+							<div data-i18n=labelCustomExclude></div>
+							<textarea id=mExclude></textarea>
+						</fieldset>
+					</div>
+				</div>
+				<div class=footer>
+					<div class=options>
+						<label><input type=checkbox id=eUpdate><span data-i18n=labelAllowUpdate></span></label>
+					</div>
+					<div class=right>
+						<button id=eSave data-i18n=buttonSave></button>
+						<button id=eSaveClose data-i18n=buttonSaveClose></button>
+						<button id=eClose data-i18n=buttonClose></button>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div id=wndEditor class="frame hide">
-			<div class=header>
-				<h2 data-i18n=labelScriptEditor></h2>
-				<div class=buttons><button id=bCustom><span id=sCustom></span> <span data-i18n=buttonCustomMeta></span></button></div>
-			</div>
-			<div class=body>
-				<div id=eCode></div>
-				<div id=eMeta class=hide>
-					<table>
-						<tr>
-							<td title="@name" data-i18n=labelName></td><td class=expand><input type=text id=mName></td>
-							<td title="@run-at" data-i18n=labelRunAt></td><td>
-								<select id=mRunAt>
-									<option value=default data-i18n=labelRunAtDefault></option>
-									<option value=start>document-start</option>
-									<option value=idle>document-idle</option>
-									<option value=end>document-end</option>
-								</select>
-							</td>
-						</tr>
-						<tr title="@homepageURL"><td data-i18n=labelHomepageURL></td><td colspan=3 class=expand><input type=text id=mHomepageURL></td></tr>
-					</table>
-					<table>
-						<tr title="@updateURL"><td data-i18n=labelUpdateURL></td><td class=expand><input type=text id=mUpdateURL></td></tr>
-						<tr title="@downloadURL"><td data-i18n=labelDownloadURL></td><td class=expand><input type=text id=mDownloadURL></td></tr>
-					</table>
-					<fieldset title="@include">
-						<legend>
-							<span data-i18n=labelInclude></span>
-							<label><input type=checkbox id=cInclude><span data-i18n=labelKeepInclude></span></label>
-						</legend>
-						<div data-i18n=labelCustomInclude></div>
-						<textarea id=mInclude></textarea>
-					</fieldset>
-					<fieldset title="@match">
-						<legend>
-							<span data-i18n=labelMatch></span>
-							<label><input type=checkbox id=cMatch><span data-i18n=labelKeepMatch></span></label>
-						</legend>
-						<div data-i18n=labelCustomMatch></div>
-						<textarea id=mMatch></textarea>
-					</fieldset>
-					<fieldset title="@exclude">
-						<legend>
-							<span data-i18n=labelExclude></span>
-							<label><input type=checkbox id=cExclude><span data-i18n=labelKeepExclude></span></label>
-						</legend>
-						<div data-i18n=labelCustomExclude></div>
-						<textarea id=mExclude></textarea>
-					</fieldset>
+		<div id=confirm class=hide>
+			<div class=frame>
+				<div class=header>
+					<h1><span data-i18n=labelInstall></span> - <span data-i18n=extName></span></h1></td>
+					<div class=buttons>
+						<input type=checkbox id=cClose><label for=cClose data-i18n=optionClose></label>
+						<button id=bInstall disabled=disabled data-i18n=buttonConfirmInstallation></button>
+						<button id=bClose data-i18n=buttonClose></button>
+					</div>
+					<div id=url class=ellipsis></div>
+					<div id=msg class=ellipsis></div>
 				</div>
-			</div>
-			<div class=footer>
-				<div class=options>
-					<label><input type=checkbox id=eUpdate><span data-i18n=labelAllowUpdate></span></label>
+				<div class=body>
+					<div id=cCode></div>
 				</div>
-				<div class=right>
-					<button id=eSave data-i18n=buttonSave></button>
-					<button id=eSaveClose data-i18n=buttonSaveClose></button>
-					<button id=eClose data-i18n=buttonClose></button>
-				</div>
-			</div>
-		</div>
-		<div id=wndInstall class="frame hide">
-			<div class=header>
-				<h1><span data-i18n=labelInstall></span> - <span data-i18n=extName></span></h1></td>
-				<div class=buttons>
-					<input type=checkbox id=cClose><label for=cClose data-i18n=optionClose></label>
-					<button id=bInstall disabled=disabled data-i18n=buttonConfirmInstallation></button>
-					<button id=bClose data-i18n=buttonClose></button>
-				</div>
-				<div id=url class=ellipsis></div>
-				<div id=msg class=ellipsis></div>
-			</div>
-			<div class=body>
-				<div id=cCode></div>
 			</div>
 		</div>
 		<div id=notify class=hide><a href=# class=close>[&times;]</a><div class=title data-i18n=Warning></div><div class=message></div></div>

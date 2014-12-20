@@ -19,7 +19,7 @@ initI18n();
 
 if(location.search) {	// confirm install
 
-$('#wndInstall').classList.remove('hide');
+$('#confirm').classList.remove('hide');
 var M=$('#msg'),I=$('#bInstall'),U=$('#url'),B=$('#bClose'),C=$('#cClose'),data={},T;
 function showMsg(m,t){M.innerHTML=m;M.setAttribute('title',t||m);}
 B.onclick=function(){window.close();};
@@ -94,7 +94,7 @@ initEditor(function(o){
 
 } else {	// options page
 
-$('#main').classList.remove('hide');
+$('#options').classList.remove('hide');
 var L=$('#sList'),cache,divs={},cur=null,C=$('.content');
 function split(t){return t.replace(/^\s+|\s+$/g,'').split(/\s*\n\s*/).filter(function(e){return e;});}
 function getName(d,n,def){
@@ -144,7 +144,7 @@ function loadItem(n,r){
 		+'<span class=author></span>'
 	+'</div>'
 	+'<div class=panelT>'
-		+'<span class=move data=move>&equiv;</span>'
+		+'<i class="fa fa-arrows move" data="move"></i>'
 	+'</div>'
 	+'<p class="descrip ellipsis"></p>'
 	+'<div class=panelB>'
@@ -369,7 +369,6 @@ function markClean(){
 }
 function mReset(){
 	M.classList.add('hide');
-	sC.innerHTML='&laquo;';
 	var e=[],c=E.scr.custom,m=E.scr.meta;
 	M.dirty=false;
 	mN.value=c.name||'';
@@ -440,7 +439,7 @@ M.markDirty=function(){M.dirty=true;E.markDirty();};
 [mN,mH,mR,mU,mD,mI,mM,mE,cI,cM,cE].forEach(function(i){i.onchange=M.markDirty;});
 $('#bCustom').onclick=function(){
 	var r=M.classList.toggle('hide');
-	sC.innerHTML=r?'&laquo;':'&raquo;';
+	sC.className='fa '+(r?'fa-caret-down':'fa-caret-up');
 };
 eS.onclick=eSave;
 eSC.onclick=function(){eSave();eClose();};
