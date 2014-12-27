@@ -103,13 +103,21 @@
 		"description": "Label shown on the top of settings page",
 		"message": "Settings"
 	},
+	"labelAutoUpdate": {
+		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
+		"message": "Automatically check scripts for updates every day"
+	},
 	"labelShowButton": {
 		"description": "Option to show an icon of this extension in the toolbar.",
 		"message": "Show button on toolbar"
 	},
-	"labelAutoUpdate": {
-		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
-		"message": "Automatically check scripts for updates every day"
+	"labelShowButtonAsNeeded": {
+		"description": "Option to hide button when there is no script running in current tab",
+		"message": "Show button as needed"
+	},
+	"labelShowBadge": {
+		"description": "Option to show number of scripts running in current tab as a badge number",
+		"message": "Show number of current running scripts as a badge number"
 	},
 	"labelDataImport": {
 		"description": "Section title of data import.",
@@ -172,7 +180,7 @@
 		"message": "Translators: "
 	},
 	"anchorTranslator": {
-		"description": "Translators shown on about tab.",
+		"description": "Translator shown on about tab.",
 		"message": "<a href=mailto:gera2ld@163.com>Gerald</a>"
 	},
 	"labelScriptEditor": {

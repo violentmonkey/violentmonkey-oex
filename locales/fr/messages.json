@@ -103,13 +103,21 @@
 		"description": "Label shown on the top of settings page",
 		"message": "Paramètres"
 	},
+	"labelAutoUpdate": {
+		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
+		"message": "Vérifier quotidiennement les mises à jours des scripts"
+	},
 	"labelShowButton": {
 		"description": "Option to show an icon of this extension in the toolbar.",
 		"message": "Afficher le bouton sur la barre d’outils"
 	},
-	"labelAutoUpdate": {
-		"description": "Option to allow automatically checking scripts for updates every 24 hours.",
-		"message": "Vérifier quotidiennement les mises à jours des scripts"
+	"labelShowButtonAsNeeded": {
+		"description": "Option to hide button when there is no script running in current tab",
+		"message": "Show button as needed"
+	},
+	"labelShowBadge": {
+		"description": "Option to show number of scripts running in current tab as a badge number",
+		"message": "Show number of current running scripts as a badge number"
 	},
 	"labelDataImport": {
 		"description": "Section title of data import.",
