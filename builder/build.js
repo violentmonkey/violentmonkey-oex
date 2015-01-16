@@ -51,107 +51,60 @@ function Distributor(uncompressed,source){
 }
 Distributor.prototype={
 	distribute:function(dest,src,srcdir){
-		var t=this,i=-1;
+		function callback(){
+			t.callback(dest);
+		}
+		var t=this,i=-1,m,r;
+		t.processing++;
 		if(!src) src=dest;
 		dest=path.join(t.uncompressed,dest);
 		if(!srcdir) srcdir=t.source;
 		t.mkdirs(path.dirname(dest));
 		if(typeof src=='string') src=[src];
-		src.forEach(function(i){
-			i=path.join(srcdir,i);
-			if(t.isTextFile(i)) t.packTextFile(i,dest);
-			else t.copyFile(i,dest);
-		});
+		src=src.map(function(i){return path.join(srcdir,i);});
+		if(/\.js$/.test(dest)) {
+			r=uglifyjs.minify(src,{mangle:false});
+			fs.writeFile(dest,r.code,callback);
+		} else if(/\.css$/.test(dest)) {
+			m=[];
+			src.forEach(function(i){
+				m.push(fs.readFileSync(i));
+			});
+			less.render(m.join('\n'),{
+				compress:true,
+			},function(e,r){
+				fs.writeFile(dest,r.css,callback);
+			});
+		} else if(r=dest.match(/\.(html|json|xml)$/)) {
+			m=[];
+			src.forEach(function(i){
+				m.push(fs.readFileSync(i));
+			});
+			m=m.join('');
+			if(r[1]=='html') [
+				[/<!--.*?-->/g,''],
+				[/<\s+/g,'<'],
+				[/\s+>/g,'>'],
+			].forEach(function(i){m=m.replace(i[0],i[1]);});
+			fs.writeFile(dest,m,callback);
+		} else t.copyFiles(dest,src,callback);
 	},
-	isTextFile:function(p){
-		return ['.html','.js','.css','.json','.xml'].indexOf(path.extname(p))>=0;
+	callback:function(dest){
+		this.oex.append(fs.createReadStream(dest),
+			{name:path.relative(this.uncompressed,dest)});
+		if(!--this.processing) this.oex.finalize();
 	},
-	oexPack:function(p){
-		this.oex.append(fs.createReadStream(p),
-			{name:path.relative(this.uncompressed,p)});
-	},
-	processStart:function(){
-		this.processing++;
-	},
-	processFinish:function(){
-		function finish(){
-			t.oex.finalize();
+	copyFiles:function(dest,src,callback){
+		function copy(){
+			var f,r;
+			if(f=src.shift()) {
+				r=fs.createReadStream(f);
+				r.pipe(w,{end:false});
+				r.on('end',copy);
+			} else w.end(callback);
 		}
-		function doPack(p){
-			return function(){
-				t.oexPack(p);
-				if(!--count) finish();
-			};
-		}
-		var t=this,i,count;
-		if(!--t.processing) {
-			count=0;
-			for(i in t.streams) {
-				count++;
-				t.streams[i].stream.end('',null,doPack(i));
-			}
-			if(!count) finish();
-		}
-	},
-	getStream:function(p,callback){
-		var s=this.streams[p];
-		if(!s) s=this.streams[p]={
-			stream:fs.createWriteStream(p,{encoding:'utf-8'}),
-			using:false,
-			callbacks:[],
-		};
-		if(s.using) s.callbacks.push(callback);
-		else {
-			this.processStart();
-			s.using=true;callback.call(this,s.stream);
-		}
-	},
-	finishStream:function(p){
-		var s=this.streams[p],c;
-		if(s.callbacks.length) {
-			c=s.callbacks.splice(0,1)[0];
-			c.call(this,s.stream);
-		} else {
-			s.using=false;this.processFinish();
-		}
-	},
-	compressText:function(src){
-		var r=fs.readFileSync(src,{encoding:'utf8'}),e=path.extname(src);
-		if(e=='.html') [
-			[/<!--.*?-->/g,''],
-			[/<\s+/g,'<'],
-			[/\s+>/g,'>'],
-		].forEach(function(i){r=r.replace(i[0],i[1]);});
-		return r;
-	},
-	packTextFile:function(src,dest){
-		var r,t=this;
-		function finish(){t.finishStream(dest);}
-		t.getStream(dest,function(f){
-			if(/\.js$/.test(src)) {
-				r=uglifyjs.minify(src,{mangle:false});
-				f.write(r.code,'utf-8',finish);
-			} else if(/\.css$/.test(src)) {
-				less.render(fs.readFileSync(src,{encoding:'utf8'}),{
-					compress:true,
-				},function(e,r){
-					f.write(r.css,'utf-8',finish);
-				});
-			} else {
-				f.write(t.compressText(src),'utf-8',finish);
-			}
-		});
-	},
-	copyFile:function(src,dest){
-		var t=this;
-		t.processStart();
-		var r=fs.createReadStream(src),
-				w=fs.createWriteStream(dest);
-		r.pipe(w);
-		w.on('close',function(){
-			t.processFinish();
-			t.oexPack(dest);
-		});
+		var w=fs.createWriteStream(dest);
+		copy();
 	},
 	mkdirs:function(dir){
 		if(!dir) return;
@@ -163,8 +116,7 @@ Distributor.prototype={
 		}
 	},
 	finish:function(callback){
-		if(this.processing) this.onFinish=callback;
-		else callback();
+		this.onFinish=callback;
 	},
 };
 function main(src,dist,pack){
