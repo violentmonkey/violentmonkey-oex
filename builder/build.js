@@ -1,6 +1,8 @@
 #!node
 var fs=require('fs'),path=require('path'),
 		uglifyjs=require('uglify-js'),less=require('less'),
+		cleanCSS=require('less-plugin-clean-css'),
+		cleanCSSPlugin=new cleanCSS({advanced:true}),
 		archiver=require('archiver');
 function parseRule(s){
 	if(s.substr(0,2)=='R:')
@@ -71,7 +73,7 @@ Distributor.prototype={
 				m.push(fs.readFileSync(i));
 			});
 			less.render(m.join('\n'),{
-				compress:true,
+				plugins:[cleanCSSPlugin],
 			},function(e,r){
 				fs.writeFile(dest,r.css,callback);
 			});
