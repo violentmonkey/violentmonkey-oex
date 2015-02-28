@@ -113,7 +113,7 @@
 	},
 	"labelShowButtonAsNeeded": {
 		"description": "Option to hide button when there is no script running in current tab",
-		"message": "Show button as needed"
+		"message": "Show button only if there are scripts run in current tab"
 	},
 	"labelShowBadge": {
 		"description": "Option to show number of scripts running in current tab as a badge number",

@@ -113,11 +113,11 @@
 	},
 	"labelShowButtonAsNeeded": {
 		"description": "Option to hide button when there is no script running in current tab",
-		"message": "Show button as needed"
+		"message": "仅当当前页面有脚本运行时显示按钮"
 	},
 	"labelShowBadge": {
 		"description": "Option to show number of scripts running in current tab as a badge number",
-		"message": "Show number of current running scripts as a badge number"
+		"message": "在按钮旁显示正在运行的脚本数"
 	},
 	"labelDataImport": {
 		"description": "Section title of data import.",
