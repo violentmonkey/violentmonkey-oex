@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget xmlns="http://www.w3.org/ns/widgets" version="1.6.9" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="http://geraldl.net/proj/vm?from=oex">
+<widget xmlns="http://www.w3.org/ns/widgets" version="1.6.9.1" defaultlocale="en" id="https://addons.opera.com/extensions/details/violent-monkey/" href="http://geraldl.net/proj/vm?from=oex">
 	<name>Violent monkey</name>
 	<author href="http://geraldl.net" email="gera2ld@163.com">Gerald</author>
 	<icon src="images/icon64.png"/>
