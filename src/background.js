@@ -703,6 +703,7 @@ function getTabData(){
 	// send a command to refresh badge
 	try{
 		opera.extension.tabs.getFocused().postMessage({topic:'GetTabData'});
+		clearPopupTimer();
 		popupTimer=setTimeout(clearBadge,200);
 	}catch(e){
 		clearBadge();
