@@ -111,10 +111,6 @@
 		"description": "Option to show an icon of this extension in the toolbar.",
 		"message": "Zobrazovat tlačítko na liště"
 	},
-	"labelShowButtonAsNeeded": {
-		"description": "Option to hide button when there is no script running in current tab",
-		"message": "Show button only if there are scripts run in current tab"
-	},
 	"labelShowBadge": {
 		"description": "Option to show number of scripts running in current tab as a badge number",
 		"message": "Show number of current running scripts as a badge number"
@@ -182,6 +178,10 @@
 	"anchorTranslator": {
 		"description": "Translator shown on about tab.",
 		"message": "<a href=http://my.opera.com/ahoj1234>ahoj1234</a>"
+	},
+	"labelCurrentLang": {
+		"description": "Label of current language.",
+		"message": "Current Language:"
 	},
 	"labelScriptEditor": {
 		"description": "Shown in the title of the script editing page.",
@@ -271,9 +271,17 @@
 		"description": "Shown in the title of the confirm page while trying to install a script.",
 		"message": "Instaluji skript"
 	},
-	"optionClose": {
+	"buttonInstallOptions": {
+		"description": "Button to show options of installation confirm page.",
+		"message": "Options"
+	},
+	"installOptionClose": {
 		"description": "Option to close confirm window after installation.",
 		"message": "Close po instalaci"
+	},
+	"installOptionTrack": {
+		"description": "Option to track the loading local file before window is closed.",
+		"message": "Track local file before this window is closed"
 	},
 	"buttonConfirmInstallation": {
 		"description": "Button to confirm installation of a script.",
@@ -283,14 +291,6 @@
 		"description": "Show warnings with a notification.",
 		"message": "Warning"
 	},
-	"msgWarnGrant": {
-		"description": "Message shown when `@grant` is not found in a script.",
-		"message": "Script [$1] has no `@grant` lines! Click to see more details."
-	},
-	"msgScriptURL": {
-		"description": "URL of the script to be installed on confirm page.",
-		"message": "Skript URL: $1"
-	},
 	"msgErrorLoadingData": {
 		"description": "Message shown on confirm page when the script to be installed cannot be loaded.",
 		"message": "Chyba při načítání skript."
@@ -299,10 +299,6 @@
 		"description": "Message shown in the confirm page when a javascript file to be installed is loaded.",
 		"message": "Skript načten."
 	},
-	"msgLoadingData": {
-		"description": "Message shown on confirm page when the script to be installed is loading.",
-		"message": "Nahrávám skript..."
-	},
 	"msgErrorLoadingDependency": {
 		"description": "Message shown when not all requirements are loaded successfully.",
 		"message": "Chyba při načítání požadavky."
@@ -310,6 +306,26 @@
 	"msgLoadingDependency": {
 		"description": "Message shown on confirm page when the requirements are being downloaded.",
 		"message": "Vkládání požadavky... ($1/$2)"
+	},
+	"msgScriptURL": {
+		"description": "URL of the script to be installed on confirm page.",
+		"message": "Skript URL: $1"
+	},
+	"msgLoadingData": {
+		"description": "Message shown on confirm page when the script to be installed is loading.",
+		"message": "Nahrávám skript..."
+	},
+	"msgWarnGrant": {
+		"description": "Message shown when `@grant` is not found in a script.",
+		"message": "Script [$1] has no `@grant` lines! Click to see more details."
+	},
+	"labelNoScripts": {
+		"description": "Message shown when no script is installed.",
+		"message": "Oops, you haven't got any script yet."
+	},
+	"hintSupportPage": {
+		"description": "Hint for support page.",
+		"message": "Support page"
 	},
 	"buttonDisable": {
 		"description": "Button to disable a script.",
@@ -331,6 +347,18 @@
 		"description": "Check a script for updates.",
 		"message": "Zkontrolovat aktualizace"
 	},
+	"msgErrorZip": {
+		"description": "Message shown when Violentmonkey fails to open the zip file.",
+		"message": "Error loading zip file."
+	},
+	"msgImported": {
+		"description": "Message shown after import. There is an argument referring to the count of scripts imported.",
+		"message": "$1 vec(i) jsou importovány."
+	},
+	"hintUseDownloadURL": {
+		"description": "Shown as a place holder for @updateURL when it is not assigned",
+		"message": "Use @downloadURL"
+	},
 	"confirmNotSaved": {
 		"description": "Confirm message shown when there are unsaved script modifications.",
 		"message": "Modifikace není uložena! Klikni na OK pro zbavení se jí, nebo na zrušit pro zůstání zde."
@@ -346,18 +374,6 @@
 	"hintVacuum": {
 		"description": "Hint for vacuuming data.",
 		"message": "Zbavit se nadbytečného a zkusit znovu načíst chybějící zdroje v cache."
-	},
-	"msgErrorZip": {
-		"description": "Message shown when Violentmonkey fails to open the zip file.",
-		"message": "Error loading zip file."
-	},
-	"msgImported": {
-		"description": "Message shown after import. There is an argument referring to the count of scripts imported.",
-		"message": "$1 vec(i) jsou importovány."
-	},
-	"hintUseDownloadURL": {
-		"description": "Shown as a place holder for @updateURL when it is not assigned",
-		"message": "Use @downloadURL"
 	},
 	"labelSearch": {
 		"description": "Label for search input in search box.",

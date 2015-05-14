@@ -1,23 +1,45 @@
-// Multilingual
-function initMessages(callback){
-	var data={},f=new XMLHttpRequest();
-	f.open('GET','messages.json',true);
-	f.responseType='json';
-	f.onload=function(){
-		var i,o=f.response;
-		for(i in o) data[i]=o[i];
-		if(callback) callback();
-	};
-	f.send();
+'use strict';
 
-	_=function(k,a){
-		var r=data[k]||'';
-		if(r) r=r.message.replace(/\$(?:\{(\d+)\}|(\d+))/g,function(v,g1,g2){
-			v=g1||g2;v=a[v-1];return v==null?'':v;
-		});
-		//return r||k;
-		return r;
+function initMessages () {
+	function getData() {
+		var req = new XMLHttpRequest();
+		req.open('GET', 'messages.json', true);
+		req.responseType = 'json';
+		req.onload = function() {
+			messages = this.response;
+		};
+		req.onerror = function(e) {
+			// Though this should not happen, it did happened!
+			setTimeout(getData, 500);
+		};
+		req.send();
+	}
+	var messages = {};
+	getData();
+	window._ = function (key, args) {
+		var message = '', value = messages[key];
+		if(value) {
+			args = args || [];
+			args.unshift(key);
+			message = value.message.replace(/\$(?:\{(\d+)\}|(\d+))/g, function(value, group1, group2) {
+				var index = typeof group1 != 'undefined' ? group1 : group2;
+				var arg = args[index];
+				return typeof arg == 'undefined' ? value : arg;
+			});
+		}
+		//return message || key || '';
+		return message;
 	};
+}
+
+function compareVersion(version1, version2) {
+	version1 = (version1 || '').split('.');
+	version2 = (version2 || '').split('.');
+	for ( var i = 0; i < version1.length || i < version2.length; i ++ ) {
+		var delta = (parseInt(version1[i], 10) || 0) - (parseInt(version2[i], 10) || 0);
+		if(delta) return delta < 0 ? -1 : 1;
+	}
+	return 0;
 }
 
 // Database
@@ -42,415 +64,499 @@ function initMessages(callback){
  * 		values: String
  * }
  */
-function older(o,n){
-	o=(o||'').split('.');n=(n||'').split('.');
-	var r=/(\d*)([a-z]*)(\d*)([a-z]*)/i;
-	while(o.length&&n.length) {
-		var vo=o.shift().match(r),vn=n.shift().match(r);
-		vo.shift();vn.shift();	// origin string
-		vo[0]=parseInt(vo[0]||0,10);
-		vo[2]=parseInt(vo[2]||0,10);
-		vn[0]=parseInt(vn[0]||0,10);
-		vn[2]=parseInt(vn[2]||0,10);
-		while(vo.length&&vn.length) {
-			var eo=vo.shift(),en=vn.shift();
-			if(eo!=en) return eo<en;
-		}
-	}
-	return n.length;
+function dbError(t, e) {
+	opera.postError('Database error: ' + e.message);
+	if(e.code == 4)
+		opera.extension.tabs.create({url: '/notice_quota.html'}).focus();
 }
-function dbError(t,e){
-	opera.postError('Database error: '+e.message);
-	if(e.code==4)
-		opera.extension.tabs.create({url:'/notice_quota.html'}).focus();
-}
-function initDatabase(callback){
-	db=openDatabase('Violentmonkey','0.5','Violentmonkey data',10*1024*1024);
-	db.transaction(function(t){
-		function executeSql(_t,r){
-			var s=sql.shift();
-			if(s) t.executeSql(s,[],executeSql,dbError);
+function initDatabase(callback) {
+	db = openDatabase('Violentmonkey', '0.5', 'Violentmonkey data', 10 * 1024 * 1024);
+	db.transaction(function(t) {
+		function executeSql(t, r) {
+			var sql = sqls.shift();
+			if(sql) t.executeSql(sql, [], executeSql, dbError);
 			else if(callback) callback();
 		}
-		var count=0,sql=[
+		var sqls = [
 			'CREATE TABLE IF NOT EXISTS scripts(id INTEGER PRIMARY KEY,uri VARCHAR,meta TEXT,custom TEXT,enabled INTEGER,"update" INTEGER,position INTEGER,code TEXT)',
 			'CREATE TABLE IF NOT EXISTS cache(uri VARCHAR UNIQUE NOT NULL,data BLOB)',
 			'CREATE TABLE IF NOT EXISTS "values"(uri VARCHAR UNIQUE NOT NULL,data TEXT)',
 		];
-		executeSql();
+		executeSql(t);
 	});
 }
-function upgradeData(callback){
-	function finish(){if(callback) callback();}
-	var dataVer='0.5.1';
-	if(older(widget.preferences.version_storage||'',dataVer)) {
-		db.transaction(function(t){
-			function update(){
-				var o=data.shift();
-				if(!o) finish();
-				else t.executeSql('UPDATE scripts SET meta=? WHERE id=?',[JSON.stringify(o[1]),o[0]],update,dbError);
+function upgradeData(callback) {
+	function finish(){
+		if(callback) callback();
+	}
+	var dataVer = '0.5.1';
+	if (compareVersion(widget.preferences.version_storage, dataVer) < 0) {
+		db.transaction(function(t) {
+			function update() {
+				var item = data.shift();
+				if(!item) finish();
+				else t.executeSql('UPDATE scripts SET meta=? WHERE id=?',
+													[JSON.stringify(item[1]), item[0]], update, dbError);
 			}
-			var data=[],i,v;
-			t.executeSql('SELECT * FROM scripts',[],function(t,r){
-				for(i=0;i<r.rows.length;i++) {
-					v=r.rows.item(i);
-					data.push([v.id,parseMeta(v.code)]);
+			var data=[];
+			t.executeSql('SELECT * FROM scripts', [], function(t, r){
+				for ( var i = 0; i < r.rows.length; i ++ ) {
+					var v = r.rows.item(i);
+					data.push([v.id, parseMeta(v.code)]);
 				}
 				update();
-			},dbError);
+			}, dbError);
 		});
-		widget.preferences.version_storage=dataVer;
+		widget.preferences.version_storage = dataVer;
 	} else finish();
 }
 
-function getNameURI(i){
-	var ns=i.meta.namespace||'',n=i.meta.name||'',k=escape(ns)+':'+escape(n)+':';
-	if(!ns&&!n) k+=i.id;return k;
+function getNameURI(script) {
+	var ns = script.meta.namespace || '';
+	var name = script.meta.name || '';
+	var nameURI = escape(ns) + ':' + escape(name) + ':';
+	if (!ns && !name) nameURI += script.id;
+	return nameURI;
 }
 
-function newScript(){
-	var r={
-		custom:{},
-		enabled:1,
-		update:1,
-		code:'// ==UserScript==\n// @name New Script\n// ==/UserScript==\n'
+function newScript() {
+	var script = {
+		custom: {},
+		enabled: 1,
+		update: 1,
+		code: '// ==UserScript==\n// @name New Script\n// ==/UserScript==\n',
 	};
-	r.meta=parseMeta(r.code);
-	return r;
+	script.meta = parseMeta(script.code);
+	return script;
 }
-function saveScript(o,callback){
-	if(!o.position) o.position=++pos;
+
+function saveScript(script, callback){
+	if(!script.position) script.position = ++ pos;
 	db.transaction(function(t){
-		var d=[];
-		d.push(parseInt(o.id)||null);
-		d.push(o.uri);
-		d.push(JSON.stringify(o.meta));
-		d.push(JSON.stringify(o.custom));
-		d.push(o.enabled=o.enabled?1:0);
-		d.push(o.update=o.update?1:0);
-		d.push(o.position);
-		d.push(o.code);
-		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)',d,function(t,r){
-			if(!o.id) o.id=r.insertId;
+		var data = [];
+		data.push(parseInt(script.id) || null);
+		data.push(script.uri);
+		data.push(JSON.stringify(script.meta));
+		data.push(JSON.stringify(script.custom));
+		data.push(script.enabled = script.enabled ? 1 : 0);
+		data.push(script.update = script.update ? 1 : 0);
+		data.push(script.position);
+		data.push(script.code);
+		t.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)', data, function(t, r) {
+			if(!script.id) script.id = r.insertId;
 			if(ids) {
-				if(!(o.id in metas)) ids.push(o.id);
-				metas[o.id]=getScript(o,true);
+				if(!(script.id in metas)) ids.push(script.id);
+				metas[script.id] = getScript(script, true);
 			}
-			if(callback) callback(o);
-		},dbError);
-	});
-}
-function removeScript(i){
-	var id=ids.splice(i,1)[0];
-	db.transaction(function(t){
-		t.executeSql('DELETE FROM scripts WHERE id=?',[id],function(t,r){delete metas[id];},dbError);
+			if(callback) callback(script);
+		}, dbError);
 	});
 }
 
-function str2RE(s){return s.replace(/(\.|\?|\/)/g,'\\$1').replace(/\*/g,'.*?');}
-function autoReg(s,w){	// w: forced wildcard mode
-	if(!w&&s[0]=='/'&&s.slice(-1)=='/') return RegExp(s.slice(1,-1));	// Regular-expression
-	return RegExp('^'+str2RE(s)+'$');	// String with wildcards
+function removeScript(index){
+	var id = ids.splice(index, 1)[0];
+	db.transaction(function (t) {
+		t.executeSql('DELETE FROM scripts WHERE id=?', [id], function(t, r) {delete metas[id];}, dbError);
+	});
 }
-var match_reg=/(.*?):\/\/([^\/]*)\/(.*)/;
-function matchTest(s,u){
-	if(s=='<all_urls>') return true;
-	var m=s.match(match_reg);
-	if(!m) return false;
-	// scheme
-	if(!(
-		m[1]=='*'&&/^https?$/i.test(u[1])	// * = http|https
-		||m[1]==u[1]
-	)) return false;
-	// host
-	if(m[2]!='*') {
-		if(m[2].slice(0,2)=='*.') {
-			if(u[2]!=m[2].slice(2)&&u[2].slice(1-m[2].length)!=m[2].slice(1)) return false;
-		} else if(m[2]!=u[2]) return false;
+
+function str2RE(str) {
+	return RegExp('^' + str.replace(/(\.|\?|\/)/g, '\\$1').replace(/\*/g, '.*?') + '$');
+}
+
+function autoReg(str) {
+	if (/^\/.*\/$/.test(str))
+		return RegExp(str.slice(1, -1));	// Regular-expression
+	else
+		return str2RE(str);	// String with wildcards
+}
+
+var match_reg = /(.*?):\/\/([^\/]*)\/(.*)/;
+function matchTest(str, urlParts){
+	if (str == '<all_urls>') return true;
+	var parts = str.match(match_reg);
+	return !!(parts &&
+		// scheme
+		(
+			parts[1] == urlParts[1] ||	// exact match
+			parts[1] == '*' && /^https?$/i.test(urlParts[1])	// * = http|https
+		) &&
+		// host
+		(
+			parts[2] == '*' ||	// * matches all
+			parts[2] == urlParts[2] ||	// exact match
+			/^\*\.[^*]*$/.test(parts[2]) && str2RE(parts[2]).test(urlParts[2])	// *.example.com
+		) &&
+		// pathname
+		str2RE(parts[3]).test(urlParts[3])
+	);
+}
+
+function testURL(url, script){
+	var custom = script.custom;
+	var meta = script.meta;
+	var inc = [], exc = [], mat = [];
+	var ok = true;
+	if(custom._match !== false && meta.match) mat = mat.concat(meta.match);
+	if(custom.match) mat = mat.concat(custom.match);
+	if(custom._include !== false && meta.include) inc = inc.concat(meta.include);
+	if(custom.include) inc = inc.concat(custom.include);
+	if(custom._exclude !== false && meta.exclude) exc = exc.concat(meta.exclude);
+	if(custom.exclude) exc = exc.concat(custom.exclude);
+	// @match
+	if(mat.length) {
+		var urlParts = url.match(match_reg);
+		mat.some(function(str) {
+			return (ok = matchTest(str, urlParts));
+		});
 	}
-	// pathname
-	if(!autoReg(m[3],1).test(u[3])) return false;
-	return true;
+	// @include
+	else inc.some(function(str) {
+		return (ok = autoReg(str).test(url));
+	});
+	// exclude
+	if(ok) exc.some(function(str) {
+		ok = ! autoReg(str).test(url);
+		return ! ok;
+	});
+	return ok;
 }
-function testURL(url,e){
-	var f=true,i,inc=[],exc=[],mat=[],u=url.match(match_reg);
-	if(e.custom._match!=false&&e.meta.match) mat=mat.concat(e.meta.match);
-	if(e.custom.match) mat=mat.concat(e.custom.match);
-	if(e.custom._include!=false&&e.meta.include) inc=inc.concat(e.meta.include);
-	if(e.custom.include) inc=inc.concat(e.custom.include);
-	if(e.custom._exclude!=false&&e.meta.exclude) exc=exc.concat(e.meta.exclude);
-	if(e.custom.exclude) exc=exc.concat(e.custom.exclude);
-	if(mat.length) {for(i=0;i<mat.length;i++) if(f=matchTest(mat[i],u)) break;}	// @match
-	else for(i=0;i<inc.length;i++) if(f=autoReg(inc[i]).test(url)) break;	// @include
-	if(f) for(i=0;i<exc.length;i++) if(!(f=!autoReg(exc[i]).test(url))) break;	// @exclude
-	return f;
-}
-function getScript(v,metaonly){
-	var o={
-		id:v.id,
-		uri:v.uri,
-		meta:typeof v.meta=='object'?v.meta:JSON.parse(v.meta),
-		custom:typeof v.custom=='object'?v.custom:JSON.parse(v.custom),
-		enabled:v.enabled?1:0,
-		update:v.update?1:0,
-		position:v.position
+
+function getScript(data, metaonly) {
+	var script = {
+		id: data.id,
+		uri: data.uri,
+		meta: typeof data.meta == 'object' ? data.meta : JSON.parse(data.meta),
+		custom: typeof data.custom == 'object' ? data.custom : JSON.parse(data.custom),
+		enabled: data.enabled ? 1 : 0,
+		update: data.update ? 1 : 0,
+		position: data.position,
 	};
-	if(!metaonly) o.code=v.code;
-	return o;
+	if (!metaonly) script.code = data.code;
+	return script;
 }
-function getScripts(ids,metaonly,callback){
+
+function getScripts(ids, metaonly, callback){
 	var data=[];
 	db.readTransaction(function(t){
 		function getItem(){
-			var i=ids.shift();
-			if(i) t.executeSql('SELECT * FROM scripts WHERE id=?',[i],function(t,r){
-				if(r.rows.length) data.push(getScript(r.rows.item(0),metaonly));
-				getItem();
-			},dbError); else if(callback) callback(data);
+			var id = ids.shift();
+			if (id)
+				t.executeSql('SELECT * FROM scripts WHERE id=?', [id], function(t, r) {
+					if (r.rows.length)
+						data.push(getScript(r.rows.item(0), metaonly));
+					getItem();
+				}, dbError);
+			else if(callback) callback(data);
 		}
 		getItem();
 	});
 }
-function initScripts(callback){
-	ids=[];metas={};
-	db.readTransaction(function(t){
-		t.executeSql('SELECT * FROM scripts ORDER BY position',[],function(t,r){
-			var i,v,o=null;
-			for(i=0;i<r.rows.length;i++) {
-				v=r.rows.item(i);
-				o=getScript(v,true);
-				ids.push(o.id);metas[o.id]=o;
+
+function initScripts(callback) {
+	ids = [];
+	metas = {};
+	pos = 0;
+	db.transaction(function(t) {
+		function updatePos() {
+			var item = updates.shift();
+			if (item)
+				t.executeSql('UPDATE scripts SET position=? WHERE id=?', item, updatePos, dbError);
+		}
+		var updates = [];
+		t.executeSql('SELECT * FROM scripts ORDER BY position', [], function(t, r) {
+			var script;
+			for ( var i=0; i < r.rows.length; i ++ ) {
+				var v = r.rows.item(i);
+				script = getScript(v, true);
+				if (script.position != ++ pos)
+					updates.push([pos, script.id]);
+				ids.push(script.id);
+				metas[script.id] = script;
 			}
-			pos=o?o.position:0;
-			if(callback) callback();
-		});
+			if(updates.length) {
+				updatePos();
+				console.log('update ' + updates.length);
+			}
+			if (callback) callback();
+		}, dbError);
 	});
 }
-function isRemote(url){
-	return url&&!/^data:/.test(url);
+
+function isRemote(url) {
+	return url && !/^data:/.test(url);
 }
-function getData(callback){
-	var i,cache={};
-	for(i in metas)
-		if(isRemote(metas[i].meta.icon)) cache[metas[i].meta.icon]=1;
-	getCache(Object.getOwnPropertyNames(cache),function(o){
-		for(i in o) o[i]='data:image/png;base64,'+window.btoa(o[i]);
-		if(callback) callback(o);
+
+function getData(callback) {
+	var dict = {};
+	for(var i in metas)
+		if(isRemote(metas[i].meta.icon)) dict[metas[i].meta.icon] = 1;
+	getCache(Object.getOwnPropertyNames(dict), function(data) {
+		for(var i in data)
+			data[i] = 'data:image/png;base64,' + window.btoa(data[i]);
+		if(callback) callback(data);
 	});
 }
-function editScript(id,callback){
-	db.readTransaction(function(t){
-		t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
+
+function editScript(id, callback) {
+	db.readTransaction(function(t) {
+		t.executeSql('SELECT * FROM scripts WHERE id=?', [id], function(t, r) {
 			if(r.rows.length) callback(getScript(r.rows.item(0)));
 		});
 	});
 }
-function enableScript(id,v,callback){
-	var s=metas[id];if(!s) return;
-	s.enabled=v?1:0;
+
+function enableScript(id, enabled, callback) {
+	var script = metas[id];
+	if(!script) return;
+	script.enabled = enabled ? 1 : 0;
 	db.transaction(function(t){
-		t.executeSql('UPDATE scripts SET enabled=? WHERE id=?',[s.enabled,id],function(t,r){
+		t.executeSql('UPDATE scripts SET enabled=? WHERE id=?', [script.enabled, id], function(t, r) {
 			if(r.rowsAffected) {
-				updateItem({id:id,status:0});
+				updateItem({id: id, code: 0});
 				if(callback) callback();
 			}
 		},dbError);
 	});
 }
-function getValues(uris,callback,t){
-	var data={};
-	function query(t){
-		function loop(){
-			var i=uris.pop();
-			if(i) t.executeSql('SELECT data FROM "values" WHERE uri=?',[i],function(t,r){
-				if(r.rows.length) data[i]=JSON.parse(r.rows.item(0).data);
-				loop();
-			}); else if(callback) callback(data);
+
+function getValues(uris, callback) {
+	var data = {};
+	db.readTransaction(function (t) {
+		function loop() {
+			var uri = uris.pop();
+			if(uri)
+				t.executeSql('SELECT data FROM "values" WHERE uri=?', [uri], function(t, r) {
+					if(r.rows.length) data[uri] = JSON.parse(r.rows.item(0).data);
+					loop();
+				});
+			else if(callback) callback(data);
 		}
 		loop();
-	}
-	if(t) query(t); else db.readTransaction(query);
+	});
 }
-function getCache(uris,callback,t){
-	var data={};
-	function query(t){
-		function loop(){
-			var i=uris.pop();
-			if(i) t.executeSql('SELECT data FROM cache WHERE uri=?',[i],function(t,r){
-				if(r.rows.length) data[i]=r.rows.item(0).data;
-				loop();
-			}); else if(callback) callback(data);
+
+function getCache(uris, callback, t){
+	var data = {};
+	db.readTransaction(function (t) {
+		function loop() {
+			var uri = uris.pop();
+			if(uri)
+				t.executeSql('SELECT data FROM cache WHERE uri=?', [uri], function(t, r) {
+					if(r.rows.length) data[uri] = r.rows.item(0).data;
+					loop();
+				});
+			else if(callback) callback(data);
 		}
 		loop();
-	}
-	if(t) query(t); else db.readTransaction(query);
+	});
 }
-function getInjected(e,url){
-	var data={isApplied:settings.isApplied},cache={},values={};
-	url=url||e.origin;	// to recognize URLs like data:...
-	function finish(){e.source.postMessage({topic:'GotInjected',data:data});}
-	if(isRemote(url)) {
+
+function getInjected(e, url) {
+	var data = {isApplied: getOption('isApplied')};
+	var cache = {};
+	var values = {};
+	url = url || e.origin;	// to recognize `data:` URLs
+	function finish() {
+		e.source.postMessage({topic: 'GotInjected', data: data});
+	}
+	if(isRemote(url))
 		getScripts(
-			ids.filter(function(i){
-				var j,s=metas[i];
-				if(s&&testURL(url,s)) {
-					values[s.uri]=1;
-					if(s.meta.require) s.meta.require.forEach(function(i){cache[i]=1;});
-					for(j in s.meta.resources) cache[s.meta.resources[j]]=1;
+			ids.filter(function(id){
+				var script = metas[id];
+				if (script && testURL(url, script)) {
+					values[script.uri]=1;
+					if(script.meta.require) script.meta.require.forEach(function (url) { cache[url] = 1; });
+					for(var i in script.meta.resources) cache[script.meta.resources[i]] = 1;
 					return true;
 				}
 				return false;
-			}),false,function(o){
-				data.scripts=o;
-				getCache(Object.getOwnPropertyNames(cache),function(o){
-					data.cache=o;
-					getValues(Object.getOwnPropertyNames(values),function(o){
-						data.values=o;
+			}), false, function(scripts){
+				data.scripts = scripts;
+				getCache(Object.getOwnPropertyNames(cache), function(cache){
+					data.cache = cache;
+					getValues(Object.getOwnPropertyNames(values), function(values){
+						data.values = values;
 						finish();
 					});
 				});
 			}
 		);
-	} else finish();
+	else finish();
 }
-function setValue(e,d){
-	db.transaction(function(t){
-		t.executeSql('REPLACE INTO "values"(uri,data) VALUES(?,?)',[d.uri,JSON.stringify(d.data)],null,dbError);
+
+function setValue(e, data) {
+	db.transaction(function(t) {
+		t.executeSql('REPLACE INTO "values"(uri,data) VALUES(?,?)', [data.uri, JSON.stringify(data.values)], null, dbError);
 	});
 }
-function parseMeta(d){
-	var o=-1,meta={include:[],exclude:[],match:[],require:[],resource:[],grant:[]};
-	d.replace(/(?:^|\n)\/\/\s*([@=]\S+)(.*)/g,function(m,k,v){
-		if(o<0&&k=='==UserScript==') o=1;
-		else if(k=='==/UserScript==') o=0;
-		if(o==1&&k[0]=='@') k=k.slice(1); else return;
-		v=v.replace(/^\s+|\s+$/g,'');
-		if(meta[k]&&meta[k].push) meta[k].push(v);	// multiple values allowed
-		else if(!(k in meta)) meta[k]=v;	// only first value will be stored
+
+function parseMeta(code) {
+	// initialize meta, specify those with multiple values allowed
+	var meta = {
+		include: [],
+		exclude: [],
+		match: [],
+		require: [],
+		resource: [],
+		grant: [],
+	};
+	var flag = -1;
+	code.replace(/(?:^|\n)\/\/\s*([@=]\S+)(.*)/g, function(value, group1, group2) {
+		if (flag < 0 && group1 == '==UserScript==')
+			// start meta
+			flag = 1;
+		else if(flag > 0 && group1 == '==/UserScript==')
+			// end meta
+			flag = 0;
+		if(flag == 1 && group1[0] == '@') {
+			var key = group1.slice(1);
+			var val = group2.replace(/^\s+|\s+$/g, '');
+			var value = meta[key];
+			if(value && value.push) value.push(val);	// multiple values allowed
+			else if(!(key in meta)) meta[key] = val;	// only first value will be stored
+		}
 	});
-	meta.resources={};
-	meta.resource.forEach(function(i){
-		o=i.match(/^(\w\S*)\s+(.*)/);
-		if(o) meta.resources[o[1]]=o[2];
+	meta.resources = {};
+	meta.resource.forEach(function(line) {
+		var pair = line.match(/^(\w\S*)\s+(.*)/);
+		if(pair) meta.resources[pair[1]] = pair[2];
 	});
 	delete meta.resource;
-	if(!meta.homepageURL&&meta.homepage) meta.homepageURL=meta.homepage;	// @homepageURL instead of @homepage
+	// @homepageURL: compatible with @homepage
+	if(! meta.homepageURL && meta.homepage) meta.homepageURL = meta.homepage;
 	return meta;
 }
-function fetchURL(url,cb,type,headers){
-	var req=new XMLHttpRequest(),i;
-	req.open('GET',url,true);
-	if(type) req.responseType=type;
-	if(headers) for(i in headers)
-		req.setRequestHeader(i,headers[i]);
-	if(cb) req.onloadend=cb;
+
+function fetchURL(url, cb, type, headers) {
+	var req = new XMLHttpRequest();
+	req.open('GET', url, true);
+	if (type) req.responseType = type;
+	if (headers) for(var i in headers)
+		req.setRequestHeader(i, headers[i]);
+	if (cb) req.onloadend = cb;
 	req.send();
 }
-function saveCache(url,data) {
-	db.transaction(function(t){
-		t.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)',[url,data],function(t,r){
-		},dbError);
+
+function saveCache(url, data) {
+	db.transaction(function(t) {
+		t.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)', [url, data], null, dbError);
 	});
 }
-var _cache={};
-function fetchCache(url){
-	if(_cache[url]) return;
-	_cache[url]=1;
-	fetchURL(url,function(){
-		if(this.status!=200) return;
-		var r=new FileReader();
-		r.onload=function(e){
-			saveCache(url,e.target.result);
+
+var _cache = {};
+function fetchCache(url) {
+	if (_cache[url]) return;
+	_cache[url] = 1;
+	fetchURL(url, function(){
+		if (this.status != 200) return;
+		var r = new FileReader();
+		r.onload = function(e) {
+			saveCache(url, e.target.result);
 			delete _cache[url];
 		};
 		r.readAsBinaryString(this.response);
-	},'blob');
+	}, 'blob');
 }
 
-function queryScript(id,meta,callback){
-	db.readTransaction(function(t){
+function queryScript(id, meta, callback) {
+	db.readTransaction(function(t) {
 		function queryMeta() {
-			var uri=getNameURI({id:'',meta:meta});
-			if(uri=='::') callback(newScript());
-			else t.executeSql('SELECT * FROM scripts WHERE uri=?',[uri],function(t,r){
-				if(callback) {
-					if(r.rows.length) callback(getScript(r.rows.item(0)));
-					else callback(newScript());
-				}
+			var uri = getNameURI({id: '', meta: meta});
+			if (uri == '::') callback(newScript());
+			else t.executeSql('SELECT * FROM scripts WHERE uri=?', [uri], function(t, r) {
+				if(r.rows.length) callback(getScript(r.rows.item(0)));
+				else callback(newScript());
 			});
 		}
 		function queryId() {
-			t.executeSql('SELECT * FROM scripts WHERE id=?',[id],function(t,r){
-				if(r.rows.length) {
-					if(callback) callback(getScript(r.rows.item(0)));
-				} else queryMeta();
+			t.executeSql('SELECT * FROM scripts WHERE id=?', [id], function(t, r) {
+				if(r.rows.length) callback(getScript(r.rows.item(0)));
+				else queryMeta();
 			});
 		}
 		queryId();
 	});
 }
-function parseScript(d,callback){
+
+function parseScript(data, callback){
 	function finish(){
-		updateItem(r);if(callback) callback(r);
+		updateItem(ret);
+		if(callback) callback(ret);
 	}
-	var i,r={status:0,message:'message' in d?d.message:_('msgUpdated')};
-	if(d.status&&d.status!=200||!d.code) {
-		r.status=-1;r.message=_('msgErrorFetchingScript');
-		finish();
-	} else {
-		var meta=parseMeta(d.code);
-		queryScript(d.id,meta,function(c){
-			if(!c.id){r.status=1;r.message=_('msgInstalled');}
-			if(d.more) for(i in d.more) if(i in c) c[i]=d.more[i];	// for import and user edit
-			c.meta=meta;c.code=d.code;c.uri=getNameURI(c);
-			if(!c.meta.homepageURL&&!c.custom.homepageURL&&!/^(file|data):/.test(d.from)) c.custom.homepageURL=d.from;
-			if(d.url&&!/^(file|data):/.test(d.url)) c.custom.lastInstallURL=d.url;
-			saveScript(c,function(){
-				r.id=c.id;
-				if(!meta.grant.length) r.warnGrant=meta.name;
-				finish();
-			});
-		});
-		meta.require.forEach(function(u){	// @require
-			var c=d.cache&&d.cache[u];
-			if(c) saveCache(u,c); else fetchCache(u);
-		});
-		for(i in meta.resources) {	// @resource
-			var u=meta.resources[i],c=d.cache&&d.cache[u];
-			if(c) saveCache(u,c); else fetchCache(u);
+	var ret = {
+		code: 0,
+		message: 'message' in data ? data.message : _('msgUpdated'),
+	};
+	if (data.status && data.status != 200 || ! data.code) {
+		ret.code = -1;
+		ret.message = _('msgErrorFetchingScript');
+		return finish();
+	}
+	var meta = parseMeta(data.code);
+	queryScript(data.id, meta, function(script) {
+		if (!script.id) {
+			ret.code = 1;
+			ret.message = _('msgInstalled');
 		}
-		if(isRemote(meta.icon)) fetchCache(meta.icon);	// @icon
-	}
-}
-function installScript(e,data){
-	var s=[],i;
-	for(i in data) s.push(i+'='+encodeURIComponent(data[i]));
-	opera.extension.tabs.create({url:'/options.html?'+s.join('&')}).focus();
-}
-function move(s,d){
-	function update(o){
-		db.transaction(function(t){
-			function loop(){
-				var i=o.shift();
-				if(i) t.executeSql('UPDATE scripts SET position=? WHERE id=?',i,loop,dbError);
-			}
-			loop();
+		if (data.more)	// for import and user edit
+			for(var i in data.more)
+				if(i in script) script[i] = data.more[i];
+		script.meta = meta;
+		script.code = data.code;
+		script.uri = getNameURI(script);
+		// use referer page as default homepage
+		if (! script.meta.homepageURL && ! script.custom.homepageURL && ! /^(file|data):/.test(data.from))
+			script.custom.homepageURL = data.from;
+		// store last install URL
+		if(data.url && ! /^(file|data):/.test(data.url))
+			script.custom.lastInstallURL = data.url;
+		saveScript(script, function() {
+			ret.id = script.id;
+			if(!meta.grant.length) ret.warnGrant = meta.name;
+			finish();
 		});
+	});
+	function getCache(url) {
+		// check if cache is already fetched
+		var cache = data.cache && data.cache[url];
+		if(cache) saveCache(url, cache);
+		else fetchCache(url);
 	}
-	// update ids
-	var g=d>s?1:-1,x=ids[s],i,u=[],o1,o2;
-	for(i=s;i!=d;i+=g) ids[i]=ids[i+g];ids[d]=x;
-	x=metas[x].position;o1=metas[ids[d]];
-	for(i=d;i!=s;i-=g) {
-		o2=metas[ids[i-g]];
-		o1.position=o2.position;
-		u.push([o1.position,o1.id]);
-		o1=o2;
-	}
-	o1.position=x;
-	u.push([o1.position,o1.id]);
-	update(u);
+	// fetch cache asynchronously
+	meta.require.forEach(getCache);
+	for (var i in meta.resources) getCache(meta.resources[i]);
+	if (isRemote(meta.icon)) fetchCache(meta.icon);	// @icon
 }
+
+function installScript(e, data) {
+	var qs = [];
+	for(var i in data) qs.push(i + '=' + encodeURIComponent(data[i]));
+	opera.extension.tabs.create({url: '/options.html?' + qs.join('&')}).focus();
+}
+
+function move(idxFrom, idxTo) {
+	if (idxFrom == idxTo) return;
+	var step = idxTo > idxFrom ? 1 : -1;
+	var x = ids[idxFrom];
+	var script;
+	var updates = [];
+	for ( var i = idxFrom; i != idxTo; i += step ) {
+		script = metas[ids[i] = ids[i + step]];
+		updates.push([script.position = i + 1, script.id]);
+	}
+	script = metas[ids[idxTo] = x];
+	updates.push([script.position = idxTo + 1, script.id]);
+	db.transaction(function(t) {
+		function updatePos() {
+			var item = updates.shift();
+			if (item)
+				t.executeSql('UPDATE scripts SET position=? WHERE id=?', item, updatePos, dbError);
+		}
+		updatePos();
+	});
+}
+
 function vacuum(callback){
 	var cache={},values={},count=0;
 	function vacuumPosition(){
@@ -515,7 +621,7 @@ var _update={};
 function checkUpdateO(o){
 	if(_update[o.id]) return;_update[o.id]=1;
 	function finish(){delete _update[o.id];}
-	var r={id:o.id,updating:1,status:2};
+	var r={id:o.id,updating:1,code:2};
 	function update(){
 		if(du) {
 			r.message=_('msgUpdating');
@@ -533,7 +639,7 @@ function checkUpdateO(o){
 			r.message=_('msgErrorFetchingUpdateInfo');
 			if(this.status==200) try{
 				var m=parseMeta(this.responseText);
-				if(older(o.meta.version,m.version)) return update();
+				if(compareVersion(o.meta.version,m.version)<0) return update();
 				r.message=_('msgNoUpdate');
 			}catch(e){}
 			delete r.updating;
@@ -612,37 +718,11 @@ function abortRequest(e,id){
 	delete requests[id];
 }
 
-function getOption(k,def){
-	var v=widget.preferences.getItem(k)||'';
-	try{
-		v=JSON.parse(v);
-	}catch(e){
-		v=def;
-		if(v!=undefined) return setOption(k,v);
-	}
-	settings[k]=v;
-	return v;
-}
-function setOption(k,v){
-	widget.preferences.setItem(k,JSON.stringify(v));
-	settings[k]=v;
-	return v;
-}
-function initSettings(){
-	getOption('isApplied',true);
-	getOption('autoUpdate',true);
-	getOption('lastUpdate',0);
-	getOption('showButton',true);
-	getOption('showBadge',true);
-	getOption('showButtonAsNeeded',false);
-	getOption('withData',true);
-	getOption('closeAfterInstall',false);
-}
 function showButton(show){
 	if(show) opera.contexts.toolbar.addItem(button);
 	else opera.contexts.toolbar.removeItem(button);
 }
-function updateIcon() {button.icon='images/icon18'+(settings.isApplied?'':'w')+'.png';}
+function updateIcon() {button.icon='images/icon18'+(getOption('isApplied')?'':'w')+'.png';}
 function updateItem(r){	// update loaded options pages
 	for(var i=0;i<_updateItem.length;)
 		try{
@@ -667,13 +747,13 @@ function initIcon(){
 		},
 	});
 	updateIcon();
-	showButton(settings.showButton);
+	showButton(getOption('showButton'));
 }
 function autoCheck(o){
 	// check for updates automatically in 20 seconds
 	function check(){
-		if(settings.autoUpdate) {
-			if(Date.now()-settings.lastUpdate>=864e5) checkUpdateAll();
+		if(getOption('autoUpdate')) {
+			if(Date.now()-getOption('lastUpdate')>=864e5) checkUpdateAll();
 			setTimeout(check,36e5);
 		} else checking=false;
 	}
@@ -688,12 +768,10 @@ function clearPopupTimer(){
 function clearBadge(){
 	button.badge.display='none';
 	clearPopupTimer();
-	if(settings.showButton&&settings.showButtonAsNeeded) showButton(false);
 }
 function showBadge(){
 	var n=tabData&&tabData[1]&&tabData[1].length;
-	if(n&&settings.showBadge) {
-		if(settings.showButton&&settings.showButtonAsNeeded) showButton(true);
+	if(n&&getOption('showBadge')) {
 		button.badge.textContent=n>99?'99+':n;
 		button.badge.display='block';
 		clearPopupTimer();
@@ -714,7 +792,7 @@ function gotTabData(e,data){
 	tabData=data;
 	showBadge();
 }
-var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
+var db,button,checking=false,_updateItem=[],ids=null,metas,pos,
 		maps={
 			GetInjected:getInjected,
 			InstallScript:installScript,
@@ -727,8 +805,8 @@ var db,_,button,checking=false,settings={},_updateItem=[],ids=null,metas,pos,
 		},tabData=null,popupTimer=null;
 if(parseInt(opera.version())<12)	// Check old version of Opera
 	opera.extension.tabs.create({url:'https://github.com/gera2ld/Violentmonkey-oex/wiki/Obsolete'});
-else initMessages(function(){
-	initSettings();
+else {
+	initMessages();
 	initIcon();
 	initDatabase(function(){
 		upgradeData(function(){
@@ -737,11 +815,11 @@ else initMessages(function(){
 					var m=e.data,c=maps[m.topic];
 					if(c) try{c(e,m.data);}catch(e){opera.postError(e);}
 				};
-				if(settings.autoUpdate) autoCheck(2e4);
+				if(getOption('autoUpdate')) autoCheck(2e4);
 				opera.extension.tabs.onfocus=function(e){
 					tabData=null;getTabData();
 				};
 			});
 		});
 	});
-});
+}

@@ -194,7 +194,7 @@ function wrapGM(c){
 		}},
 		GM_deleteValue:{value:function(key){
 			delete value[key];
-			opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,data:value}});
+			opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,values:value}});
 		}},
 		GM_getValue:{value:function(k,d){
 			var v=value[k];
@@ -217,7 +217,7 @@ function wrapGM(c){
 				default:val=t+val;
 			}
 			value[key]=val;
-			opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,data:value}});
+			opera.extension.postMessage({topic:'SetValue',data:{uri:c.uri,values:value}});
 		}},
 		GM_getResourceText:{value:function(name){
 			var b=getCache(name);

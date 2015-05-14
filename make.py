@@ -8,7 +8,7 @@ ex_dir=re.compile(r'^\.git')
 ex_file=re.compile(r'^\.git|\.(py|oex|md|less)$|^[^\.]*$')
 
 def makeOperaAddon(src,dist):
-	print('Packager for Opera addons - designed by Gerald')
+	print('Packager for Opera OEX addons - designed by Gerald')
 	try: tree=ET.parse(os.path.join(src,'config.xml'))
 	except:
 		print('Error loading package at path: %s' % src)
@@ -32,4 +32,4 @@ def makeOperaAddon(src,dist):
 	print('Packed: %s version %s' % (name,version))
 
 if __name__=='__main__':
-	makeOperaAddon('src','dist')
+	makeOperaAddon('dist','.')
