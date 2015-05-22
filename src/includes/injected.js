@@ -49,7 +49,7 @@ opera.extension.onmessage = function(e) {
 		c=requests[message.data.id];
 		if(c) c.callback(message.data);
 	} else if(message.topic=='GetTabData')
-		opera.extension.postMessage({topic:'GotTabData',data:[menu,scr]});
+		opera.extension.postMessage({topic:'GotTabData',data:{menus:menus,ids:ids}});
 	else if(message.topic=='Command') {
 		c=command[message.data];if(c) c();
 	} else if(message.topic=='GotRequestId') qrequests.shift().start(message.data);
@@ -116,7 +116,7 @@ function Request(details){
 
 // For injected scripts
 var start=[],end=[],cache,values,requires={},
-		scr=[],menu=[],command={},loaded=false;
+		ids=[],menus=[],command={},loaded=false;
 function abspath(u){
 	// convert url to absolute path
 	var a=document.createElement('a');
@@ -243,7 +243,7 @@ function wrapGM(c){
 			a.href=url;a.target='_blank';a.click();
 		}},
 		GM_registerMenuCommand:{value:function(cap,func,acc){
-			menu.push([cap,acc]);command[cap]=func;
+			menus.push([cap,acc]);command[cap]=func;
 			opera.extension.postMessage({topic:'GetTabData'});
 		}},
 		GM_xmlhttpRequest:{value:function(details){
@@ -292,7 +292,7 @@ function loadScript(data){
 	cache=data.cache;
 	values=data.values;
 	data.scripts.forEach(function(i){
-		scr.push(i.id);
+		ids.push(i.id);
 		if(data.isApplied&&i.enabled) {
 			switch(i.custom['run-at']||i.meta['run-at']){
 				case 'document-start':l=start;break;

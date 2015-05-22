@@ -770,7 +770,7 @@ function clearBadge(){
 	clearPopupTimer();
 }
 function showBadge(){
-	var n=tabData&&tabData[1]&&tabData[1].length;
+	var n=tabData&&tabData.ids&&tabData.ids.length;
 	if(n&&getOption('showBadge')) {
 		button.badge.textContent=n>99?'99+':n;
 		button.badge.display='block';
