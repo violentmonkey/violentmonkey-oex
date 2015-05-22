@@ -167,7 +167,7 @@ else !function() {
 			(def || '<em>' + _('labelNoName') + '</em>');
 	}
 
-	function debounce(cb, delay) {
+	/*function debounce(cb, delay) {
 		function callback() {
 			cb.apply(null, args);
 		}
@@ -177,7 +177,7 @@ else !function() {
 			args = arguments;
 			timer = setTimeout(callback, delay);
 		}
-	}
+	}*/
 
 	function warnGrant(name) {
 		function close() {
@@ -394,9 +394,6 @@ else !function() {
 
 		var height = 90;
 		var gap = 10;
-		var setHeight = debounce(function(height) {
-			parent.style.height = height;
-		}, 500);
 		function getIndexByTop(top) {
 			var i = Math.floor((top - gap) / (height + gap));
 			var lower = (height + gap) * i + gap;
@@ -408,18 +405,10 @@ else !function() {
 			if(!data) return;
 			var node = data.node;
 			var top = (height + gap) * i + gap;
-			var delta = 60 * (i + 1);
-			if(node.style.top == '' && top < wrap.clientHeight) {
-				top += delta;
-				node.style.opacity = 0;
-				setTimeout(function(){
-					top -= delta;
-					node.style.top = top + 'px';
-					node.style.opacity = '';
-				}, 0);
-			}
+			setTimeout(function(){
+				node.classList.remove('entering');
+			}, ~~ (Math.random() * 500));
 			node.style.top = top + 'px';
-			setHeight((height + gap) * list.length + gap + 'px');
 		}
 
 		var emptyDom = document.createElement('div');
@@ -430,8 +419,9 @@ else !function() {
 			var data = dragging.data = findItem(e.target);
 			dragging.index = data.index;
 			var node = e.target;
-			dragging.offsetX = e.offsetX;
-			dragging.offsetY = e.offsetY;
+			var rect = node.getBoundingClientRect();
+			dragging.offsetX = e.clientX - rect.left;
+			dragging.offsetY = e.clientY - rect.top;
 			node.style.width = node.offsetWidth + 'px';
 			node.style.left = e.clientX - dragging.offsetX + 'px';
 			node.style.top = e.clientY - dragging.offsetY + 'px';
@@ -528,7 +518,7 @@ else !function() {
 			};
 			dict[script.id] = data;
 			list.push(data);
-			node.className = 'script';
+			node.className = 'script entering';
 			node.draggable = true;
 			node.addEventListener('dragstart', dragstart, false);
 			initNode(data);
