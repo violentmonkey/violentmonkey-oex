@@ -115,7 +115,7 @@ function Request(details){
 };
 
 // For injected scripts
-var start=[],end=[],cache,values,requires={},
+var start=[],end=[],idle=[],cache,values,requires={},
 		ids=[],menus=[],command={},loaded=false;
 function abspath(u){
 	// convert url to absolute path
@@ -284,11 +284,19 @@ function runCode(c){
 	}
 }
 function run(l){while(l.length) runCode(l.shift());}
-window.addEventListener('DOMContentLoaded',function(){
-	loaded=true;run(end);
+function checkLoaded(){
+	if(loaded) {
+		run(end);
+		setTimeout(function(){
+			run(idle);
+		},0);
+	}
+}
+document.addEventListener('DOMContentLoaded',function(){
+	loaded=true;checkLoaded();
 },false);
 function loadScript(data){
-	var l,idle=[];
+	var l;
 	cache=data.cache;
 	values=data.values;
 	data.scripts.forEach(function(i){
@@ -302,8 +310,7 @@ function loadScript(data){
 			l.push(i);
 		}
 	});
-	end=end.concat(idle);
-	run(start);if(loaded) run(end);
+	run(start);checkLoaded();
 	opera.extension.postMessage({topic:'GetTabData'});
 }
 opera.extension.postMessage({topic:'GetInjected',data:window.location.href});
