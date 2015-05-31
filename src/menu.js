@@ -104,8 +104,7 @@ Menu.prototype = {
 	}
 
 	function setData(data) {
-		if(!data) return;
-		if(data.menus && data.menus.length) {
+		if(data && data.menus && data.menus.length) {
 			new Menu({
 				name: _('menuBack'),
 				parent: commands_top,
@@ -143,7 +142,7 @@ Menu.prototype = {
 				before: nodeIsApplied,
 			});
 		}
-		if(data.ids && data.ids.length) {
+		if(data && data.ids && data.ids.length) {
 			var ids = data.ids.filter(function (id) {
 				return !scripts[id];
 			});
