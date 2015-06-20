@@ -806,7 +806,7 @@ else !function() {
 		function split(str) {
 			var empty = /^\s*$/;
 			return str.split(/\s*\n\s*/)
-				.filter(function(e){return empty.test(e);});
+				.filter(function(e){return !empty.test(e);});
 		}
 
 		function save() {
