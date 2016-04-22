@@ -38,23 +38,18 @@ labelNoName:
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: 管理脚本
-  touched: false
 menuFindScripts:
   description: Menu item to find scripts for a site.
   message: 为此站点查找脚本
-  touched: false
 menuScriptEnabled:
   description: 'Menu item showing the status of Violentmonkey, whether enabled.'
   message: 启用脚本
-  touched: false
 menuBack:
   description: Menu item to go back to main menu from script commands.
   message: 返回
-  touched: false
 menuCommands:
   description: Menu item to list script commands.
   message: 脚本命令...
-  touched: false
 buttonVacuum:
   description: Button to vacuum extension data.
   message: 整理数据
@@ -88,9 +83,11 @@ labelAutoUpdate:
 labelShowButton:
   description: Option to show an icon of this extension in the toolbar.
   message: 在工具栏上显示按钮
+  touched: false
 labelShowBadge:
   description: Option to show number of scripts running in current tab as a badge number
   message: 在按钮旁显示正在运行的脚本数
+  touched: false
 labelDataImport:
   description: Section title of data import.
   message: 数据导入
@@ -319,3 +316,6 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: 不显示缺少@grant的警告
+menuScriptDisabled:
+  description: 'Menu item showing the status of Violentmonkey, when disabled.'
+  message: 脚本已禁用

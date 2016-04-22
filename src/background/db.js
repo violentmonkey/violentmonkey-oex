@@ -30,6 +30,15 @@ function VMDB() {
  * }
  */
 
+function dbError(t, e) {
+  opera.postError('Database error: ' + e.message);
+	if (e.code == 4) {
+    opera.extension.tabs.create({
+      url: '/notice_quota.html',
+    }).focus();
+  }
+}
+
 VMDB.prototype.openDB = function () {
   var _this = this;
   _this.db = openDatabase('Violentmonkey', '0.5', 'Violentmonkey data', 10 * 1024 * 1024);
@@ -44,7 +53,7 @@ VMDB.prototype.openDB = function () {
         return new Promise(function (resolve, reject) {
           tx.executeSql(sql, [], function (tx, res) {
             resolve(res);
-          });
+          }, dbError);
         });
       });
     }, Promise.resolve());
@@ -81,7 +90,7 @@ VMDB.prototype.initPosition = function () {
       tx.executeSql('SELECT position FROM scripts ORDER BY position DESC LIMIT 1', [], function (tx, res) {
         if (res.rows.length) _this.position = res.rows.item(0).position;
         resolve();
-      })
+      }, dbError);
     });
   });
 };
@@ -101,7 +110,7 @@ VMDB.prototype.getScript = function (id, tx) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('SELECT * FROM scripts WHERE id=? LIMIT 1', [id], function (tx, res) {
         resolve(_this.readScripts(res)[0]);
-      });
+      }, dbError);
     });
   });
 };
@@ -115,7 +124,7 @@ VMDB.prototype.queryScript = function (id, meta, tx) {
       _this.getTransaction(false, tx).then(function (tx) {
         tx.executeSql('SELECT * FROM scripts WHERE uri=? LIMIT 1', [uri], function (tx, res) {
           resolve(_this.readScripts(res)[0]);
-        });
+        }, dbError);
       });
     });
 };
@@ -153,7 +162,7 @@ VMDB.prototype.getValues = function (uris, tx) {
               if (item) data[uri] = JSON.parse(item.data);
             } catch (e) {}
             resolve(data);
-          });
+          }, dbError);
         });
       });
     }, Promise.resolve({}));
@@ -192,7 +201,7 @@ VMDB.prototype.getScriptsByURL = function (url) {
             var item = _this.readSQLResult(res)[0];
             if (item) data[uri] = item.data;
             resolve(data);
-          });
+          }, dbError);
         });
       });
     }, Promise.resolve({}));
@@ -255,7 +264,7 @@ VMDB.prototype.removeScript = function (id) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('DELETE FROM scripts WHERE id=?', [id], function (tx, res) {
         resolve();
-      });
+      }, dbError);
     });
   });
 };
@@ -266,7 +275,7 @@ VMDB.prototype.moveScript = function (id, offset) {
     return (new Promise(function (resolve, reject) {
       tx.executeSql('SELECT position FROM scripts WHERE id=?', [id], function (tx, res) {
         resolve(_this.readSQLResult(res)[0].position);
-      });
+      }, dbError);
     })).then(function (pos) {
       return new Promise(function (resolve, reject) {
         var sql = 'SELECT id,position FROM scripts WHERE position' + (offset < 0 ? '<' : '>') + '? ORDER BY position ' + (offset < 0 ? 'DESC' : '') + ' LIMIT ?';
@@ -276,7 +285,7 @@ VMDB.prototype.moveScript = function (id, offset) {
           resolve([[items[items.length - 1].position, id]].concat(items.map(function (item, i) {
             return [i ? items[i - 1].position : pos, item.id];
           })));
-        });
+        }, dbError);
       });
     }).then(function (updates) {
       return updates.reduce(function (result, item) {
@@ -284,7 +293,7 @@ VMDB.prototype.moveScript = function (id, offset) {
           return new Promise(function (resolve, reject) {
             tx.executeSql('UPDATE scripts SET position=? WHERE id=?', item, function (tx, res) {
               resolve();
-            });
+            }, dbError);
           });
         });
       }, Promise.resolve());
@@ -302,7 +311,7 @@ VMDB.prototype.getCacheB64 = function (uris, tx) {
             var item = _this.readSQLResult(res)[0];
             if (item) data[uri] = item.data;
             resolve(data);
-          });
+          }, dbError);
         });
       });
     }, Promise.resolve({}));
@@ -314,7 +323,7 @@ VMDB.prototype.saveCache = function (url, data, tx) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('REPLACE INTO cache(uri,data) VALUES(?,?)', [url, data], function (tx, res) {
         resolve();
-      });
+      }, dbError);
     });
   });
 };
@@ -324,7 +333,7 @@ VMDB.prototype.saveRequire = function (url, data, tx) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('REPLACE INTO require(uri,data) VALUES(?,?)', [url, data], function (tx, res) {
         resolve();
-      });
+      }, dbError);
     });
   });
 };
@@ -348,7 +357,7 @@ VMDB.prototype.saveScript = function (script, tx) {
       tx.executeSql('REPLACE INTO scripts(id,uri,meta,custom,enabled,"update",position,code) VALUES(?,?,?,?,?,?,?,?)', data, function (tx, res) {
         script.id = script.id || res.insertId;
         resolve(script);
-      });
+      }, dbError);
     });
   });
 };
@@ -398,7 +407,7 @@ VMDB.prototype.setValue = function (uri, values) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('REPLACE INTO "values"(uri,data) VALUES(?,?)', [uri, JSON.stringify(values)], function (tx, res) {
         resolve();
-      });
+      }, dbError);
     });
   });
 };
@@ -422,7 +431,7 @@ VMDB.prototype.updateScriptInfo = function (id, data) {
       return new Promise(function (resolve, reject) {
         tx.executeSql('UPDATE scripts SET ' + updates.join(',') + ' WHERE id=?', args, function (tx, res) {
           resolve(scriptUtils.getScriptInfo(script));
-        });
+        }, dbError);
       });
     });
   });
@@ -479,7 +488,7 @@ VMDB.prototype.vacuum = function () {
         return new Promise(function (resolve, reject) {
           tx.executeSql('UPDATE scripts SET position=? WHERE id=?', [i + 1, id], function (tx, res) {
             resolve();
-          });
+          }, dbError);
         });
       });
     }, Promise.resolve());
@@ -493,11 +502,11 @@ VMDB.prototype.vacuum = function () {
               if (dict[item.uri]) resolve(dict[item.uri] ++);
               else tx.executeSql('DELETE FROM "' + dbName + '" WHERE uri=?', [item.uri], function (tx, res) {
                 resolve();
-              });
+              }, dbError);
             });
           });
         }, Promise.resolve()));
-      });
+      }, dbError);
     });
   }
   var _this = this;
@@ -533,7 +542,7 @@ VMDB.prototype.getScriptsByIndex = function (index, cond, tx) {
     return new Promise(function (resolve, reject) {
       tx.executeSql('SELECT * FROM scripts' + (cond ? ' WHERE ' + cond : '') + ' ORDER BY "' + index + '"', [], function (tx, res) {
         resolve(_this.readScripts(res));
-      });
+      }, dbError);
     });
   });
 };

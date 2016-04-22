@@ -80,9 +80,9 @@ var requests = function () {
     }
   }
   function abortRequest(id) {
-  	var req = requests[id];
-  	if (req) req.xhr.abort();
-  	delete requests[id];
+    var req = requests[id];
+    if (req) req.xhr.abort();
+    delete requests[id];
   }
 
   var requests = {};

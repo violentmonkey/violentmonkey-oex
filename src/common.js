@@ -55,11 +55,11 @@ _.getLocaleString = function (meta, key) {
 	var languages = [navigator.language];
 	var i = languages[0].indexOf('-');
 	if (i > 0) {
-		var lang = languages[0]
+		var lang = languages[0];
 		languages[0] = lang.slice(0, i) + lang.slice(i).toUpperCase();
 		languages.push(lang.slice(0, i));
 	}
-	var lang = _.find(languages, function (lang) {
+	lang = _.find(languages, function (lang) {
 		return (key + ':' + lang) in meta;
 	});
 	if (lang) key += ':' + lang;

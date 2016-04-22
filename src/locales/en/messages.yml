@@ -38,23 +38,18 @@ labelNoName:
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Manage scripts
-  touched: false
 menuFindScripts:
   description: Menu item to find scripts for a site.
   message: Find scripts for this site
-  touched: false
 menuScriptEnabled:
   description: 'Menu item showing the status of Violentmonkey, whether enabled.'
   message: Scripts enabled
-  touched: false
 menuBack:
   description: Menu item to go back to main menu from script commands.
   message: Back
-  touched: false
 menuCommands:
   description: Menu item to list script commands.
   message: Script commands...
-  touched: false
 buttonVacuum:
   description: Button to vacuum extension data.
   message: Vacuum database
@@ -88,9 +83,11 @@ labelAutoUpdate:
 labelShowButton:
   description: Option to show an icon of this extension in the toolbar.
   message: Show button on toolbar
+  touched: false
 labelShowBadge:
   description: Option to show number of scripts running in current tab as a badge number
   message: Show number of current running scripts as a badge number
+  touched: false
 labelDataImport:
   description: Section title of data import.
   message: Data Import
@@ -319,3 +316,6 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: Suppress no @grant warnings
+menuScriptDisabled:
+  description: 'Menu item showing the status of Violentmonkey, when disabled.'
+  message: Scripts disabled

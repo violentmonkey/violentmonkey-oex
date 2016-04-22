@@ -10,42 +10,44 @@ var badges = function () {
   }
   function clear() {
     cancel();
-    button.badge.display = 'none';
+    badges.button.badge.display = 'none';
+    tabData = null;
   }
   function clearLater() {
     cancel();
     timer = setTimeout(clear, 200);
   }
   function getBadges() {
+    var tab = opera.extension.tabs.getFocused();
     try {
-      opera.extension.tabs.getFocused()
-      .postMessage({cmd: 'GetPopup'});
+      tab.postMessage({cmd: 'GetPopup'});
       clearLater();
     } catch (e) {
       clear();
     }
   }
   function setBadges(data, src) {
-    tabData = data;
+    badges.tabData = data;
     if (data.badge /*&& _.options.get('showBadge')*/) {
-      button.badge.textContent = data.badge > 99 ? '99+' : data.badge;
-      button.badge.display = 'block';
+      badges.button.badge.textContent = data.badge > 99 ? '99+' : data.badge;
+      badges.button.badge.display = 'block';
       cancel();
     } else {
       clear();
     }
+    _.popupMessenger.post(data);
   }
   function updateIcon() {
     var isApplied = _.options.get('isApplied');
-    button.icon = '/images/icon18' + (isApplied ? '' : 'w') + '.png';
+    badges.button.icon = '/images/icon18' + (isApplied ? '' : 'w') + '.png';
   }
   function show(show) {
     var toolbar = opera.contexts.toolbar;
-    if (show) toolbar.addItem(button);
-    else toolbar.removeItem(button);
+    if (show) toolbar.addItem(badges.button);
+    else toolbar.removeItem(badges.button);
   }
   function init() {
-    button = opera.contexts.toolbar.createItem({
+    badges.button = opera.contexts.toolbar.createItem({
       title: _.i18n('extName'),
       popup: {
         href: '/popup/index.html',
@@ -61,12 +63,14 @@ var badges = function () {
     updateIcon();
     show(_.options.get('showButton'));
   }
-  var button, timer, tabData;
-  return {
+  var timer;
+  var badges = {
     init: init,
-    get: _.debounce(getBadges, 100),
+    get: getBadges,
     set: setBadges,
+    update: updateIcon,
   };
+  return badges;
 }();
 
 var autoUpdate = function () {
@@ -88,7 +92,7 @@ var autoUpdate = function () {
   };
 }();
 
-_.messenger = function () {
+function initMessenger() {
   var callbacks = [];
   return {
     connect: function (callback) {
@@ -105,7 +109,9 @@ _.messenger = function () {
       });
     },
   };
-}();
+}
+_.messenger = initMessenger();
+_.popupMessenger = initMessenger();
 
 var commands = {
   NewScript: function (data, src) {

@@ -20,7 +20,7 @@ var app = new App();
 if (!Backbone.history.start())
   app.navigate('', {trigger: true, replace: true});
 
-BaseView.prototype.initI18n.call(window);
+BaseView.prototype.postrender.call(window);
 
 var scriptList;
 function initMain() {

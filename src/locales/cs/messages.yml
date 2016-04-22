@@ -38,23 +38,18 @@ labelNoName:
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Řízení skriptů
-  touched: false
 menuFindScripts:
   description: Menu item to find scripts for a site.
   message: Najdi skripty pro tuto stránku
-  touched: false
 menuScriptEnabled:
   description: 'Menu item showing the status of Violentmonkey, whether enabled.'
   message: Skripty zapnuty
-  touched: false
 menuBack:
   description: Menu item to go back to main menu from script commands.
   message: Zpět
-  touched: false
 menuCommands:
   description: Menu item to list script commands.
   message: Skriptové příkazy...
-  touched: false
 buttonVacuum:
   description: Button to vacuum extension data.
   message: Vyprázdnit data
@@ -88,9 +83,11 @@ labelAutoUpdate:
 labelShowButton:
   description: Option to show an icon of this extension in the toolbar.
   message: Zobrazovat tlačítko na liště
+  touched: false
 labelShowBadge:
   description: Option to show number of scripts running in current tab as a badge number
   message: Show number of current running scripts as a badge number
+  touched: false
 labelDataImport:
   description: Section title of data import.
   message: Data Import
@@ -316,4 +313,7 @@ buttonInstallFromURL:
   message: ''
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
+  message: ''
+menuScriptDisabled:
+  description: 'Menu item showing the status of Violentmonkey, when disabled.'
   message: ''
