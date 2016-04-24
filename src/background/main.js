@@ -205,6 +205,7 @@ var commands = {
   InstallScript: function (data, src) {
     var params = encodeURIComponent(data.url);
     if (data.from) params += '/' + encodeURIComponent(data.from);
+    if (data.text) _.cache.set(data.url, data.text);
     opera.extension.tabs.create({
       url: '/options.html#confirm/' + params,
     });

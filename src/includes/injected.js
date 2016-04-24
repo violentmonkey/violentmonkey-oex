@@ -2,12 +2,14 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
 
   function installScript() {
     // check if this is a userscript
-    if (/^\s*</.test(document.body.innerText)) return;
+    var text = document.body.textContent;
+    if (/^\s*</.test(text)) return;
     opera.extension.postMessage({
       cmd: 'InstallScript',
       data: {
         url: window.location.href,
         from: document.referrer,
+        text: text,
       },
     });
     window.history.go(-1);
@@ -17,7 +19,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
   } else installScript();
 
 }(); else !function (){
-  
+
   var _ = {
     getUniqId: function () {
       return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
