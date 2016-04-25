@@ -23,8 +23,10 @@
     "gulp-replace": "^0.5.4",
     "gulp-util": "^3.0.7",
     "html-minifier": "^1.1.1",
+    "jszip": "^3.0.0",
     "merge2": "^1.0.1",
     "ncp": "^2.0.0",
+    "sync-promise-lite": "^0.2.0",
     "through2": "^2.0.1",
     "underscore": "^1.8.3"
   },

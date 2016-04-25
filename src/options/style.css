@@ -155,13 +155,18 @@ fieldset.title {
   width: 100%;
   height: 200px;
   white-space: normal;
+  border: 1px solid gray;
 }
-.export-list > option {
+.export-list > * {
   display: inline-block;
   width: 180px;
   margin: 2px;
   padding: 0 5px;
   box-shadow: 0 0 1px black;
+  cursor: pointer;
+}
+.export-list > .selected {
+	background: lightgreen;
 }
 .frame {
   position: fixed;
@@ -318,4 +323,18 @@ fieldset.title {
 .edit .button-panel td:not(.expand) {
   width: 1px;
   white-space: nowrap;
+}
+
+#groupImport {
+  position: relative;
+  display: inline-block;
+}
+#bImportHelper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: default;
 }

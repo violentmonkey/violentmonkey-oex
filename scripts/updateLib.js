@@ -5,9 +5,12 @@ const path = require('path');
 const glob = require('glob');
 const ncp = require('ncp');
 
+const SRC_DIR = 'src/public/lib';
 const aliases = {
   CodeMirror: 'codemirror',
   'font-awesome': {},
+  jszip: 'jszip/dist',
+  'sync-promise-lite': {},
 };
 
 function getFiles(pattern, cwd) {
@@ -28,9 +31,11 @@ function readdir(dir) {
 
 function copyFile(src, dest) {
   return new Promise((resolve, reject) => {
-    ncp(src, dest, (err) => err ? reject(err) : resolve());
+    ncp(src, dest, err => err ? reject(err) : resolve());
   }).then(() => {
     console.log(src + ' => ' + dest);
+  }, err => {
+    console.error(err);
   });
 }
 
@@ -41,8 +46,8 @@ function update(lib, files) {
   };
   alias.lib = alias.lib || lib;
   const libdir = `node_modules/${alias.lib}`;
-  const srcdir = `src/lib/${lib}`
-  return Promise.all(files.map((file) => {
+  const srcdir = `${SRC_DIR}/${lib}`
+  return Promise.all(files.map(file => {
     let aliasFile = alias.files && alias.files[file] || file;
     if (aliasFile.endsWith('/')) aliasFile += file;
     const libfile = path.join(libdir, aliasFile);
@@ -52,10 +57,10 @@ function update(lib, files) {
   });
 }
 
-readdir('./src/lib').then((data) => {
-  data.forEach(function (name) {
+readdir(SRC_DIR).then(data => {
+  data.forEach(name => {
     if (!aliases[name]) return;
-    getFiles('**', `src/lib/${name}`).then((files) => {
+    getFiles('**', `${SRC_DIR}/${name}`).then(files => {
       update(name, files);
     });
   });

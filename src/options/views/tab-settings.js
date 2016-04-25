@@ -1,6 +1,9 @@
 var ExportList = BaseView.extend({
   el: '.export-list',
   templateUrl: '/options/templates/option.html',
+  events: {
+    'click div': 'toggleSelected',
+  },
   initialize: function () {
     BaseView.prototype.initialize.call(this);
     this.listenTo(scriptList, 'reset change', this.render);
@@ -12,19 +15,20 @@ var ExportList = BaseView.extend({
     }).join(''));
   },
   getSelected: function () {
-    var selected = [];
-    this.$('option').each(function (i, option) {
-      if (option.selected) selected.push(scriptList.at(i));
-    });
-    return selected;
+    return _.map(this.$el.children(), function (el, i) {
+      return el.classList.contains('selected') ? scriptList.at(i) : null;
+    }).filter(function (i) {return i;});
+  },
+  toggleSelected: function (e) {
+    e.target.classList.toggle('selected');
   },
   toggleAll: function () {
-    var options = this.$('option');
+    var options = this.$el.children();
     var select = _.some(options, function (option) {
-      return !option.selected;
+      return !option.classList.contains('selected');
     });
     options.each(function (i, option) {
-      option.selected = select;
+      option.classList[select ? 'add' : 'remove']('selected');
     });
   },
 });
@@ -36,7 +40,7 @@ var SettingsTab = BaseView.extend({
     'change [data-check]': 'updateCheckbox',
     'change #cUpdate': 'updateAutoUpdate',
     'click #bSelect': 'toggleSelection',
-    'click #bImport': 'importFile',
+    'change #bImportHelper': 'importFile',
     'click #bExport': 'exportData',
     'click #bVacuum': 'onVacuum',
   },
@@ -44,8 +48,6 @@ var SettingsTab = BaseView.extend({
   _render: function () {
     var options = _.options.getAll();
     this.$el.html(this.templateFn(options));
-    this.$('#sInjectMode').val(options.injectMode);
-    this.updateInjectHint();
     this.exportList = new ExportList;
   },
   updateCheckbox: _.updateCheckbox,
@@ -79,56 +81,43 @@ var SettingsTab = BaseView.extend({
       return vm;
     }
     function getVMFile(entry, vm) {
-      if (!entry.filename.endsWith('.user.js')) return;
-      vm = vm || {};
-      return new Promise(function (resolve, reject) {
-        var writer = new zip.TextWriter;
-        entry.getData(writer, function (text) {
-          var script = {code: text};
-          if (vm.scripts) {
-            var more = vm.scripts[entry.filename.slice(0, -8)];
-            if (more) script.more = _.omit(more, ['id']);
-          }
-          _.sendMessage({
-            cmd: 'ParseScript',
-            data: script,
-          }).then(function () {
-            resolve(true);
-          });
+      return entry.async('string')
+      .then(function (text) {
+        var script = {code: text};
+        if (vm.scripts) {
+          var more = vm.scripts[entry.name.slice(0, -8)];
+          if (more) script.more = _.omit(more, ['id']);
+        }
+        return _.sendMessage({
+          cmd: 'ParseScript',
+          data: script,
         });
+      }).then(function () {
+        return true;
       });
     }
-    function getVMFiles(entries) {
-      var i = _.findIndex(entries, function (entry) {
-        return entry.filename === 'ViolentMonkey';
-      });
-      if (~i) return new Promise(function (resolve, reject) {
-        var writer = new zip.TextWriter;
-        entries[i].getData(writer, function (text) {
-          entries.splice(i, 1);
-          resolve({
+    function getVMFiles(zip) {
+      var vm = zip.file('ViolentMonkey');
+      return (vm
+        ? vm.async('string')
+        .then(function (text) {
+          return {
             vm: getVMConfig(text),
-            entries: entries,
-          });
+          };
+        })
+        : Promise.resolve({})
+      ).then(function (data) {
+        data.entries = zip.filter(function (relativePath, file) {
+          return /\.user\.js$/.test(relativePath);
         });
-      });
-      return {
-        entries: entries,
-      };
-    }
-    function readZip(file) {
-      return new Promise(function (resolve, reject) {
-        zip.createReader(new zip.BlobReader(file), function (res) {
-          res.getEntries(function (entries) {
-            resolve(entries);
-          });
-        }, function (err) {reject(err);});
+        return data;
       });
     }
-    readZip(file).then(getVMFiles).then(function (data) {
-      var vm = data.vm;
-      var entries = data.entries;
-      return Promise.all(entries.map(function (entry) {
+    JSZip.loadAsync(file)
+    .then(getVMFiles)
+    .then(function (data) {
+      var vm = data.vm || {};
+      return Promise.all(data.entries.map(function (entry) {
         return getVMFile(entry, vm);
       })).then(function (res) {
         return _.filter(res).length;
@@ -138,46 +127,14 @@ var SettingsTab = BaseView.extend({
       alert(_.i18n('msgImported', [count]));
     });
   },
-  importFile: function () {
+  importFile: function (e) {
     var _this = this;
-    $('<input type=file accept=".zip">')
-    .change(function (e) {
-      if (this.files && this.files.length)
-        _this.importData(this.files[0]);
-    })
-    .trigger('click');
+    var input = e.target;
+    if (input.files && input.files.length) {
+      _this.importData(input.files[0]);
+    }
   },
   exportData: function () {
-    function getWriter() {
-      return new Promise(function (resolve, reject) {
-        zip.createWriter(new zip.BlobWriter, function (writer) {
-          resolve(writer);
-        });
-      });
-    }
-    function addFile(writer, file) {
-      return new Promise(function (resolve, reject) {
-        writer.add(file.name, new zip.TextReader(file.content), function () {
-          resolve(writer);
-        });
-      });
-    }
-    function download(writer) {
-      return new Promise(function (resolve, reject) {
-        writer.close(function (blob) {
-          resolve(blob);
-        });
-      }).then(function (blob) {
-        var url = URL.createObjectURL(blob);
-        $('<a>').attr({
-          href: url,
-          download: 'scripts.zip',
-        }).trigger('click');
-        setTimeout(function () {
-          URL.revokeObjectURL(url);
-        });
-      });
-    }
     var bExport = this.$('#bExport');
     bExport.prop('disabled', true);
     var selected = this.exportList.getSelected();
@@ -187,7 +144,7 @@ var SettingsTab = BaseView.extend({
       cmd: 'ExportZip',
       data: {
         values: withValues,
-        ids: _.pluck(selected, 'id'),
+        ids: _.map(selected, 'id'),
       }
     }).then(function (data) {
       var names = {};
@@ -216,12 +173,15 @@ var SettingsTab = BaseView.extend({
       });
       return files;
     }).then(function (files) {
-      return files.reduce(function (result, file) {
-        return result.then(function (writer) {
-          return addFile(writer, file);
-        });
-      }, getWriter()).then(download);
-    }).then(function () {
+      var zip = new JSZip;
+      files.forEach(function (file) {
+        zip.file(file.name, file.content);
+      });
+      return zip.generateAsync({type: 'base64'});
+    }).then(function (data) {
+      _.bg.opera.extension.tabs.create({
+        url: 'data:application/zip;base64,' + data,
+      }).focus();
       bExport.prop('disabled', false);
     });
   },

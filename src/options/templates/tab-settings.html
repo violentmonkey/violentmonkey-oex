@@ -10,7 +10,10 @@
   </label>
   <fieldset class=title>
     <legend data-i18n=labelDataImport></legend>
-    <button id=bImport data-i18n=buttonImportData></button>
+    <div id="groupImport">
+      <button id=bImport data-i18n=buttonImportData></button>
+      <input type=file id="bImportHelper">
+    </div>
     <button id=bVacuum data-i18n=buttonVacuum title="<%- _.i18n('hintVacuum') %>"></button>
   </fieldset>
   <fieldset class=title>
@@ -20,7 +23,7 @@
       <input id=cbValues type=checkbox data-check=exportValues <%= it.exportValues ? 'checked' : '' %>>
       <span data-i18n=labelExportScriptData></span>
     </label>
-    <select class=export-list multiple></select>
+    <div class=export-list multiple></div>
     <button id=bSelect data-i18n=buttonAllNone></button>
     <button id=bExport data-i18n=buttonExportData></button>
   </fieldset>

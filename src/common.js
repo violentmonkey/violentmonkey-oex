@@ -47,6 +47,11 @@ _.options = function () {
 	};
 }();
 
+_.updateCheckbox = function (e) {
+  var target = e.target;
+  _.options.set(target.dataset.check, target.checked);
+};
+
 _.getUniqId = function () {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 };
