@@ -33,9 +33,7 @@ function VMDB() {
 function dbError(t, e) {
   opera.postError('Database error: ' + e.message);
 	if (e.code == 4) {
-    opera.extension.tabs.create({
-      url: '/notice_quota.html',
-    }).focus();
+    _.tabs.create('/notice_quota.html');
   }
 }
 

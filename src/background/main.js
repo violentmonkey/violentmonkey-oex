@@ -170,19 +170,6 @@ var commands = {
   ParseScript: function (data, src) {
     return vmdb.parseScript(data).then(function (res) {
       var meta = res.data.meta;
-      if (!meta.grant.length && !_.options.get('ignoreGrant'))
-        notify({
-          id: 'VM-NoGrantWarning',
-          title: _.i18n('Warning'),
-          body: _.i18n('msgWarnGrant', [meta.name||_.i18n('labelNoName')]),
-          onClicked: function () {
-            _.mx.br.tabs.newTab({
-              activate: true,
-              url: 'http://wiki.greasespot.net/@grant',
-            });
-            this.close();
-          },
-        });
       _.messenger.post(res);
       return res.data;
     });
@@ -206,9 +193,7 @@ var commands = {
     var params = encodeURIComponent(data.url);
     if (data.from) params += '/' + encodeURIComponent(data.from);
     if (data.text) _.cache.set(data.url, data.text);
-    opera.extension.tabs.create({
-      url: '/options.html#confirm/' + params,
-    });
+    _.tabs.create('/options.html#confirm/' + params);
   },
   GetRequestId: function (data, src) {
     return requests.getRequestId();
@@ -228,9 +213,7 @@ var commands = {
 };
 
 if (+opera.version() < 12) {
-  opera.extension.tabs.create({
-    url: 'https://github.com/violentmonkey/violentmonkey-oex/wiki/Obsolete',
-  });
+  _.tabs.create('https://github.com/violentmonkey/violentmonkey-oex/wiki/Obsolete');
 } else {
   vmdb.initialized.then(function () {
     opera.extension.onmessage = function (e) {

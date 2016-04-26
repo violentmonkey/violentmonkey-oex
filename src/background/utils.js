@@ -223,3 +223,9 @@ _.cache = function () {
     set: set,
   };
 }();
+
+_.tabs = {
+  create: function (url) {
+    opera.extension.tabs.create({url: url}).focus();
+  },
+};

@@ -73,3 +73,5 @@ var BaseView = Backbone.View.extend({
     };
   },
 });
+
+BaseView.prototype.postrender.call(window);

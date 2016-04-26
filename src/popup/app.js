@@ -18,8 +18,6 @@ var app = new App();
 if (!Backbone.history.start())
   app.navigate('', {trigger: true, replace: true});
 
-BaseView.prototype.postrender.call(window);
-
 !function () {
   function commandClick(e, model) {
     _.bg.opera.extension.tabs.getFocused()
@@ -91,7 +89,7 @@ BaseView.prototype.postrender.call(window);
           return new MenuItem({
             id: script.id,
             name: script.custom.name || _.getLocaleString(script.meta, 'name'),
-            data: script.enabled,
+            data: !!script.enabled,
             symbol: scriptSymbol,
             title: true,
             className: 'ellipsis',

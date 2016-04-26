@@ -179,9 +179,7 @@ var SettingsTab = BaseView.extend({
       });
       return zip.generateAsync({type: 'base64'});
     }).then(function (data) {
-      _.bg.opera.extension.tabs.create({
-        url: 'data:application/zip;base64,' + data,
-      }).focus();
+      _.bg._.tabs.create('data:application/zip;base64,' + data);
       bExport.prop('disabled', false);
     });
   },
