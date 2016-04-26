@@ -1,3 +1,7 @@
+_.showMessage = function (options) {
+  new MessageView(options);
+};
+
 var App = Backbone.Router.extend({
   routes: {
     '': 'renderMain',

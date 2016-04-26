@@ -66,14 +66,20 @@ var EditView = BaseView.extend({
       data: {
         id: data.id,
         code: data.code,
+        isNew: !data.id,
         message: '',
         more: {
           custom: data.custom,
           update: data.update,
         }
       }
-    }).then(function () {
+    }).then(function (script) {
+      _this.model.set('id', script.id);
       _this.updateStatus(false);
+    }, function (err) {
+      _.showMessage({
+        data: err,
+      });
     });
   },
   close: function () {
