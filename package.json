@@ -5,7 +5,8 @@
     "clean": "gulp clean",
     "eslint": "gulp eslint",
     "i18n": "gulp i18n",
-    "dev": "gulp build && gulp watch",
+    "predev": "gulp build",
+    "dev": "gulp watch",
     "update": "node scripts/updateLib"
   },
   "description": "Violentmonkey for Opera 12",

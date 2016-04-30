@@ -111,25 +111,25 @@ buttonExportData:
   message: Exportovat do souboru zip
 labelAbout:
   description: Label shown on top of the about page.
-  message: About Violentmonkey
+  message: ''
 labelRelated:
   description: Label of related links.
-  message: 'Related links: '
+  message: ''
 anchorSupportPage:
   description: Link to the support page of Violentmonkey.
-  message: '<a href=https://github.com/gera2ld/Violentmonkey-oex/wiki target=_blank>Violentmonkey</a>'
+  message: ''
 labelDonate:
   description: Label of link to donate page.
-  message: Donate
+  message: ''
 labelFeedback:
   description: Label of link to feedback page.
-  message: Feedback
+  message: ''
 labelAuthor:
   description: Label of author shown in the details of a script.
   message: 'Autor: '
 anchorAuthor:
   description: 'Author shown in the footer of options page, translator information may be added.'
-  message: '<a href=mailto:gera2ld@163.com>Gerald</a>'
+  message: ''
 labelTranslator:
   description: Label of translator.
   message: 'Translator: '

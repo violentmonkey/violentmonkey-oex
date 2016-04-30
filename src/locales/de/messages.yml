@@ -114,10 +114,10 @@ labelAbout:
   message: Über Violentmonkey
 labelRelated:
   description: Label of related links.
-  message: 'Links: '
+  message: ''
 anchorSupportPage:
   description: Link to the support page of Violentmonkey.
-  message: '<a href=https://github.com/gera2ld/Violentmonkey-oex target=_blank>Violentmonkey</a>'
+  message: ''
 labelDonate:
   description: Label of link to donate page.
   message: Spenden
@@ -138,7 +138,7 @@ anchorTranslator:
   message: '<a href="http://blog.scrobble.me">Adrian Moerchen</a>'
 labelCurrentLang:
   description: Label of current language.
-  message: 'Current Language:'
+  message: ''
 labelScriptEditor:
   description: Shown in the title of the script editing page.
   message: Editor
