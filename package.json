@@ -1,21 +1,44 @@
 {
   "name": "Violentmonkey-oex",
   "version": "1.0.0",
+  "scripts": {
+    "clean": "gulp clean",
+    "eslint": "gulp eslint",
+    "i18n": "gulp i18n",
+    "predev": "gulp build",
+    "dev": "gulp watch",
+    "update": "node scripts/updateLib"
+  },
   "description": "Violentmonkey for Opera 12",
   "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-inject": "^1.2.0",
-    "gulp-less": "^3.0.2",
-    "gulp-minify-css": "^1.0.0"
+    "codemirror": "^5.14.2",
+    "del": "^2.2.0",
+    "font-awesome": "^4.6.1",
+    "glob": "^7.0.3",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-filter": "^4.0.0",
+    "gulp-order": "^1.1.1",
+    "gulp-replace": "^0.5.4",
+    "gulp-util": "^3.0.7",
+    "html-minifier": "^2.1.0",
+    "jszip": "^3.0.0",
+    "merge2": "^1.0.1",
+    "ncp": "^2.0.0",
+    "sync-promise-lite": "^0.2.1",
+    "through2": "^2.0.1",
+    "underscore": "^1.8.3"
   },
-  "author": "Gerald <gera2ld@163.com>",
+  "author": "Gerald <i@gerald.top>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gera2ld/Violentmonkey-oex.git"
+    "url": "https://github.com/violentmonkey/violentmonkey-oex.git"
   },
   "bugs": {
-    "url": "https://github.com/gera2ld/Violentmonkey-oex/issues"
+    "url": "https://github.com/violentmonkey/violentmonkey-oex/issues"
   },
-  "homepage": "https://github.com/gera2ld/Violentmonkey-oex",
-  "license": "ISC"
+  "homepage": "https://github.com/violentmonkey/violentmonkey-oex",
+  "license": "MIT"
 }
