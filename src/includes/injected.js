@@ -522,10 +522,16 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
         comm.forEach(Object.getOwnPropertyNames(wrapper), function(name) {
           code.push(name + '=this["' + name + '"]=g["' + name + '"]');
         });
-        if (code.length)
-          code = ['var ' + code.join(',') + ';delete g;with(this)!function(){'];
-        else
+        if (code.length) {
+          // In Opera Presto, the top level context is an isolated object
+          // instead of `window`, consequently top level objects such as
+          // `location` and `XMLHttpRequest` will be undefined unless prefixed
+          // with `window.`. Another way to solve this is to add `window` to
+          // the scope chain by using `with (window)`.
+          code = ['var ' + code.join(',') + ';delete g;with(window)with(this)!function(){'];
+        } else {
           code = [];
+        }
         for(var i = 0; i < require.length; i ++)
           if((part = data.require[require[i]])) code.push(part);
         // wrap code to make 'use strict' work
