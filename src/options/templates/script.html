@@ -8,12 +8,12 @@
 <div class=script-info>
   <a class="script-name ellipsis" target=_blank
     <%= it.homepageURL ? 'href="' + _.escape(it.homepageURL)  + '"' : '' %>
-    ><%- it.custom.name || it.getLocaleString('name') %>
-  </a>
+    ><%- it.custom.name || it.getLocaleString('name') %><!--
+  --></a>
   <a class="script-support <%= it.meta.supportURL ? '' : 'hide' %>"
-    target=_blank href="<%- it.meta.supportURL %>">
-    <i class="fa fa-question-circle"></i>
-  </a>
+    target=_blank href="<%- it.meta.supportURL %>"><!--
+    --><i class="fa fa-question-circle"></i><!--
+  --></a>
 </div>
 <p class="script-desc ellipsis">
   <%- it.custom.description || it.getLocaleString('description') %>
