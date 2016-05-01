@@ -18,7 +18,7 @@ var badges = function () {
     timer = setTimeout(clear, 200);
   }
   function getBadges() {
-    var tab = opera.extension.tabs.getFocused();
+    var tab = _.tabs.get();
     try {
       tab.postMessage({cmd: 'GetPopup'});
       clearLater();

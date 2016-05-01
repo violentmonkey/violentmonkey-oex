@@ -52,6 +52,12 @@ _.updateCheckbox = function (e) {
   _.options.set(target.dataset.check, target.checked);
 };
 
+_.zfill = function (num, length) {
+  num = num.toString();
+  while (num.length < length) num = '0' + num;
+  return num;
+};
+
 _.getUniqId = function () {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 };
