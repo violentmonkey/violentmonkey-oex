@@ -75,3 +75,15 @@ var BaseView = Backbone.View.extend({
 });
 
 BaseView.prototype.postrender.call(window);
+
+!function () {
+  var xhr = new XMLHttpRequest;
+  xhr.open('GET', '/images/sprite.svg', true);
+  xhr.onload = function () {
+    var div = document.createElement('div');
+    div.style.display = 'none';
+    div.innerHTML = xhr.responseText;
+    document.body.insertBefore(div, document.body.firstChild);
+  };
+  xhr.send();
+}();

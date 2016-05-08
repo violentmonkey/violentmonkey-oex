@@ -15,7 +15,7 @@ var MenuView = MenuBaseView.extend({
     var bot = comp.bot;
     _this.addMenuItem({
       name: _.i18n('menuManageScripts'),
-      symbol: 'fa-cog',
+      symbol: 'cog',
       onClick: function (e) {
         _.bg.opera.extension.tabs.create({
           url: '/options.html',
@@ -25,7 +25,7 @@ var MenuView = MenuBaseView.extend({
     if (domainsMenu.length)
       _this.addMenuItem({
         name: _.i18n('menuFindScripts'),
-        symbol: 'fa-search',
+        symbol: 'search',
         onClick: function (e) {
           var tabData = _.bg.badges.getData();
           var matches = tabData && tabData.url.match(/:\/\/(?:www\.)?([^\/]*)/);
@@ -39,7 +39,7 @@ var MenuView = MenuBaseView.extend({
       }, top);
     if (commandsMenu.length) _this.addMenuItem({
       name: _.i18n('menuCommands'),
-      symbol: 'fa-arrow-right',
+      symbol: 'arrow-right',
       onClick: function (e) {
         app.navigate('commands', {trigger: true});
       },
@@ -50,7 +50,7 @@ var MenuView = MenuBaseView.extend({
       },
       data: _.options.get('isApplied'),
       symbol: function (data) {
-        return data ? 'fa-check' : 'fa-times';
+        return data ? 'check' : 'remove';
       },
       onClick: function (e, model) {
         var isApplied = !model.get('data');

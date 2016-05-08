@@ -22,6 +22,7 @@
     "gulp-filter": "^4.0.0",
     "gulp-order": "^1.1.1",
     "gulp-replace": "^0.5.4",
+    "gulp-svg-sprite": "^1.2.19",
     "gulp-util": "^3.0.7",
     "html-minifier": "^2.1.0",
     "jszip": "^3.0.0",
