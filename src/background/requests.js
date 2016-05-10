@@ -1,4 +1,4 @@
-var requests = function () {
+define('requests', function (_require, _exports, module) {
   function getRequestId() {
     var id = _.getUniqId();
     requests[id] = {
@@ -27,10 +27,10 @@ var requests = function () {
       } catch (e) {}
       if (evt.type === 'loadend') clearRequest(req);
       return lastPromise = lastPromise.then(function () {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, _reject) {
           if (xhr.response && xhr.responseType === 'blob') {
             var reader = new FileReader;
-            reader.onload = function (e) {
+            reader.onload = function (_e) {
               data.response = this.result;
               resolve();
             };
@@ -76,19 +76,24 @@ var requests = function () {
       });
       xhr.send(details.data);
     } catch (e) {
-      console.log(e);
+      opera.postError(e.toString());
     }
   }
   function abortRequest(id) {
     var req = requests[id];
-    if (req) req.xhr.abort();
-    delete requests[id];
+    if (req) {
+      req.xhr.abort();
+      clearRequest(req);
+    }
+  }
+  function clearRequest(req) {
+    delete requests[req.id];
   }
 
   var requests = {};
-  return {
+  module.exports = {
     getRequestId: getRequestId,
     abortRequest: abortRequest,
     httpRequest: httpRequest,
   };
-}();
+});

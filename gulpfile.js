@@ -4,7 +4,6 @@ const replace = require('gulp-replace');
 const merge2 = require('merge2');
 const cssnano = require('gulp-cssnano');
 const gulpFilter = require('gulp-filter');
-const order = require('gulp-order');
 const eslint = require('gulp-eslint');
 const svgSprite = require('gulp-svg-sprite');
 const templateCache = require('./scripts/templateCache');
@@ -52,6 +51,7 @@ gulp.task('eslint', () => (
   ])
   .pipe(eslint())
   .pipe(eslint.format())
+  .pipe(eslint.failAfterError())
 ));
 
 gulp.task('templates', () => (
@@ -71,20 +71,12 @@ gulp.task('js-bg', () => (
 
 gulp.task('js-options', () => (
   gulp.src(paths.jsOptions)
-  .pipe(order([
-    '**/tab-*.js',
-    '!**/app.js',
-  ]))
   .pipe(concat('options/app.js'))
   .pipe(gulp.dest('dist'))
 ));
 
 gulp.task('js-popup', () => (
   gulp.src(paths.jsPopup)
-  .pipe(order([
-    '**/base.js',
-    '!**/app.js',
-  ]))
   .pipe(concat('popup/app.js'))
   .pipe(gulp.dest('dist'))
 ));
