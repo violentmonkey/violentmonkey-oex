@@ -1,8 +1,16 @@
 if (opera.extension && opera.extension.bgProcess) {
 	_.bg = opera.extension.bgProcess;
-	_.i18n = _.bg._.i18n;
+  _.require = _.bg._require;
 	// Promise MUST be the same contructor
 	window.Promise = _.bg.Promise;
+
+  _.sendMessage = function () {
+    var commands = _.require('app').commands;
+    return function (req) {
+      var func = commands[req.cmd];
+      return Promise.resolve(func && func(req.data));
+    };
+  }();
 } else {
 	_.bg = window;
 }
@@ -75,9 +83,4 @@ _.getLocaleString = function (meta, key) {
 	});
 	if (lang) key += ':' + lang;
 	return meta[key] || '';
-};
-
-_.sendMessage = function (req) {
-	var func = _.bg.commands[req.cmd];
-	return Promise.resolve(func && func(req.data));
 };

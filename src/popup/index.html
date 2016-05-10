@@ -7,11 +7,13 @@
 		<script src="/lib/zepto.min.js"></script>
     <script src="/lib/underscore-min.js"></script>
     <script src="/lib/backbone-min.js"></script>
+    <script src="/lib/require-lite.js"></script>
 		<script src="/common.js"></script>
     <script src="/cache.js"></script>
 	</head>
   <body>
     <div id="popup"></div>
 		<script src="app.js"></script>
+    <script>define.use('app');</script>
 	</body>
 </html>
