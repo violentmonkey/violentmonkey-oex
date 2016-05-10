@@ -43,7 +43,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
   function utf8decode (utftext) {
     var string = "";
     var i = 0;
-    var c = 0, c1 = 0, c2 = 0, c3 = 0;
+    var c = 0, c2 = 0, c3 = 0;
     while ( i < utftext.length ) {
       c = utftext.charCodeAt(i);
       if (c < 128) {string += String.fromCharCode(c);i++;}
@@ -69,7 +69,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
         var func = callbacks[message.cmdFor];
         func && func(message.data);
       } else if (message.cmd === 'HttpRequested') {
-        var req = requests[message.data.id];
+        var req = comm.requests[message.data.id];
         req && req.callback(message.data);
       } else if (message.cmd === 'GetPopup') {
         var data = {
@@ -191,7 +191,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
     forEach: _.forEach,
     props: Object.getOwnPropertyNames(window),
 
-    init: function(srcId, destId) {
+    init: function() {
       var comm = this;
       comm.load = comm.checkLoad = function(){};
     },
@@ -202,9 +202,6 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
         Command: function (data) {
           var func = comm.command[data];
           if(func) func();
-        },
-        GotRequestId: function (id) {
-          comm.qrequests.shift().start(id);
         },
         HttpRequested: function (r) {
           var req = comm.requests[r.id];
@@ -452,18 +449,13 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
         },
         GM_getResourceURL: {
           value: function (name) {
-            for(var i in resources) if (name == i) {
+            for (var i in resources) if (name == i) {
               i = resources[i];
               var url = urls[i];
-              if(!url) {
+              if (!url) {
                 var cc = cache[i];
-                if(cc) {
-                  cc = window.atob(cc);
-                  var b = new Uint8Array(cc.length);
-                  for(var j = 0; j < cc.length; j ++)
-                    b[j] = cc.charCodeAt(j);
-                  b = new Blob([b]);
-                  urls[i] = url = URL.createObjectURL(b);
+                if (cc) {
+                  url = urls[i] = 'data:text/plain,' + cc;
                 }
               }
             }
@@ -611,6 +603,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
     badge.ready = true;
     getPopup();
   }
+  comm.init();
   opera.extension.postMessage({
     cmd: 'GetInjected',
     data: window.location.href,

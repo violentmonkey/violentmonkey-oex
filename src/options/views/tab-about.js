@@ -1,10 +1,14 @@
-var AboutTab = BaseView.extend({
-  el: '#tab',
-  name: 'about',
-  templateUrl: '/options/templates/tab-about.html',
-  _render: function () {
-    this.$el.html(this.templateFn({
-      version: _.bg.app.version,
-    }));
-  },
+define('views/TabAbout', function (require, _exports, module) {
+  var BaseView = require('cache').BaseView;
+  var app = _.require('app');
+  module.exports = BaseView.extend({
+    el: '#tab',
+    name: 'about',
+    templateUrl: '/options/templates/tab-about.html',
+    _render: function () {
+      this.$el.html(this.templateFn({
+        version: app.version,
+      }));
+    },
+  });
 });
