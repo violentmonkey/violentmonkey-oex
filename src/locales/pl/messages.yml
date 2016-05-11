@@ -13,7 +13,7 @@ msgUpdated:
   message: Skrypt zaktualizowany.
 msgErrorFetchingScript:
   description: Message shown when Violentmonkey fails fetching a new version of the script.
-  message: 'Błąd przy pobieraniu skryptu!'
+  message: Błąd przy pobieraniu skryptu!
 msgInstalled:
   description: Message shown when a script is installed.
   message: Skrypt zainstalowany
@@ -21,7 +21,9 @@ msgUpdating:
   description: Message shown when a new version of script is being fetched.
   message: Aktualizowanie skryptu...
 msgNewVersion:
-  description: 'Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided.'
+  description: >-
+    Message shown when a new version of script is found by @updateURL, but no
+    @downloadURL is provided.
   message: Znaleziono nową wersję tego skryptu.
 msgCheckingForUpdate:
   description: Message shown when a script is being checked for updates by version numbers.
@@ -35,6 +37,7 @@ msgNoUpdate:
 labelNoName:
   description: Text as the name of a script when no @name is assigned.
   message: Bez nazwy
+  touched: false
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Zarządzaj skryptami
@@ -93,7 +96,7 @@ labelDataImport:
   message: Imporotwanie danych
 buttonImportData:
   description: Button to choose a file for data import.
-  message: 'Importuj skrypty z pliku ".zip"'
+  message: Importuj skrypty z pliku ".zip"
 labelDataExport:
   description: Section title of data export.
   message: Eksportowanie danych
@@ -108,7 +111,7 @@ buttonAllNone:
   message: Wszystkie/Żaden
 buttonExportData:
   description: Button to open the data export dialog.
-  message: 'Eksportuj skrypty do pliku ".zip"'
+  message: Eksportuj skrypty do pliku ".zip"
 labelAbout:
   description: Label shown on top of the about page.
   message: O rozszerzeniu Violentmonkey
@@ -128,14 +131,18 @@ labelAuthor:
   description: Label of author shown in the details of a script.
   message: 'Autor: '
 anchorAuthor:
-  description: 'Author shown in the footer of options page, translator information may be added.'
+  description: >-
+    Author shown in the footer of options page, translator information may be
+    added.
   message: '<a href=mailto:gera2ld@163.com>Gerald</a>'
 labelTranslator:
   description: Label of translator.
   message: 'Tłumacze: '
 anchorTranslator:
   description: Translator shown on about tab.
-  message: '<a href=mailto:cydziol@gmail.com>MISI90</a>, <a href=mailto:MyReksio@gmail.com>Piter432</a>'
+  message: >-
+    <a href=mailto:cydziol@gmail.com>MISI90</a>, <a
+    href=mailto:MyReksio@gmail.com>Piter432</a>
 labelCurrentLang:
   description: Label of current language.
   message: 'Current Language:'
@@ -220,11 +227,16 @@ buttonConfirmInstallation:
 Warning:
   description: Show warnings with a notification.
   message: Warning
+  touched: false
 msgErrorLoadingData:
-  description: Message shown on confirm page when the script to be installed cannot be loaded.
+  description: >-
+    Message shown on confirm page when the script to be installed cannot be
+    loaded.
   message: Błąd wczytywania skryptu.
 msgLoadedData:
-  description: Message shown in the confirm page when a javascript file to be installed is loaded.
+  description: >-
+    Message shown in the confirm page when a javascript file to be installed is
+    loaded.
   message: Skrypt wczytany.
 msgErrorLoadingDependency:
   description: Message shown when not all requirements are loaded successfully.
@@ -242,9 +254,10 @@ msgLoadingData:
 msgWarnGrant:
   description: Message shown when `@grant` is not found in a script.
   message: 'Script [$1] has no `@grant` lines! Click to see more details.'
+  touched: false
 labelNoScripts:
   description: Message shown when no script is installed.
-  message: "Oops, you haven't got any script yet."
+  message: 'Oops, you haven''t got any script yet.'
 hintSupportPage:
   description: Hint for support page.
   message: Strona wsparcia
@@ -266,17 +279,21 @@ buttonUpdate:
   message: Sprawdź aktualizację/e skryptu
 msgErrorZip:
   description: Message shown when Violentmonkey fails to open the zip file.
-  message: 'Błąd odczytywania pliku ".zip".'
+  message: Błąd odczytywania pliku ".zip".
   touched: false
 msgImported:
-  description: Message shown after import. There is an argument referring to the count of scripts imported.
+  description: >-
+    Message shown after import. There is an argument referring to the count of
+    scripts imported.
   message: $1 pozycja/e/i zaimportowana/e/ych.
 hintUseDownloadURL:
   description: Shown as a place holder for @updateURL when it is not assigned
   message: Use @downloadURL
 confirmNotSaved:
   description: Confirm message shown when there are unsaved script modifications.
-  message: 'Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij "OK", aby wyjść lub "Anuluj", aby pozostać.'
+  message: >-
+    Modyfikacje w tym skrypcie nie zostały zapisane! Kliknij "OK", aby wyjść lub
+    "Anuluj", aby pozostać.
 buttonVacuuming:
   description: Message shown when data vacuum is in progress.
   message: Czyszczenie danych...
@@ -289,21 +306,19 @@ hintVacuum:
 labelSearch:
   description: Label for search input in search box.
   message: 'Szukaj w: '
-  touched: false
 labelReplace:
   description: Label for replace input in search box.
   message: 'Zamień na: '
-  touched: false
 buttonReplace:
   description: Button to replace the current match.
   message: Zamień
-  touched: false
 buttonReplaceAll:
   description: Button to replace all matches.
   message: Wszystko
-  touched: false
 msgNamespaceConflict:
-  description: Message shown when namespace of the new script conflicts with an existent one.
+  description: >-
+    Message shown when namespace of the new script conflicts with an existent
+    one.
   message: ''
 hintInputURL:
   description: Hint for a prompt box to input URL of a user script.
@@ -314,6 +329,7 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: ''
+  touched: false
 menuScriptDisabled:
   description: 'Menu item showing the status of Violentmonkey, when disabled.'
   message: ''

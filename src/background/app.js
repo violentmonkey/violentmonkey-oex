@@ -40,6 +40,7 @@ define('app', function (require, _exports, module) {
         callbacks.push(callback);
       },
       post: function (data) {
+        data = JSON.parse(JSON.stringify(data));
         callbacks = callbacks.filter(function (callback) {
           try {
             callback(data);

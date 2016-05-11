@@ -122,7 +122,7 @@ define('views/Confirm', function (require, _exports, module) {
       this.$('#msg').html(msg);
     },
     getFile: function (url, isBlob) {
-      var xhr = new XMLHttpRequest;
+      var xhr = new _.bg.XMLHttpRequest;
       xhr.open('GET', url, true);
       if (isBlob) xhr.responseType = 'blob';
       return new Promise(function (resolve, reject) {
@@ -150,7 +150,7 @@ define('views/Confirm', function (require, _exports, module) {
         return text ? resolve(text) : reject();
       }).catch(function () {
         return new Promise(function (resolve, reject) {
-          var xhr = new XMLHttpRequest;
+          var xhr = new _.bg.XMLHttpRequest;
           xhr.open('GET', url, true);
           xhr.onload = function () {
             resolve(this.responseText);

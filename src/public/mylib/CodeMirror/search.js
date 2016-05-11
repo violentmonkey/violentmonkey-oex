@@ -2,6 +2,7 @@
 // Modified by Gerald <gera2ld@163.com>
 
 (function() {
+  var i18n = _.require('utils/i18n');
   function searchOverlay(query) {
     if (typeof query == "string") return {token: function(stream) {
       if (stream.match(query)) return "searching";
@@ -42,8 +43,8 @@
 			dialog = wrap.appendChild(document.createElement("div"));
 			dialog.className='CodeMirror-dialog';
 		}
-		var text=_('labelSearch')+'<input class=CodeMirror-search placeholder="Search for"><button class=CodeMirror-findPrev>&lt;</button><button class=CodeMirror-findNext>&gt;</button><button class=CodeMirror-cancel>&times;</button>',closed=false,iS,iR;
-		if(rep) text+='<br>'+_('labelReplace')+'<input class=CodeMirror-replace placeholder="Replace with"><button class=CodeMirror-replaceNext>'+_('buttonReplace')+'</button><button class=CodeMirror-replaceAll>'+_('buttonReplaceAll')+'</button>';
+		var text=i18n('labelSearch')+'<input class=CodeMirror-search placeholder="Search for"><button class=CodeMirror-findPrev>&lt;</button><button class=CodeMirror-findNext>&gt;</button><button class=CodeMirror-cancel>&times;</button>',closed=false,iS,iR;
+		if(rep) text+='<br>'+i18n('labelReplace')+'<input class=CodeMirror-replace placeholder="Replace with"><button class=CodeMirror-replaceNext>'+i18n('buttonReplace')+'</button><button class=CodeMirror-replaceAll>'+i18n('buttonReplaceAll')+'</button>';
 		dialog.innerHTML=text;
 		iS=dialog.querySelector('.CodeMirror-search');
 		CodeMirror.on(dialog.querySelector('.CodeMirror-findNext'), "click", function(e) {findNext(cm);});

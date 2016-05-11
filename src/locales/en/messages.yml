@@ -6,14 +6,14 @@ extDescription:
   message: Userscript support for Opera.
 extTranslator:
   description: Information of the translator.
-  message: 'Gerald <gera2ld@163.com>'
+  message: Gerald <gera2ld@163.com>
   touched: false
 msgUpdated:
   description: Message shown when a script is updated/reinstalled.
   message: Script updated.
 msgErrorFetchingScript:
   description: Message shown when Violentmonkey fails fetching a new version of the script.
-  message: 'Error fetching script!'
+  message: Error fetching script!
 msgInstalled:
   description: Message shown when a script is installed.
   message: Script installed.
@@ -21,7 +21,9 @@ msgUpdating:
   description: Message shown when a new version of script is being fetched.
   message: Updating...
 msgNewVersion:
-  description: 'Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided.'
+  description: >-
+    Message shown when a new version of script is found by @updateURL, but no
+    @downloadURL is provided.
   message: New version found.
 msgCheckingForUpdate:
   description: Message shown when a script is being checked for updates by version numbers.
@@ -35,6 +37,7 @@ msgNoUpdate:
 labelNoName:
   description: Text as the name of a script when no @name is assigned.
   message: No Name
+  touched: false
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Manage scripts
@@ -128,7 +131,9 @@ labelAuthor:
   description: Label of author shown in the details of a script.
   message: 'Author: '
 anchorAuthor:
-  description: 'Author shown in the footer of options page, translator information may be added.'
+  description: >-
+    Author shown in the footer of options page, translator information may be
+    added.
   message: '<a href=mailto:i@gerald.top>Gerald</a>'
 labelTranslator:
   description: Label of translator.
@@ -198,7 +203,7 @@ buttonSave:
   message: Save
 buttonSaveClose:
   description: Button to save modifications of a script and then close the editing page.
-  message: 'Save & Close'
+  message: Save & Close
 buttonClose:
   description: Button to close window.
   message: Close
@@ -220,11 +225,16 @@ buttonConfirmInstallation:
 Warning:
   description: Show warnings with a notification.
   message: Warning
+  touched: false
 msgErrorLoadingData:
-  description: Message shown on confirm page when the script to be installed cannot be loaded.
+  description: >-
+    Message shown on confirm page when the script to be installed cannot be
+    loaded.
   message: Error loading script data.
 msgLoadedData:
-  description: Message shown in the confirm page when a javascript file to be installed is loaded.
+  description: >-
+    Message shown in the confirm page when a javascript file to be installed is
+    loaded.
   message: Script data loaded.
 msgErrorLoadingDependency:
   description: Message shown when not all requirements are loaded successfully.
@@ -242,9 +252,10 @@ msgLoadingData:
 msgWarnGrant:
   description: Message shown when `@grant` is not found in a script.
   message: 'Script [$1] has no `@grant` lines! Click to see more details.'
+  touched: false
 labelNoScripts:
   description: Message shown when no script is installed.
-  message: "Oops, you haven't got any script yet."
+  message: 'Oops, you haven''t got any script yet.'
 hintSupportPage:
   description: Hint for support page.
   message: Support page
@@ -269,7 +280,9 @@ msgErrorZip:
   message: Error loading zip file.
   touched: false
 msgImported:
-  description: Message shown after import. There is an argument referring to the count of scripts imported.
+  description: >-
+    Message shown after import. There is an argument referring to the count of
+    scripts imported.
   message: $1 script(s) are imported.
 hintUseDownloadURL:
   description: Shown as a place holder for @updateURL when it is not assigned
@@ -291,22 +304,20 @@ hintVacuum:
 labelSearch:
   description: Label for search input in search box.
   message: 'Search for: '
-  touched: false
 labelReplace:
   description: Label for replace input in search box.
   message: 'Replace with: '
-  touched: false
 buttonReplace:
   description: Button to replace the current match.
   message: Replace
-  touched: false
 buttonReplaceAll:
   description: Button to replace all matches.
   message: All
-  touched: false
 msgNamespaceConflict:
-  description: Message shown when namespace of the new script conflicts with an existent one.
-  message: 'Script namespace conflicts! Please modify @name and @namespace.'
+  description: >-
+    Message shown when namespace of the new script conflicts with an existent
+    one.
+  message: Script namespace conflicts! Please modify @name and @namespace.
 hintInputURL:
   description: Hint for a prompt box to input URL of a user script.
   message: 'Input URL:'
@@ -316,6 +327,7 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: Suppress no @grant warnings
+  touched: false
 menuScriptDisabled:
   description: 'Menu item showing the status of Violentmonkey, when disabled.'
   message: Scripts disabled
