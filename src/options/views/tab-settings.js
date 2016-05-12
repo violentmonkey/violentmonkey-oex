@@ -10,8 +10,9 @@ define('views/TabSettings', function (require, _exports, module) {
       'click div': 'toggleSelected',
     },
     initialize: function () {
-      BaseView.prototype.initialize.call(this);
-      this.listenTo(app.scriptList, 'reset change update', this.render);
+      var _this = this;
+      BaseView.prototype.initialize.call(_this);
+      _this.listenTo(app.scriptList, 'reset change update', _this.render);
     },
     _render: function () {
       var _this = this;

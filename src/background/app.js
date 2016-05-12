@@ -37,14 +37,15 @@ define('app', function (require, _exports, module) {
   function initMessenger() {
     var callbacks = [];
     return {
-      connect: function (callback) {
-        callbacks.push(callback);
+      connect: function (window, callback) {
+        callbacks.push([window, callback]);
       },
       post: function (data) {
         data = JSON.parse(JSON.stringify(data));
-        callbacks = callbacks.filter(function (callback) {
+        callbacks = callbacks.filter(function (item) {
+          if (item[0].closed) return false;
           try {
-            callback(data);
+            item[1](data);
           } catch (e) {
             return false;
           }

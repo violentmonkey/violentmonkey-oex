@@ -30,22 +30,24 @@ define('cache', function (require, _exports, module) {
   var BaseView = cache.BaseView = Backbone.View.extend({
     initialize: function () {
       var _this = this;
-      if (_this.templateUrl)
+      if (_this.templateUrl) {
         _this.__gotTemplate = cache.get(_this.templateUrl)
-          .then(function (fn) {
-            _this.templateFn = fn;
-          });
-          _.bindAll(_this, 'render', 'postrender');
-          _this.render();
+        .then(function (fn) {
+          _this.templateFn = fn;
+        });
+      }
+      _.bindAll(_this, 'render', 'postrender');
+      _this.render();
     },
     _render: function () {
       this.$el.html(this.templateFn());
     },
     render: function () {
-      var render = this._render.bind(this);
-      (this.__gotTemplate || Promise.resolve()).then(render)
-        .then(this.postrender);
-      return this;
+      var _this = this;
+      (_this.__gotTemplate || Promise.resolve())
+        .then(_this._render.bind(_this))
+        .then(_this.postrender);
+      return _this;
     },
     postrender: function () {
       _.forEach(this.$('[data-i18n]'), function (node) {
@@ -58,14 +60,14 @@ define('cache', function (require, _exports, module) {
       switch (key[0]) {
       case '!':
         key = key.slice(1);
-      value = target.checked;
-      break;
-    case '[':
-      key = key.slice(1);
-    value = _.filter(target.value.split('\n').map(function (s) {return s.trim();}));
-    break;
-  default:
-    value = target.value;
+        value = target.checked;
+        break;
+      case '[':
+        key = key.slice(1);
+        value = _.filter(target.value.split('\n').map(function (s) {return s.trim();}));
+        break;
+      default:
+        value = target.value;
       }
       return {
         key: key,

@@ -18,7 +18,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
     window.addEventListener('load', installScript, false);
   } else installScript();
 
-}(); else !function (){
+}(); else !function (window) {
 
   var _ = {
     getUniqId: function () {
@@ -231,7 +231,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       }
 
       // request object functions
-      function callback(req){
+      function callback(req) {
         var t = this;
         var cb = t.details['on' + req.type];
         if (cb) {
@@ -609,4 +609,4 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
     data: window.location.href,
   });
 
-}();
+}(window);
