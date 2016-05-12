@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const concat = require('gulp-concat');
 const replace = require('gulp-replace');
+const footer = require('gulp-footer');
 const merge2 = require('merge2');
 const cssnano = require('gulp-cssnano');
 const gulpFilter = require('gulp-filter');
@@ -65,6 +66,7 @@ gulp.task('templates', () => (
 gulp.task('js-bg', () => (
   gulp.src(paths.jsBg)
   .pipe(concat('background/app.js'))
+  .pipe(footer(';define.use("app");'))
   .pipe(replace('__VERSION__', pkg.version))
   .pipe(gulp.dest('dist'))
 ));
@@ -72,12 +74,14 @@ gulp.task('js-bg', () => (
 gulp.task('js-options', () => (
   gulp.src(paths.jsOptions)
   .pipe(concat('options/app.js'))
+  .pipe(footer(';define.use("app");'))
   .pipe(gulp.dest('dist'))
 ));
 
 gulp.task('js-popup', () => (
   gulp.src(paths.jsPopup)
   .pipe(concat('popup/app.js'))
+  .pipe(footer(';define.use("app");'))
   .pipe(gulp.dest('dist'))
 ));
 

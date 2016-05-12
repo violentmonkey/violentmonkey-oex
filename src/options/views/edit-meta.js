@@ -1,6 +1,5 @@
 define('views/Meta', function (require, _exports, module) {
   var BaseView = require('cache').BaseView;
-  var i18n = _.require('utils/i18n');
 
   module.exports = BaseView.extend({
     className: 'button-panel',
@@ -14,7 +13,7 @@ define('views/Meta', function (require, _exports, module) {
       var it = model.toJSON();
       it.__name = model.meta.name;
       it.__homepageURL = model.meta.homepageURL;
-      it.__updateURL = model.meta.updateURL || i18n('hintUseDownloadURL');
+      it.__updateURL = model.meta.updateURL || _.i18n('hintUseDownloadURL');
       it.__downloadURL = model.meta.downloadURL || it.lastInstallURL;
       this.$el.html(this.templateFn(it));
     },

@@ -9,6 +9,7 @@ define('app', function (require, _exports, module) {
   var requests = require('requests');
   var tabs = require('utils/tabs');
   var cache = require('utils/cache');
+  _.i18n = require('utils/i18n');
   window._require = require;
 
   var vmdb = new VMDB;

@@ -1,6 +1,4 @@
 define('cache', function (require, _exports, module) {
-  var i18n = _.require('utils/i18n');
-
   function Cache(allowOverride) {
     this.data = {};
     this.allowOverride = allowOverride;
@@ -51,7 +49,7 @@ define('cache', function (require, _exports, module) {
     },
     postrender: function () {
       _.forEach(this.$('[data-i18n]'), function (node) {
-        node.innerHTML = i18n(node.dataset.i18n);
+        node.innerHTML = _.i18n(node.dataset.i18n);
       });
     },
     getValue: function (target) {
