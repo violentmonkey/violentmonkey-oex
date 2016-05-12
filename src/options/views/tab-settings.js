@@ -11,7 +11,7 @@ define('views/TabSettings', function (require, _exports, module) {
     },
     initialize: function () {
       BaseView.prototype.initialize.call(this);
-      this.listenTo(app.scriptList, 'reset change', this.render);
+      this.listenTo(app.scriptList, 'reset change update', this.render);
     },
     _render: function () {
       var _this = this;

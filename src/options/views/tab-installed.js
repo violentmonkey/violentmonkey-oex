@@ -20,7 +20,7 @@ define('views/TabMain', function (require, _exports, module) {
       BaseView.prototype.initialize.call(_this);
       _this.listenTo(app.scriptList, 'reset', _this.render);
       _this.listenTo(app.scriptList, 'add', _this.addOne);
-      _this.listenTo(app.scriptList, 'add update', _this.setBackdrop);
+      _this.listenTo(app.scriptList, 'update', _this.setBackdrop);
       _this.listenTo(app.scriptList, 'edit:open', function (model) {
         _this.closeEdit();
         _this.editView = new EditView({model: model.clone()});
