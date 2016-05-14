@@ -533,7 +533,11 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
         var name = script.custom.name || script.meta.name || script.id;
         // normal injection
         try {
-          var func = new Function('g', code);
+          // In content page of Opera Presto, the top level Window-like object
+          // `this` is different from `window`. In order to build the function
+          // with prototypes from `window`, we MUST use `window.Function`
+          // instead of `Function`.
+          var func = new window.Function('g', code);
         } catch(e) {
           console.error('Syntax error in script: ' + name + '\n' + e.message);
           return;
