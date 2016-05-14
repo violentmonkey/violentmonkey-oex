@@ -13,7 +13,7 @@ msgUpdated:
   message: Скрипт обновлен.
 msgErrorFetchingScript:
   description: Message shown when Violentmonkey fails fetching a new version of the script.
-  message: 'Ошибка загрузки скрипта!'
+  message: Ошибка загрузки скрипта!
 msgInstalled:
   description: Message shown when a script is installed.
   message: Скрипт установлен.
@@ -21,7 +21,9 @@ msgUpdating:
   description: Message shown when a new version of script is being fetched.
   message: Обновление...
 msgNewVersion:
-  description: 'Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided.'
+  description: >-
+    Message shown when a new version of script is found by @updateURL, but no
+    @downloadURL is provided.
   message: Доступна новая версия.
 msgCheckingForUpdate:
   description: Message shown when a script is being checked for updates by version numbers.
@@ -35,6 +37,7 @@ msgNoUpdate:
 labelNoName:
   description: Text as the name of a script when no @name is assigned.
   message: Null name
+  touched: false
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Управление скриптами
@@ -128,7 +131,9 @@ labelAuthor:
   description: Label of author shown in the details of a script.
   message: 'Автор: '
 anchorAuthor:
-  description: 'Author shown in the footer of options page, translator information may be added.'
+  description: >-
+    Author shown in the footer of options page, translator information may be
+    added.
   message: '<a href=mailto:gera2ld@163.com>Gerald</a>'
 labelTranslator:
   description: Label of translator.
@@ -220,11 +225,16 @@ buttonConfirmInstallation:
 Warning:
   description: Show warnings with a notification.
   message: Warning
+  touched: false
 msgErrorLoadingData:
-  description: Message shown on confirm page when the script to be installed cannot be loaded.
+  description: >-
+    Message shown on confirm page when the script to be installed cannot be
+    loaded.
   message: Ошибка загрузки скрипта.
 msgLoadedData:
-  description: Message shown in the confirm page when a javascript file to be installed is loaded.
+  description: >-
+    Message shown in the confirm page when a javascript file to be installed is
+    loaded.
   message: Скрипт загружен.
 msgErrorLoadingDependency:
   description: Message shown when not all requirements are loaded successfully.
@@ -242,9 +252,10 @@ msgLoadingData:
 msgWarnGrant:
   description: Message shown when `@grant` is not found in a script.
   message: 'Script [$1] has no `@grant` lines! Click to see more details.'
+  touched: false
 labelNoScripts:
   description: Message shown when no script is installed.
-  message: "Oops, you haven't got any script yet."
+  message: 'Oops, you haven''t got any script yet.'
 hintSupportPage:
   description: Hint for support page.
   message: Support page
@@ -269,7 +280,9 @@ msgErrorZip:
   message: Ошибка загрузки zip-файла.
   touched: false
 msgImported:
-  description: Message shown after import. There is an argument referring to the count of scripts imported.
+  description: >-
+    Message shown after import. There is an argument referring to the count of
+    scripts imported.
   message: $1 пункт(ов) импортировано.
 hintUseDownloadURL:
   description: Shown as a place holder for @updateURL when it is not assigned
@@ -291,21 +304,19 @@ hintVacuum:
 labelSearch:
   description: Label for search input in search box.
   message: 'Найти для: '
-  touched: false
 labelReplace:
   description: Label for replace input in search box.
   message: 'Заменить на: '
-  touched: false
 buttonReplace:
   description: Button to replace the current match.
   message: Заменять
-  touched: false
 buttonReplaceAll:
   description: Button to replace all matches.
   message: Заменить всё
-  touched: false
 msgNamespaceConflict:
-  description: Message shown when namespace of the new script conflicts with an existent one.
+  description: >-
+    Message shown when namespace of the new script conflicts with an existent
+    one.
   message: ''
 hintInputURL:
   description: Hint for a prompt box to input URL of a user script.
@@ -316,6 +327,7 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: ''
+  touched: false
 menuScriptDisabled:
   description: 'Menu item showing the status of Violentmonkey, when disabled.'
   message: ''

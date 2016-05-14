@@ -5,7 +5,6 @@ define('views/TabMain', function (require, _exports, module) {
   var Script = require('models').Script;
   var app = require('app');
   var tabs = _.require('utils/tabs');
-  var i18n = _.require('utils/i18n');
 
   module.exports = BaseView.extend({
     el: '#tab',
@@ -21,7 +20,7 @@ define('views/TabMain', function (require, _exports, module) {
       BaseView.prototype.initialize.call(_this);
       _this.listenTo(app.scriptList, 'reset', _this.render);
       _this.listenTo(app.scriptList, 'add', _this.addOne);
-      _this.listenTo(app.scriptList, 'add update', _this.setBackdrop);
+      _this.listenTo(app.scriptList, 'update', _this.setBackdrop);
       _this.listenTo(app.scriptList, 'edit:open', function (model) {
         _this.closeEdit();
         _this.editView = new EditView({model: model.clone()});
@@ -47,10 +46,10 @@ define('views/TabMain', function (require, _exports, module) {
     setBackdrop: function () {
       if (app.scriptList.loading) {
         this.$bd.addClass('mask').show();
-        this.$bdm.html(i18n('msgLoading'));
+        this.$bdm.html(_.i18n('msgLoading'));
       } else if (!app.scriptList.length) {
         this.$bd.removeClass('mask').show();
-        this.$bdm.html(i18n('labelNoScripts'));
+        this.$bdm.html(_.i18n('labelNoScripts'));
       } else {
         this.$bd.hide();
       }
@@ -71,7 +70,7 @@ define('views/TabMain', function (require, _exports, module) {
       _.sendMessage({cmd: 'CheckUpdateAll'});
     },
     installFromURL: function () {
-      var url = prompt(i18n('hintInputURL'));
+      var url = prompt(_.i18n('hintInputURL'));
       if (~url.indexOf('://')) {
         tabs.create({
           url: '/options.html' + '#confirm/' + encodeURIComponent(url),

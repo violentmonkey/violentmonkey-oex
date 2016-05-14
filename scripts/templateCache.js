@@ -16,7 +16,6 @@ module.exports = function templateCache() {
 
 define('templates', function (require, exports, module) {
   var cache = require('cache');
-  var i18n = _.require('utils/i18n');
 `;
   const footer = `
 });

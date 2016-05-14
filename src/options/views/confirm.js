@@ -1,7 +1,6 @@
 define('views/Confirm', function (require, _exports, module) {
   var cache = _.require('utils/cache');
   var tabs = _.require('utils/tabs');
-  var i18n = _.require('utils/i18n');
   var BaseView = require('cache').BaseView;
   var ConfirmOptionsView = require('views/ConfirmOption');
   var editor = require('editor');
@@ -25,7 +24,7 @@ define('views/Confirm', function (require, _exports, module) {
       _this.$el.html(_this.templateFn({
         url: _this.url,
       }));
-      _this.showMessage(i18n('msgLoadingData'));
+      _this.showMessage(_.i18n('msgLoadingData'));
       _this.loadedEditor = editor.init({
         container: _this.$('.editor-code')[0],
         readonly: true,
@@ -66,7 +65,7 @@ define('views/Confirm', function (require, _exports, module) {
         if (!length) return;
         var error = [];
         var updateStatus = function () {
-          _this.showMessage(i18n('msgLoadingDependency', [finished, length]));
+          _this.showMessage(_.i18n('msgLoadingDependency', [finished, length]));
         };
         updateStatus();
         var promises = script.require.map(function (url) {
@@ -92,10 +91,10 @@ define('views/Confirm', function (require, _exports, module) {
           _this.data.dependencyOK = true;
         });
       }).then(function () {
-        _this.showMessage(i18n('msgLoadedData'));
+        _this.showMessage(_.i18n('msgLoadedData'));
         _this.$('#btnInstall').prop('disabled', false);
       }, function (error) {
-        _this.showMessage(i18n('msgErrorLoadingDependency'), error);
+        _this.showMessage(_.i18n('msgErrorLoadingDependency'), error);
         return Promise.reject();
       });
     },
@@ -122,7 +121,7 @@ define('views/Confirm', function (require, _exports, module) {
       this.$('#msg').html(msg);
     },
     getFile: function (url, isBlob) {
-      var xhr = new XMLHttpRequest;
+      var xhr = new _.bg.XMLHttpRequest;
       xhr.open('GET', url, true);
       if (isBlob) xhr.responseType = 'blob';
       return new Promise(function (resolve, reject) {
@@ -150,13 +149,13 @@ define('views/Confirm', function (require, _exports, module) {
         return text ? resolve(text) : reject();
       }).catch(function () {
         return new Promise(function (resolve, reject) {
-          var xhr = new XMLHttpRequest;
+          var xhr = new _.bg.XMLHttpRequest;
           xhr.open('GET', url, true);
           xhr.onload = function () {
             resolve(this.responseText);
           };
           xhr.onerror = xhr.ontimeout = function () {
-            _this.showMessage(i18n('msgErrorLoadingData'));
+            _this.showMessage(_.i18n('msgErrorLoadingData'));
             reject(this);
           };
           xhr.send();

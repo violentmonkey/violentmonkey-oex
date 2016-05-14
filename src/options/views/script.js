@@ -1,7 +1,6 @@
 define('views/Script', function (require, _exports, module) {
   var BaseView = require('cache').BaseView;
   var app = require('app');
-  var i18n = _.require('utils/i18n');
 
   var DEFAULT_ICON = '/images/icon48.png';
   module.exports = BaseView.extend({
@@ -20,10 +19,9 @@ define('views/Script', function (require, _exports, module) {
     initialize: function () {
       var _this = this;
       _this.model.set('_icon', DEFAULT_ICON);
-      // MUST call `super` before `render`
-      BaseView.prototype.initialize.call(_this);
       _this.listenTo(_this.model, 'change', _this.render);
       _this.listenTo(_this.model, 'remove', _this.onRemoved);
+      BaseView.prototype.initialize.call(_this);
     },
     loadIcon: function () {
       var _this = this;
@@ -51,7 +49,7 @@ define('views/Script', function (require, _exports, module) {
     getAuthor: function (text) {
       if (!text) return '';
       var matches = text.match(/^(.*?)\s<(\S*?@\S*?)>$/);
-      var label = i18n('labelAuthor');
+      var label = _.i18n('labelAuthor');
       return matches
         ? label + '<a href=mailto:' + matches[2] + '>' + matches[1] + '</a>'
         : label + _.escape(text);

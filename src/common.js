@@ -1,6 +1,7 @@
 if (opera.extension && opera.extension.bgProcess) {
 	_.bg = opera.extension.bgProcess;
   _.require = _.bg._require;
+  _.i18n = _.bg._.i18n;
 	// Promise MUST be the same contructor
 	window.Promise = _.bg.Promise;
 

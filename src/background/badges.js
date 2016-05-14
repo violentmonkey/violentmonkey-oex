@@ -1,5 +1,4 @@
 define('badges', function (require, _exports, module) {
-  var i18n = require('utils/i18n');
   var tabs = require('utils/tabs');
 
   function cancel() {
@@ -48,7 +47,7 @@ define('badges', function (require, _exports, module) {
   }
   function init() {
     badges.button = opera.contexts.toolbar.createItem({
-      title: i18n('extName'),
+      title: _.i18n('extName'),
       popup: {
         href: '/popup/index.html',
         width: 222,

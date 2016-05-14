@@ -2,7 +2,6 @@ define('views/TabSettings', function (require, _exports, module) {
   var BaseView = require('cache').BaseView;
   var app = require('app');
   var tabs = _.require('utils/tabs');
-  var i18n = _.require('utils/i18n');
 
   var ExportList = BaseView.extend({
     el: '.export-list',
@@ -11,8 +10,9 @@ define('views/TabSettings', function (require, _exports, module) {
       'click div': 'toggleSelected',
     },
     initialize: function () {
-      BaseView.prototype.initialize.call(this);
-      this.listenTo(app.scriptList, 'reset change', this.render);
+      var _this = this;
+      BaseView.prototype.initialize.call(_this);
+      _this.listenTo(app.scriptList, 'reset change update', _this.render);
     },
     _render: function () {
       var _this = this;
@@ -131,7 +131,7 @@ define('views/TabSettings', function (require, _exports, module) {
           });
         }).then(function (count) {
           app.scriptList.reload();
-          alert(i18n('msgImported', [count]));
+          alert(_.i18n('msgImported', [count]));
         });
     },
     importFile: function (e) {
@@ -192,9 +192,9 @@ define('views/TabSettings', function (require, _exports, module) {
     },
     onVacuum: function (e) {
       var button = $(e.target);
-      button.prop('disabled', true).html(i18n('buttonVacuuming'));
+      button.prop('disabled', true).html(_.i18n('buttonVacuuming'));
       _.sendMessage({cmd: 'Vacuum'}).then(function () {
-        button.html(i18n('buttonVacuumed'));
+        button.html(_.i18n('buttonVacuumed'));
       });
     },
   });

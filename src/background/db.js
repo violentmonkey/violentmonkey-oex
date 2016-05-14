@@ -2,7 +2,6 @@ define('vmdb', function (require, _exports, module) {
   var scriptUtils = require('utils/script');
   var tester = require('utils/tester');
   var tabsUtils = require('utils/tabs');
-  var i18n = require('utils/i18n');
 
   function VMDB() {
     var _this = this;
@@ -558,7 +557,7 @@ define('vmdb', function (require, _exports, module) {
     var res = {
       cmd: 'update',
       data: {
-        message: data.message == null ? i18n('msgUpdated') : data.message || '',
+        message: data.message == null ? _.i18n('msgUpdated') : data.message || '',
       },
     };
     var meta = scriptUtils.parseMeta(data.code);
@@ -602,11 +601,11 @@ define('vmdb', function (require, _exports, module) {
         });
       return _this.queryScript(data.id, meta, tx).then(function (script) {
         if (script) {
-          if (data.isNew) throw i18n('msgNamespaceConflict');
+          if (data.isNew) throw _.i18n('msgNamespaceConflict');
         } else {
           script = scriptUtils.newScript();
           res.cmd = 'add';
-          res.data.message = i18n('msgInstalled');
+          res.data.message = _.i18n('msgInstalled');
         }
         if (data.more) for (var k in data.more)
           if (k in script) script[k] = data.more[k];
@@ -643,35 +642,35 @@ define('vmdb', function (require, _exports, module) {
         if (scriptUtils.compareVersion(script.meta.version, meta.version) < 0)
           return Promise.resolve();
         res.data.checking = false;
-        res.data.message = i18n('msgNoUpdate');
+        res.data.message = _.i18n('msgNoUpdate');
         _.messenger.post(res);
         return Promise.reject();
       };
       var errHandler = function (_xhr) {
         res.data.checking = false;
-        res.data.message = i18n('msgErrorFetchingUpdateInfo');
+        res.data.message = _.i18n('msgErrorFetchingUpdateInfo');
         _.messenger.post(res);
         return Promise.reject();
       };
       var update = function () {
         if (!downloadURL) {
-          res.data.message = '<span class="new">' + i18n('msgNewVersion') + '</span>';
+          res.data.message = '<span class="new">' + _.i18n('msgNewVersion') + '</span>';
           _.messenger.post(res);
           return Promise.reject();
         }
-        res.data.message = i18n('msgUpdating');
+        res.data.message = _.i18n('msgUpdating');
         _.messenger.post(res);
         return scriptUtils.fetch(downloadURL).then(function (xhr) {
           return xhr.responseText;
         }, function (_xhr) {
           res.data.checking = false;
-          res.data.message = i18n('msgErrorFetchingScript');
+          res.data.message = _.i18n('msgErrorFetchingScript');
           _.messenger.post(res);
           return Promise.reject();
         });
       };
       if (!updateURL) return Promise.reject();
-      res.data.message = i18n('msgCheckingForUpdate');
+      res.data.message = _.i18n('msgCheckingForUpdate');
       _.messenger.post(res);
       return scriptUtils.fetch(updateURL, null, {
         Accept: 'text/x-userscript-meta',

@@ -5,7 +5,7 @@ define('app', function (require, exports, _module) {
   var EditView = require('views/Edit');
 
   var scriptList = exports.scriptList = new models.ScriptList;
-  _.bg._.messenger.connect(function (res) {
+  _.bg._.messenger.connect(window, function (res) {
     if (res.cmd === 'add') {
       res.data.message = '';
       scriptList.push(res.data);

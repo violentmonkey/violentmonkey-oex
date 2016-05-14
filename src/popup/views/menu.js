@@ -1,7 +1,6 @@
 define('views/Menu', function (require, _exports, module) {
   var MenuBaseView = require('views/Base');
   var app = require('app');
-  var i18n = _.require('utils/i18n');
   var badges = _.require('badges');
 
   module.exports = MenuBaseView.extend({
@@ -20,7 +19,7 @@ define('views/Menu', function (require, _exports, module) {
       var top = comp.top;
       var bot = comp.bot;
       _this.addMenuItem({
-        name: i18n('menuManageScripts'),
+        name: _.i18n('menuManageScripts'),
         symbol: 'cog',
         onClick: function (_e) {
           _.bg.opera.extension.tabs.create({
@@ -30,7 +29,7 @@ define('views/Menu', function (require, _exports, module) {
       }, top);
       if (app.domainsMenu.length)
         _this.addMenuItem({
-          name: i18n('menuFindScripts'),
+          name: _.i18n('menuFindScripts'),
           symbol: 'search',
           onClick: function (_e) {
             var tabData = badges.getData();
@@ -44,7 +43,7 @@ define('views/Menu', function (require, _exports, module) {
           },
         }, top);
         if (app.commandsMenu.length) _this.addMenuItem({
-          name: i18n('menuCommands'),
+          name: _.i18n('menuCommands'),
           symbol: 'arrow-right',
           onClick: function (_e) {
             app.navigate('commands', {trigger: true});
@@ -52,7 +51,7 @@ define('views/Menu', function (require, _exports, module) {
         }, top);
         _this.addMenuItem({
           name: function (data) {
-            return data ? i18n('menuScriptEnabled') : i18n('menuScriptDisabled');
+            return data ? _.i18n('menuScriptEnabled') : _.i18n('menuScriptDisabled');
           },
           data: _.options.get('isApplied'),
           symbol: function (data) {

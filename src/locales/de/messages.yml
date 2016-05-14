@@ -13,7 +13,7 @@ msgUpdated:
   message: Das Skript wurde aktualisiert.
 msgErrorFetchingScript:
   description: Message shown when Violentmonkey fails fetching a new version of the script.
-  message: 'Fehler beim Herunterladen der neuen Version!'
+  message: Fehler beim Herunterladen der neuen Version!
 msgInstalled:
   description: Message shown when a script is installed.
   message: Das Skript wurde installiert.
@@ -21,7 +21,9 @@ msgUpdating:
   description: Message shown when a new version of script is being fetched.
   message: Aktualisiere...
 msgNewVersion:
-  description: 'Message shown when a new version of script is found by @updateURL, but no @downloadURL is provided.'
+  description: >-
+    Message shown when a new version of script is found by @updateURL, but no
+    @downloadURL is provided.
   message: Neue Version verfügbar.
 msgCheckingForUpdate:
   description: Message shown when a script is being checked for updates by version numbers.
@@ -35,6 +37,7 @@ msgNoUpdate:
 labelNoName:
   description: Text as the name of a script when no @name is assigned.
   message: Kein Name
+  touched: false
 menuManageScripts:
   description: 'Menu item to manage scripts, or to open the options page of the extension.'
   message: Skripte verwalten
@@ -128,7 +131,9 @@ labelAuthor:
   description: Label of author shown in the details of a script.
   message: 'Autor: '
 anchorAuthor:
-  description: 'Author shown in the footer of options page, translator information may be added.'
+  description: >-
+    Author shown in the footer of options page, translator information may be
+    added.
   message: '<a href=mailto:gera2ld@163.com>Gerald</a>'
 labelTranslator:
   description: Label of translator.
@@ -198,7 +203,7 @@ buttonSave:
   message: Speichern
 buttonSaveClose:
   description: Button to save modifications of a script and then close the editing page.
-  message: 'Speichern & Schließen'
+  message: Speichern & Schließen
 buttonClose:
   description: Button to close window.
   message: Schließen
@@ -220,11 +225,16 @@ buttonConfirmInstallation:
 Warning:
   description: Show warnings with a notification.
   message: Warnung
+  touched: false
 msgErrorLoadingData:
-  description: Message shown on confirm page when the script to be installed cannot be loaded.
+  description: >-
+    Message shown on confirm page when the script to be installed cannot be
+    loaded.
   message: Fehler beim Laden der Skriptdaten.
 msgLoadedData:
-  description: Message shown in the confirm page when a javascript file to be installed is loaded.
+  description: >-
+    Message shown in the confirm page when a javascript file to be installed is
+    loaded.
   message: Skriptdaten geladen
 msgErrorLoadingDependency:
   description: Message shown when not all requirements are loaded successfully.
@@ -242,9 +252,10 @@ msgLoadingData:
 msgWarnGrant:
   description: Message shown when `@grant` is not found in a script.
   message: 'Das Skript [$1] hat keinen Eintrag für `@grant`! Für mehr Details klicken.'
+  touched: false
 labelNoScripts:
   description: Message shown when no script is installed.
-  message: "Oops, you haven't got any script yet."
+  message: 'Oops, you haven''t got any script yet.'
 hintSupportPage:
   description: Hint for support page.
   message: Support
@@ -269,14 +280,18 @@ msgErrorZip:
   message: Error loading zip file.
   touched: false
 msgImported:
-  description: Message shown after import. There is an argument referring to the count of scripts imported.
+  description: >-
+    Message shown after import. There is an argument referring to the count of
+    scripts imported.
   message: $1 Skript(e) wurden importiert.
 hintUseDownloadURL:
   description: Shown as a place holder for @updateURL when it is not assigned
   message: Verwende @downloadURL
 confirmNotSaved:
   description: Confirm message shown when there are unsaved script modifications.
-  message: 'Die Änderungen wurden nicht gespreichert!Zum Verwerfen OK drücken oder Abbrechen um fortzufahren.'
+  message: >-
+    Die Änderungen wurden nicht gespreichert!Zum Verwerfen OK drücken oder
+    Abbrechen um fortzufahren.
 buttonVacuuming:
   description: Message shown when data vacuum is in progress.
   message: Säubere Daten...
@@ -289,21 +304,19 @@ hintVacuum:
 labelSearch:
   description: Label for search input in search box.
   message: 'Suche nach: '
-  touched: false
 labelReplace:
   description: Label for replace input in search box.
   message: 'Ersetzen mit: '
-  touched: false
 buttonReplace:
   description: Button to replace the current match.
   message: Ersetzen
-  touched: false
 buttonReplaceAll:
   description: Button to replace all matches.
   message: Alle
-  touched: false
 msgNamespaceConflict:
-  description: Message shown when namespace of the new script conflicts with an existent one.
+  description: >-
+    Message shown when namespace of the new script conflicts with an existent
+    one.
   message: ''
 hintInputURL:
   description: Hint for a prompt box to input URL of a user script.
@@ -314,6 +327,7 @@ buttonInstallFromURL:
 labelIgnoreGrant:
   description: Option to suppress no @grant warnings.
   message: ''
+  touched: false
 menuScriptDisabled:
   description: 'Menu item showing the status of Violentmonkey, when disabled.'
   message: ''

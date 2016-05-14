@@ -1,7 +1,6 @@
 define('views/Command', function (require, _exports, module) {
   var MenuBaseView = require('views/Base');
   var app = require('app');
-  var i18n = _.require('utils/i18n');
 
   module.exports = MenuBaseView.extend({
     initialize: function () {
@@ -19,7 +18,7 @@ define('views/Command', function (require, _exports, module) {
       var top = comp.top;
       var bot = comp.bot;
       _this.addMenuItem({
-        name: i18n('menuBack'),
+        name: _.i18n('menuBack'),
         symbol: 'arrow-left',
         onClick: function (_e) {
           app.navigate('', {trigger: true});

@@ -9,6 +9,7 @@ define('app', function (require, _exports, module) {
   var requests = require('requests');
   var tabs = require('utils/tabs');
   var cache = require('utils/cache');
+  _.i18n = require('utils/i18n');
   window._require = require;
 
   var vmdb = new VMDB;
@@ -36,13 +37,15 @@ define('app', function (require, _exports, module) {
   function initMessenger() {
     var callbacks = [];
     return {
-      connect: function (callback) {
-        callbacks.push(callback);
+      connect: function (window, callback) {
+        callbacks.push([window, callback]);
       },
       post: function (data) {
-        callbacks = callbacks.filter(function (callback) {
+        data = JSON.parse(JSON.stringify(data));
+        callbacks = callbacks.filter(function (item) {
+          if (item[0].closed) return false;
           try {
-            callback(data);
+            item[1](data);
           } catch (e) {
             return false;
           }

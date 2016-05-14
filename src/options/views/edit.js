@@ -5,7 +5,6 @@ define('views/Edit', function (require, _exports, module) {
   var Meta = require('models').Meta;
   var app = require('app');
   var editor = require('editor');
-  var i18n = _.require('utils/i18n');
 
   module.exports = BaseView.extend({
     className: 'frame edit',
@@ -92,7 +91,7 @@ define('views/Edit', function (require, _exports, module) {
       });
     },
     close: function () {
-      if (!this.changed || confirm(i18n('confirmNotSaved')))
+      if (!this.changed || confirm(_.i18n('confirmNotSaved')))
         app.scriptList.trigger('edit:close');
     },
     saveClose: function () {

@@ -113,7 +113,7 @@ define('app', function (require, exports, _module) {
       },
     };
     init();
-    _.bg._.popupMessenger.connect(commands.SetPopup);
+    _.bg._.popupMessenger.connect(window, commands.SetPopup);
     badges.get();
   }();
 });
