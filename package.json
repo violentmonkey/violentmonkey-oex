@@ -1,6 +1,6 @@
 {
   "name": "Violentmonkey-oex",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "scripts": {
     "clean": "gulp clean",
     "eslint": "gulp eslint",
