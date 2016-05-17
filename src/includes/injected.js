@@ -218,11 +218,11 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       if (func) func(obj.data);
     },
     runCode: function(name, func, wrapper) {
-      try{
-        func.call(wrapper.window, wrapper);
-      }catch(e){
+      try {
+        func.call(wrapper.window || wrapper, wrapper);
+      } catch (e) {
         var msg = 'Error running script: ' + name + '\n' + e;
-        if(e.message) msg += '\n' + e.message;
+        if (e.message) msg += '\n' + e.message;
         console.error(msg);
       }
     },
