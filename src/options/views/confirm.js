@@ -125,19 +125,17 @@ define('views/Confirm', function (require, _exports, module) {
       xhr.open('GET', url, true);
       if (isBlob) xhr.responseType = 'blob';
       return new Promise(function (resolve, reject) {
-        xhr.onload = function () {
+        xhr.onloadend = function () {
+          if (xhr.status > 300) return reject(url);
           if (isBlob) {
             var reader = new FileReader;
             reader.onload = function (_e) {
               resolve(window.btoa(this.result));
             };
-            reader.readAsBinaryString(this.response);
+            reader.readAsBinaryString(xhr.response);
           } else {
             resolve(xhr.responseText);
           }
-        };
-        xhr.onerror = function () {
-          reject(url);
         };
         xhr.send();
       });
@@ -148,17 +146,10 @@ define('views/Confirm', function (require, _exports, module) {
         var text = cache.get(url);
         return text ? resolve(text) : reject();
       }).catch(function () {
-        return new Promise(function (resolve, reject) {
-          var xhr = new _.bg.XMLHttpRequest;
-          xhr.open('GET', url, true);
-          xhr.onload = function () {
-            resolve(this.responseText);
-          };
-          xhr.onerror = xhr.ontimeout = function () {
-            _this.showMessage(_.i18n('msgErrorLoadingData'));
-            reject(this);
-          };
-          xhr.send();
+        return _this.getFile(url)
+        .catch(function () {
+          _this.showMessage(_.i18n('msgErrorLoadingData'));
+          return Promise.reject();
         });
       });
     },

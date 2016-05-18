@@ -130,6 +130,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       'close',
       'confirm',
       'dispatchEvent',
+      'fetch',
       'find',
       'focus',
       'getComputedStyle',
@@ -142,6 +143,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       'postMessage',
       'print',
       'prompt',
+      'requestAnimationFrame',
       'removeEventListener',
       'resizeBy',
       'resizeTo',
@@ -155,7 +157,7 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       'stop',
     ], function (name) {
       var method = window[name];
-      wrapper[name] = function () {
+      if (method) wrapper[name] = function () {
         return method.apply(window, arguments);
       };
     });
@@ -216,11 +218,11 @@ if (document.contentType !== 'text/html' && /\.user\.js$/i.test(window.location.
       if (func) func(obj.data);
     },
     runCode: function(name, func, wrapper) {
-      try{
-        func.call(wrapper.window, wrapper);
-      }catch(e){
+      try {
+        func.call(wrapper.window || wrapper, wrapper);
+      } catch (e) {
         var msg = 'Error running script: ' + name + '\n' + e;
-        if(e.message) msg += '\n' + e.message;
+        if (e.message) msg += '\n' + e.message;
         console.error(msg);
       }
     },
