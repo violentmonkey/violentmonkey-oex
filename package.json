@@ -29,6 +29,7 @@
     "jszip": "^3.0.0",
     "merge2": "^1.0.1",
     "ncp": "^2.0.0",
+    "qunitjs": "^2.0.0-rc1",
     "sync-promise-lite": "^0.2.3",
     "through2": "^2.0.1",
     "underscore": "^1.8.3"
