@@ -4,7 +4,6 @@ define('views/TabSettings', function (require, _exports, module) {
   var tabs = _.require('utils/tabs');
 
   var ExportList = BaseView.extend({
-    el: '.export-list',
     templateUrl: '/options/templates/option.html',
     events: {
       'click div': 'toggleSelected',
@@ -40,8 +39,8 @@ define('views/TabSettings', function (require, _exports, module) {
   });
 
   module.exports = BaseView.extend({
-    el: '#tab',
     name: 'settings',
+    className: 'content',
     events: {
       'change [data-check]': 'updateCheckbox',
       'change #cUpdate': 'updateAutoUpdate',
@@ -52,9 +51,12 @@ define('views/TabSettings', function (require, _exports, module) {
     },
     templateUrl: '/options/templates/tab-settings.html',
     _render: function () {
+      var _this = this;
       var options = _.options.getAll();
-      this.$el.html(this.templateFn(options));
-      this.exportList = new ExportList;
+      _this.$el.html(_this.templateFn(options));
+      _this.exportList = new ExportList({
+        el: _this.$('.export-list')[0],
+      });
     },
     updateCheckbox: _.updateCheckbox,
     updateAutoUpdate: function (_e) {

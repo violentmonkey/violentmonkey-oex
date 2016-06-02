@@ -6,25 +6,20 @@ define('views/Confirm', function (require, _exports, module) {
   var editor = require('editor');
 
   module.exports = BaseView.extend({
-    el: '#app',
     events: {
       'click .button-toggle': 'toggleOptions',
       'click #btnInstall': 'installScript',
       'click #btnClose': 'close',
     },
     templateUrl: '/options/templates/confirm.html',
-    initialize: function (url, _from) {
-      this.url = url;
-      this.from = _from;
-      _.bindAll(this, 'hideOptions');
-      BaseView.prototype.initialize.call(this);
+    initialize: function () {
+      var _this = this;
+      _.bindAll(_this, 'hideOptions', 'trackLocalFile');
+      BaseView.prototype.initialize.call(_this);
     },
     _render: function () {
       var _this = this;
-      _this.$el.html(_this.templateFn({
-        url: _this.url,
-      }));
-      _this.showMessage(_.i18n('msgLoadingData'));
+      _this.$el.html(_this.templateFn());
       _this.loadedEditor = editor.init({
         container: _this.$('.editor-code')[0],
         readonly: true,
@@ -32,21 +27,32 @@ define('views/Confirm', function (require, _exports, module) {
       }).then(function (editor) {
         _this.editor = editor;
       });
+      _this.$toggler = _this.$('.button-toggle');
+      _this.$('#url').attr('title', _this.url).text(_this.url);
+      _this.showMessage(_.i18n('msgLoadingData'));
+    },
+    initData: function (url, referer) {
+      var _this = this;
+      _this.url = url;
+      _this.from = referer;
+      _this.render();
       _this.loadData().then(function () {
         _this.parseMeta();
       });
-      _this.$toggler = _this.$('.button-toggle');
     },
-    loadData: function () {
+    loadData: function (changedOnly) {
       var _this = this;
+      var _text = _this.data && _this.data.code;
       _this.$('#btnInstall').prop('disabled', true);
       _this.data = {
+        code: _text,
         require: {},
         resources: {},
         dependencyOK: false,
         isLocal: /^file:\/\/\//.test(_this.url),
       };
       return _this.getScript(_this.url).then(function (text) {
+        if (changedOnly && _text == text) return Promise.reject();
         _this.data.code = text;
         _this.loadedEditor.then(function () {
           _this.editor.setValueAndFocus(_this.data.code);
@@ -99,19 +105,21 @@ define('views/Confirm', function (require, _exports, module) {
       });
     },
     hideOptions: function () {
-      if (!this.optionsView) return;
-      this.$toggler.removeClass('active');
-      this.optionsView.remove();
-      this.optionsView = null;
+      var _this = this;
+      if (!_this.optionsView) return;
+      _this.$toggler.removeClass('active');
+      _this.optionsView.remove();
+      _this.optionsView = null;
     },
     toggleOptions: function (_e) {
-      if (this.optionsView) {
-        this.hideOptions();
+      var _this = this;
+      if (_this.optionsView) {
+        _this.hideOptions();
       } else {
-        this.$toggler.addClass('active');
-        this.optionsView = new ConfirmOptionsView;
-        this.optionsView.$el.insertAfter(this.$toggler);
-        $(document).one('mousedown', this.hideOptions);
+        _this.$toggler.addClass('active');
+        _this.optionsView = new ConfirmOptionsView;
+        _this.optionsView.$el.insertAfter(_this.$toggler);
+        $(document).one('mousedown', _this.hideOptions);
       }
     },
     close: function () {
@@ -121,10 +129,10 @@ define('views/Confirm', function (require, _exports, module) {
       this.$('#msg').html(msg);
     },
     getFile: function (url, isBlob) {
-      var xhr = new _.bg.XMLHttpRequest;
-      xhr.open('GET', url, true);
-      if (isBlob) xhr.responseType = 'blob';
       return new Promise(function (resolve, reject) {
+        var xhr = new _.bg.XMLHttpRequest;
+        xhr.open('GET', url, true);
+        if (isBlob) xhr.responseType = 'blob';
         xhr.onloadend = function () {
           if (xhr.status > 300) return reject(url);
           if (isBlob) {
@@ -147,9 +155,9 @@ define('views/Confirm', function (require, _exports, module) {
         return text ? resolve(text) : reject();
       }).catch(function () {
         return _this.getFile(url)
-        .catch(function () {
+        .catch(function (url) {
           _this.showMessage(_.i18n('msgErrorLoadingData'));
-          return Promise.reject();
+          throw url;
         });
       });
     },
@@ -181,18 +189,13 @@ define('views/Confirm', function (require, _exports, module) {
     trackLocalFile: function () {
       var _this = this;
       setTimeout(function () {
-        var code = _this.data.code;
-        _this.loadData().then(function () {
+        _this.loadData(true).then(function () {
           var track = _.options.get('trackLocalFile');
           if (!track) return;
-          if (_this.data.code != code) {
-            _this.parseMeta().then(function () {
-              track && _this.installScript();
-            });
-          } else {
-            _this.trackLocalFile();
-          }
-        });
+          _this.parseMeta().then(function () {
+            track && _this.installScript();
+          });
+        }, _this.trackLocalFile);
       }, 2000);
     },
   });
