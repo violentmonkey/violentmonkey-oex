@@ -5,10 +5,11 @@ define('views/Menu', function (require, _exports, module) {
 
   module.exports = MenuBaseView.extend({
     initialize: function () {
-      MenuBaseView.prototype.initialize.call(this);
-      this.listenTo(app.scriptsMenu, 'reset', this.render);
-      this.listenTo(app.commandsMenu, 'reset', this.render);
-      this.listenTo(app.domainsMenu, 'reset', this.render);
+      var _this = this;
+      MenuBaseView.prototype.initialize.call(_this);
+      _this.listenTo(app.scriptsMenu, 'reset', _this.render);
+      _this.listenTo(app.commandsMenu, 'reset', _this.render);
+      _this.listenTo(app.domainsMenu, 'reset', _this.render);
     },
     _render: function () {
       var _this = this;
@@ -67,9 +68,7 @@ define('views/Menu', function (require, _exports, module) {
         app.scriptsMenu.each(function (item) {
           _this.addMenuItem(item, bot);
         });
-        setTimeout(function () {
-          _this.fixStyles(bot, comp.plh);
-        });
+        _this.fixStyles(bot, comp.plh);
     },
   });
 });
